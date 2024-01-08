@@ -1,0 +1,32 @@
+openapi: 3.0.3
+info:
+  title: Data Universal Repository API
+  version: 2.0.0
+  description: API wrapper around different know data repositories
+  contact:
+    email: thomas@tursics.de
+    name: Thomas Tursics
+    url: https://www.tursics.de/
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit/
+servers:
+  - url: https://opendata.guru/api/2
+    variables: {}
+    description: ''
+paths:
+  /system-status.php:
+    get:
+      summary: Get system status information
+      description: Get system status information
+      operationId: getSystem
+      responses:
+        default:
+          description: Default error sample response
+      tags:
+        - live
+tags:
+  - name: live
+    description: >-
+      The operation calls the source systems directly. Be patient on heavy
+      usage. There is no caching system.
