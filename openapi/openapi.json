@@ -22,14 +22,63 @@
     }
   ],
   "paths": {
-    "/system-status.php": {
+    "/system": {
       "get": {
         "summary": "Get system status information",
         "description": "Get system status information",
         "operationId": "getSystem",
+        "parameters": [
+          {
+            "name": "link",
+            "in": "query",
+            "description": "URL to the systems API",
+            "required": true,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "ckan": {
+                "value": "https://ckan.open.nrw.de/api/3/action/organization_list",
+                "summary": "CKAN portal"
+              }
+            }
+          }
+        ],
         "responses": {
-          "default": {
-            "description": "Default error sample response"
+          "200": {
+            "description": "Sample successful response",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "ckanSample": {
+                    "value": {
+                      "cms": "",
+                      "extensions": [
+                        "text_view",
+                        "image_view",
+                        "recline_view"
+                      ],
+                      "system": "CKAN",
+                      "url": "https://ckan.open.nrw.de",
+                      "version": "2.9.9"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Sample error response",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "unsetLink": {
+                    "value": "{ \"error\": 400, \"message\": \"Bad Request. Parameter \\\"link\\\" is not set\" }"
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
