@@ -23,4 +23,8 @@ RewriteRule ^2$              /api/2/        [R,L,QSA]
 
 RewriteRule ^2/(system)$     /api/$1.php        [L]
 
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+</IfModule>
+
 ##########################################################################################
