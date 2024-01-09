@@ -1,0 +1,26 @@
+##########################################################################################
+# deactivate "directory indexing / directory listing"
+Options -Indexes
+
+# deactivate "name completion" and "show similar file names"
+CheckSpelling off
+
+##########################################################################################
+# error pages
+ErrorDocument 400 /api/error.php?error=400
+ErrorDocument 401 /api/error.php?error=401
+ErrorDocument 402 /api/error.php?error=402
+ErrorDocument 403 /api/error.php?error=403
+ErrorDocument 404 /api/error.php?error=404
+ErrorDocument 500 /api/error.php?error=500
+
+##########################################################################################
+
+RewriteEngine on
+
+RewriteRule ^$               /api/2/        [R,L,QSA]
+RewriteRule ^2$              /api/2/        [R,L,QSA]
+
+RewriteRule ^2/(system)$     /api/$1.php        [L]
+
+##########################################################################################
