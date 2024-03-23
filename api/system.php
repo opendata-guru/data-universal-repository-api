@@ -1,4 +1,24 @@
 <?php
+	include('helper/_link.php');
+
+	$link = getLink();
+
+	if ($link->error) {
+		header($link->error->header);
+		echo json_encode((object) array(
+			'error' => $link->error->error,
+			'message' => $link->error->message,
+		));
+		exit;
+	}
+
+/*header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET');
+header('Access-Control-Allow-Headers: X-Requested-With');
+header('Content-Type: application/json; charset=utf-8');
+echo json_encode($link);
+exit;*/
+
 	$link = htmlspecialchars($_GET['link']);
 
 	$piveauSuffix = '/api/hub/search/catalogues';
