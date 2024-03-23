@@ -25,13 +25,13 @@
     "/system": {
       "get": {
         "summary": "Get system status information",
-        "description": "Get system status information",
+        "description": "Get information about the system used, the version number, extensions and a link.",
         "operationId": "getSystem",
         "parameters": [
           {
             "name": "link",
             "in": "query",
-            "description": "URL to the systems API",
+            "description": "URL to the source system",
             "required": true,
             "allowEmptyValue": false,
             "schema": {
@@ -47,7 +47,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Sample successful response",
+            "description": "Example of a successful answer",
             "content": {
               "application/json": {
                 "examples": {
@@ -69,7 +69,7 @@
             }
           },
           "400": {
-            "description": "Sample error response",
+            "description": "Example of an error response",
             "content": {
               "application/json": {
                 "examples": {
@@ -90,7 +90,7 @@
   "tags": [
     {
       "name": "live",
-      "description": "The operation calls the source systems directly. Be patient on heavy usage. There is no caching system."
+      "description": "The API endpoints call the source systems directly. Be careful during heavy use, there is no caching mechanism."
     }
   ]
 }
