@@ -1,4 +1,14 @@
 <?php
+	function get_contents($url){
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_URL, $url);
+		$data = curl_exec($ch);
+		curl_close($ch);
+
+		return $data;
+	}
+
 	function unparse_url($parsedURL) {
 		$scheme = isset($parsedURL['scheme']) ? $parsedURL['scheme'] . '://' : '';
 		$host = isset($parsedURL['host']) ? $parsedURL['host'] : '';
@@ -65,6 +75,11 @@
 				$system = 'CKAN';
 			} else if ($CKAN_ACTION == substr($link['path'], -strlen($CKAN_ACTION))) {
 				$link['path'] = substr($link['path'], 0, -strlen($CKAN_ACTION));
+				unset($link['query']);
+				unset($link['fragment']);
+				$url = unparse_url($link);
+				$system = 'CKAN';
+			} else if (!$link['path'] && ('ckan' === explode('.', $link['host'])[0])) {
 				unset($link['query']);
 				unset($link['fragment']);
 				$url = unparse_url($link);

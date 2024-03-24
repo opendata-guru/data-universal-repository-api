@@ -1,5 +1,11 @@
 <?php
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Methods: GET');
+    header('Access-Control-Allow-Headers: X-Requested-With');
+	header('Content-Type: application/json; charset=utf-8');
+
 	include('helper/_link.php');
+	include('system/_cms.php');
 
 	$link = getLink();
 
@@ -12,12 +18,18 @@
 		exit;
 	}
 
-/*header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET');
-header('Access-Control-Allow-Headers: X-Requested-With');
-header('Content-Type: application/json; charset=utf-8');
-echo json_encode($link);
-exit;*/
+	if ('CKAN' === $link->system) {
+		include 'system/system-ckan.php';
+		systemCKAN($link->url);
+	} else {
+		header('HTTP/1.0 400 Bad Request');
+		echo json_encode((object) array(
+			'error' => 400,
+			'message' => 'Bad Request. The underlying system could not be detected',
+		));
+	}
+
+exit;
 
 	$link = htmlspecialchars($_GET['link']);
 
