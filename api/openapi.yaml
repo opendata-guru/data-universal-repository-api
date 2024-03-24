@@ -30,8 +30,11 @@ paths:
             type: string
           examples:
             ckan:
-              value: https://ckan.open.nrw.de/api/3/action/organization_list
+              value: https://ckan.govdata.de
               summary: CKAN portal
+            ckan-long:
+              value: https://ckan.open.nrw.de/api/3/action/organization_list
+              summary: CKAN portal with long URL
       responses:
         '200':
           description: Example of a successful answer
@@ -57,7 +60,7 @@ paths:
               examples:
                 unsetLink:
                   value: >-
-                    { "error": 400, "message": "Bad Request. Parameter \"link\"
+                    { "error": 400, "message": "Bad Request. Parameter 'link'
                     is not set" }
       tags:
         - live

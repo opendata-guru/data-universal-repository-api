@@ -39,8 +39,12 @@
             },
             "examples": {
               "ckan": {
-                "value": "https://ckan.open.nrw.de/api/3/action/organization_list",
+                "value": "https://ckan.govdata.de",
                 "summary": "CKAN portal"
+              },
+              "ckan-long": {
+                "value": "https://ckan.open.nrw.de/api/3/action/organization_list",
+                "summary": "CKAN portal with long URL"
               }
             }
           }
@@ -74,7 +78,7 @@
               "application/json": {
                 "examples": {
                   "unsetLink": {
-                    "value": "{ \"error\": 400, \"message\": \"Bad Request. Parameter \\\"link\\\" is not set\" }"
+                    "value": "{ \"error\": 400, \"message\": \"Bad Request. Parameter 'link' is not set\" }"
                   }
                 }
               }
