@@ -50,9 +50,12 @@
 		}
 
 		if (!$error && ($system === 'unknown')) {
+			$CKAN_CURRENT_PACKAGE_LIST = '/api/3/action/current_package_list_with_resources';
 			$CKAN_ORGANIZATION_LIST = '/api/3/action/organization_list';
-			$CKAN_GROUP_LIST = '/api/3/action/group_list';
+			$CKAN_PACKAGE_SEARCH = '/api/3/action/package_search';
+			$CKAN_PACKAGE_SHOW = '/api/3/action/package_show';
 			$CKAN_STATUS_SHOW = '/api/3/action/status_show';
+			$CKAN_GROUP_LIST = '/api/3/action/group_list';
 			$CKAN_ACTION = '/api/3/action';
 
 			if ($CKAN_ORGANIZATION_LIST == substr($link['path'], -strlen($CKAN_ORGANIZATION_LIST))) {
@@ -63,6 +66,24 @@
 				$system = 'CKAN';
 			} else if ($CKAN_GROUP_LIST == substr($link['path'], -strlen($CKAN_GROUP_LIST))) {
 				$link['path'] = substr($link['path'], 0, -strlen($CKAN_GROUP_LIST));
+				unset($link['query']);
+				unset($link['fragment']);
+				$url = unparse_url($link);
+				$system = 'CKAN';
+			} else if ($CKAN_CURRENT_PACKAGE_LIST == substr($link['path'], -strlen($CKAN_CURRENT_PACKAGE_LIST))) {
+				$link['path'] = substr($link['path'], 0, -strlen($CKAN_CURRENT_PACKAGE_LIST));
+				unset($link['query']);
+				unset($link['fragment']);
+				$url = unparse_url($link);
+				$system = 'CKAN';
+			} else if ($CKAN_PACKAGE_SEARCH == substr($link['path'], -strlen($CKAN_PACKAGE_SEARCH))) {
+				$link['path'] = substr($link['path'], 0, -strlen($CKAN_PACKAGE_SEARCH));
+				unset($link['query']);
+				unset($link['fragment']);
+				$url = unparse_url($link);
+				$system = 'CKAN';
+			} else if ($CKAN_PACKAGE_SHOW == substr($link['path'], -strlen($CKAN_PACKAGE_SHOW))) {
+				$link['path'] = substr($link['path'], 0, -strlen($CKAN_PACKAGE_SHOW));
 				unset($link['query']);
 				unset($link['fragment']);
 				$url = unparse_url($link);
@@ -84,6 +105,25 @@
 				unset($link['fragment']);
 				$url = unparse_url($link);
 				$system = 'CKAN';
+			}
+		}
+
+		if (!$error && ($system === 'unknown')) {
+			$PIVEAU_SEARCH_CATALOGUES = '/api/hub/search/catalogues';
+			$PIVEAU_SEARCH = '/api/hub/search';
+
+			if ($PIVEAU_SEARCH_CATALOGUES == substr($link['path'], -strlen($PIVEAU_SEARCH_CATALOGUES))) {
+				$link['path'] = substr($link['path'], 0, -strlen($PIVEAU_SEARCH_CATALOGUES));
+				unset($link['query']);
+				unset($link['fragment']);
+				$url = unparse_url($link);
+				$system = 'Piveau';
+			} else if ($PIVEAU_SEARCH == substr($link['path'], -strlen($PIVEAU_SEARCH))) {
+				$link['path'] = substr($link['path'], 0, -strlen($PIVEAU_SEARCH));
+				unset($link['query']);
+				unset($link['fragment']);
+				$url = unparse_url($link);
+				$system = 'Piveau';
 			}
 		}
 

@@ -33,8 +33,11 @@ paths:
               value: https://ckan.govdata.de
               summary: CKAN portal
             ckan-long:
-              value: https://ckan.open.nrw.de/api/3/action/organization_list
+              value: https://open.nrw/api/3/action/organization_list
               summary: CKAN portal with long URL
+            piveau:
+              value: https://opendata.bayern/api/hub/search/
+              summary: Piveau portal
       responses:
         '200':
           description: Example of a successful answer
