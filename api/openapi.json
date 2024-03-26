@@ -38,6 +38,10 @@
               "type": "string"
             },
             "examples": {
+              "arcgis": {
+                "value": "https://portal-chemnitz.opendata.arcgis.com",
+                "summary": "ArcGIS portal"
+              },
               "ckan": {
                 "value": "https://ckan.govdata.de",
                 "summary": "CKAN portal"

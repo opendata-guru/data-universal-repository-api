@@ -24,6 +24,9 @@
 	} else if ('Piveau' === $link->system) {
 		include 'system/system-piveau.php';
 		systemPiveau($link->url);
+	} else if ('ArcGIS' === $link->system) {
+		include 'system/system-arcgis.php';
+		systemArcGIS($link->url);
 	} else {
 		header('HTTP/1.0 400 Bad Request');
 		echo json_encode((object) array(
