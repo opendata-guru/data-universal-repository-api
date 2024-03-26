@@ -57,50 +57,28 @@
 			$CKAN_STATUS_SHOW = '/api/3/action/status_show';
 			$CKAN_GROUP_LIST = '/api/3/action/group_list';
 			$CKAN_ACTION = '/api/3/action';
+			$found = null;
 
 			if ($CKAN_ORGANIZATION_LIST == substr($link['path'], -strlen($CKAN_ORGANIZATION_LIST))) {
-				$link['path'] = substr($link['path'], 0, -strlen($CKAN_ORGANIZATION_LIST));
-				unset($link['query']);
-				unset($link['fragment']);
-				$url = unparse_url($link);
-				$system = 'CKAN';
+				$found = substr($link['path'], 0, -strlen($CKAN_ORGANIZATION_LIST));
 			} else if ($CKAN_GROUP_LIST == substr($link['path'], -strlen($CKAN_GROUP_LIST))) {
-				$link['path'] = substr($link['path'], 0, -strlen($CKAN_GROUP_LIST));
-				unset($link['query']);
-				unset($link['fragment']);
-				$url = unparse_url($link);
-				$system = 'CKAN';
+				$found = substr($link['path'], 0, -strlen($CKAN_GROUP_LIST));
 			} else if ($CKAN_CURRENT_PACKAGE_LIST == substr($link['path'], -strlen($CKAN_CURRENT_PACKAGE_LIST))) {
-				$link['path'] = substr($link['path'], 0, -strlen($CKAN_CURRENT_PACKAGE_LIST));
-				unset($link['query']);
-				unset($link['fragment']);
-				$url = unparse_url($link);
-				$system = 'CKAN';
+				$found = substr($link['path'], 0, -strlen($CKAN_CURRENT_PACKAGE_LIST));
 			} else if ($CKAN_PACKAGE_SEARCH == substr($link['path'], -strlen($CKAN_PACKAGE_SEARCH))) {
-				$link['path'] = substr($link['path'], 0, -strlen($CKAN_PACKAGE_SEARCH));
-				unset($link['query']);
-				unset($link['fragment']);
-				$url = unparse_url($link);
-				$system = 'CKAN';
+				$found = substr($link['path'], 0, -strlen($CKAN_PACKAGE_SEARCH));
 			} else if ($CKAN_PACKAGE_SHOW == substr($link['path'], -strlen($CKAN_PACKAGE_SHOW))) {
-				$link['path'] = substr($link['path'], 0, -strlen($CKAN_PACKAGE_SHOW));
-				unset($link['query']);
-				unset($link['fragment']);
-				$url = unparse_url($link);
-				$system = 'CKAN';
+				$found = substr($link['path'], 0, -strlen($CKAN_PACKAGE_SHOW));
 			} else if ($CKAN_STATUS_SHOW == substr($link['path'], -strlen($CKAN_STATUS_SHOW))) {
-				$link['path'] = substr($link['path'], 0, -strlen($CKAN_STATUS_SHOW));
-				unset($link['query']);
-				unset($link['fragment']);
-				$url = unparse_url($link);
-				$system = 'CKAN';
+				$found = substr($link['path'], 0, -strlen($CKAN_STATUS_SHOW));
 			} else if ($CKAN_ACTION == substr($link['path'], -strlen($CKAN_ACTION))) {
-				$link['path'] = substr($link['path'], 0, -strlen($CKAN_ACTION));
-				unset($link['query']);
-				unset($link['fragment']);
-				$url = unparse_url($link);
-				$system = 'CKAN';
+				$found = substr($link['path'], 0, -strlen($CKAN_ACTION));
 			} else if (!$link['path'] && ('ckan' === explode('.', $link['host'])[0])) {
+				$found = '';
+			}
+
+			if ($found !== null) {
+				$link['path'] = $found;
 				unset($link['query']);
 				unset($link['fragment']);
 				$url = unparse_url($link);
@@ -109,17 +87,33 @@
 		}
 
 		if (!$error && ($system === 'unknown')) {
+			$PIVEAU_SEARCH_CATALOGUES_ = '/api/hub/search/catalogues/';
 			$PIVEAU_SEARCH_CATALOGUES = '/api/hub/search/catalogues';
+			$PIVEAU_SEARCH_DATASETS = '/api/hub/search/datasets';
+			$PIVEAU_SEARCH_SCROLL = '/api/hub/search/scroll';
+			$PIVEAU_SEARCH_SEARCH = '/api/hub/search/search';
+			$PIVEAU_SEARCH_ = '/api/hub/search/';
 			$PIVEAU_SEARCH = '/api/hub/search';
+			$found = null;
 
-			if ($PIVEAU_SEARCH_CATALOGUES == substr($link['path'], -strlen($PIVEAU_SEARCH_CATALOGUES))) {
-				$link['path'] = substr($link['path'], 0, -strlen($PIVEAU_SEARCH_CATALOGUES));
-				unset($link['query']);
-				unset($link['fragment']);
-				$url = unparse_url($link);
-				$system = 'Piveau';
+			if ($PIVEAU_SEARCH_CATALOGUES_ == substr($link['path'], -strlen($PIVEAU_SEARCH_CATALOGUES_))) {
+				$found = substr($link['path'], 0, -strlen($PIVEAU_SEARCH_CATALOGUES_));
+			} else if ($PIVEAU_SEARCH_CATALOGUES == substr($link['path'], -strlen($PIVEAU_SEARCH_CATALOGUES))) {
+				$found = substr($link['path'], 0, -strlen($PIVEAU_SEARCH_CATALOGUES));
+			} else if ($PIVEAU_SEARCH_DATASETS == substr($link['path'], -strlen($PIVEAU_SEARCH_DATASETS))) {
+				$found = substr($link['path'], 0, -strlen($PIVEAU_SEARCH_DATASETS));
+			} else if ($PIVEAU_SEARCH_SCROLL == substr($link['path'], -strlen($PIVEAU_SEARCH_SCROLL))) {
+				$found = substr($link['path'], 0, -strlen($PIVEAU_SEARCH_SCROLL));
+			} else if ($PIVEAU_SEARCH_SEARCH == substr($link['path'], -strlen($PIVEAU_SEARCH_SEARCH))) {
+				$found = substr($link['path'], 0, -strlen($PIVEAU_SEARCH_SEARCH));
+			} else if ($PIVEAU_SEARCH_ == substr($link['path'], -strlen($PIVEAU_SEARCH_))) {
+				$found = substr($link['path'], 0, -strlen($PIVEAU_SEARCH_));
 			} else if ($PIVEAU_SEARCH == substr($link['path'], -strlen($PIVEAU_SEARCH))) {
-				$link['path'] = substr($link['path'], 0, -strlen($PIVEAU_SEARCH));
+				$found = substr($link['path'], 0, -strlen($PIVEAU_SEARCH));
+			}
+
+			if ($found !== null) {
+				$link['path'] = $found;
 				unset($link['query']);
 				unset($link['fragment']);
 				$url = unparse_url($link);
