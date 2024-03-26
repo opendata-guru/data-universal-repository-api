@@ -135,6 +135,32 @@
 		}
 
 		if (!$error && ($system === 'unknown')) {
+			$ENTRYSTORE_MANAGEMENT_STATUS = '/store/management/status';
+			$ENTRYSTORE_SEARCH = '/store/search';
+			$ENTRYSTORE_STORE_ = '/store/';
+			$ENTRYSTORE_STORE = '/store';
+			$found = null;
+
+			if ($ENTRYSTORE_MANAGEMENT_STATUS == substr($link['path'], -strlen($ENTRYSTORE_MANAGEMENT_STATUS))) {
+				$found = substr($link['path'], 0, -strlen($ENTRYSTORE_MANAGEMENT_STATUS));
+			} else if ($ENTRYSTORE_SEARCH == substr($link['path'], -strlen($ENTRYSTORE_SEARCH))) {
+				$found = substr($link['path'], 0, -strlen($ENTRYSTORE_SEARCH));
+			} else if ($ENTRYSTORE_STORE_ == substr($link['path'], -strlen($ENTRYSTORE_STORE_))) {
+				$found = substr($link['path'], 0, -strlen($ENTRYSTORE_STORE_));
+			} else if ($ENTRYSTORE_STORE == substr($link['path'], -strlen($ENTRYSTORE_STORE))) {
+				$found = substr($link['path'], 0, -strlen($ENTRYSTORE_STORE));
+			}
+
+			if ($found !== null) {
+				$link['path'] = $found;
+				unset($link['query']);
+				unset($link['fragment']);
+				$url = unparse_url($link);
+				$system = 'EntryStore';
+			}
+		}
+
+		if (!$error && ($system === 'unknown')) {
 			$url = $link;
 		}
 
