@@ -41,6 +41,9 @@ paths:
             entrystore:
               value: https://register.opendata.sachsen.de/store/
               summary: EntryStore portal
+            ods:
+              value: https://opendata.potsdam.de/api/explore/v2.1
+              summary: Opendatasoft portal
             piveau:
               value: https://opendata.bayern/api/hub/search/
               summary: Piveau portal

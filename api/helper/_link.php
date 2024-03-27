@@ -161,6 +161,74 @@
 		}
 
 		if (!$error && ($system === 'unknown')) {
+			$ODS_20_CATALOG_METADATA_TEMPLATES = '/api/explore/v2.0/catalog/metadata_templates';
+			$ODS_21_CATALOG_METADATA_TEMPLATES = '/api/explore/v2.1/catalog/metadata_templates';
+			$ODS_20_CATALOG_DATASETS = '/api/explore/v2.0/catalog/datasets';
+			$ODS_21_CATALOG_DATASETS = '/api/explore/v2.1/catalog/datasets';
+			$ODS_20_CATALOG_EXPORTS = '/api/explore/v2.0/catalog/exports';
+			$ODS_21_CATALOG_EXPORTS = '/api/explore/v2.1/catalog/exports';
+			$ODS_20_CATALOG_FACETS = '/api/explore/v2.0/catalog/facets';
+			$ODS_21_CATALOG_FACETS = '/api/explore/v2.1/catalog/facets';
+			$ODS_20_MONITORING = '/api/explore/v2.0/monitoring';
+			$ODS_21_MONITORING = '/api/explore/v2.1/monitoring';
+			$ODS_20_CATALOG = '/api/explore/v2.0/catalog';
+			$ODS_21_CATALOG = '/api/explore/v2.1/catalog';
+			$ODS_20_ODS = '/api/explore/v2.0/opendatasoft';
+			$ODS_21_ODS = '/api/explore/v2.1/opendatasoft';
+			$ODS_20_ = '/api/explore/v2.0/';
+			$ODS_21_ = '/api/explore/v2.1/';
+			$ODS_20 = '/api/explore/v2.0';
+			$ODS_21 = '/api/explore/v2.1';
+			$found = null;
+
+			if ($ODS_20_CATALOG_METADATA_TEMPLATES == substr($link['path'], -strlen($ODS_20_CATALOG_METADATA_TEMPLATES))) {
+				$found = substr($link['path'], 0, -strlen($ODS_20_CATALOG_METADATA_TEMPLATES));
+			} else if ($ODS_21_CATALOG_METADATA_TEMPLATES == substr($link['path'], -strlen($ODS_21_CATALOG_METADATA_TEMPLATES))) {
+				$found = substr($link['path'], 0, -strlen($ODS_21_CATALOG_METADATA_TEMPLATES));
+			} else if ($ODS_20_CATALOG_DATASETS == substr($link['path'], -strlen($ODS_20_CATALOG_DATASETS))) {
+				$found = substr($link['path'], 0, -strlen($ODS_20_CATALOG_DATASETS));
+			} else if ($ODS_21_CATALOG_DATASETS == substr($link['path'], -strlen($ODS_21_CATALOG_DATASETS))) {
+				$found = substr($link['path'], 0, -strlen($ODS_21_CATALOG_DATASETS));
+			} else if ($ODS_20_CATALOG_EXPORTS == substr($link['path'], -strlen($ODS_20_CATALOG_EXPORTS))) {
+				$found = substr($link['path'], 0, -strlen($ODS_20_CATALOG_EXPORTS));
+			} else if ($ODS_21_CATALOG_EXPORTS == substr($link['path'], -strlen($ODS_21_CATALOG_EXPORTS))) {
+				$found = substr($link['path'], 0, -strlen($ODS_21_CATALOG_EXPORTS));
+			} else if ($ODS_20_CATALOG_FACETS == substr($link['path'], -strlen($ODS_20_CATALOG_FACETS))) {
+				$found = substr($link['path'], 0, -strlen($ODS_20_CATALOG_FACETS));
+			} else if ($ODS_21_CATALOG_FACETS == substr($link['path'], -strlen($ODS_21_CATALOG_FACETS))) {
+				$found = substr($link['path'], 0, -strlen($ODS_21_CATALOG_FACETS));
+			} else if ($ODS_20_MONITORING == substr($link['path'], -strlen($ODS_20_MONITORING))) {
+				$found = substr($link['path'], 0, -strlen($ODS_20_MONITORING));
+			} else if ($ODS_21_MONITORING == substr($link['path'], -strlen($ODS_21_MONITORING))) {
+				$found = substr($link['path'], 0, -strlen($ODS_21_MONITORING));
+			} else if ($ODS_20_CATALOG == substr($link['path'], -strlen($ODS_20_CATALOG))) {
+				$found = substr($link['path'], 0, -strlen($ODS_20_CATALOG));
+			} else if ($ODS_21_CATALOG == substr($link['path'], -strlen($ODS_21_CATALOG))) {
+				$found = substr($link['path'], 0, -strlen($ODS_21_CATALOG));
+			} else if ($ODS_20_ODS == substr($link['path'], -strlen($ODS_20_ODS))) {
+				$found = substr($link['path'], 0, -strlen($ODS_20_ODS));
+			} else if ($ODS_21_ODS == substr($link['path'], -strlen($ODS_21_ODS))) {
+				$found = substr($link['path'], 0, -strlen($ODS_21_ODS));
+			} else if ($ODS_20_ == substr($link['path'], -strlen($ODS_20_))) {
+				$found = substr($link['path'], 0, -strlen($ODS_20_));
+			} else if ($ODS_21_ == substr($link['path'], -strlen($ODS_21_))) {
+				$found = substr($link['path'], 0, -strlen($ODS_21_));
+			} else if ($ODS_20 == substr($link['path'], -strlen($ODS_20))) {
+				$found = substr($link['path'], 0, -strlen($ODS_20));
+			} else if ($ODS_21 == substr($link['path'], -strlen($ODS_21))) {
+				$found = substr($link['path'], 0, -strlen($ODS_21));
+			}
+
+			if ($found !== null) {
+				$link['path'] = $found;
+				unset($link['query']);
+				unset($link['fragment']);
+				$url = unparse_url($link);
+				$system = 'Opendatasoft';
+			}
+		}
+
+		if (!$error && ($system === 'unknown')) {
 			$url = $link;
 		}
 
