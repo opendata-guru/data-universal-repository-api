@@ -33,6 +33,14 @@
 	} else if ('Opendatasoft' === $link->system) {
 		include 'system/system-opendatasoft.php';
 		systemOpendatasoft($link->url);
+	} else if ('unknown' !== $link->system) {
+		echo json_encode((object) array(
+			'cms' => '',
+			'extensions' => null,
+			'system' => $link->system,
+			'url' => $link->url,
+			'version' => '',
+		));
 	} else {
 		header('HTTP/1.0 400 Bad Request');
 		echo json_encode((object) array(
