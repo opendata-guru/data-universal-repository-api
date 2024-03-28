@@ -23,7 +23,7 @@ paths:
       parameters:
         - name: link
           in: query
-          description: URL to the source system
+          description: URL to the source system. The URL can also be a deep link to the data portal. A smart algorithm helps correctly identify the end point.
           required: true
           allowEmptyValue: false
           schema:
@@ -72,8 +72,7 @@ paths:
               examples:
                 unsetLink:
                   value: >-
-                    { "error": 400, "message": "Bad Request. Parameter 'link'
-                    is not set" }
+                    { "error": 400, "message": "Bad Request. The underlying system could not be detected" }
       tags:
         - live
 tags:
