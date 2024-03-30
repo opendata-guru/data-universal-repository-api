@@ -57,32 +57,47 @@ paths:
             application/json:
               examples:
                 ckanSample:
-                  value: {
-  "cms": "",
-  "extensions": [
-    "text_view",
-    "image_view",
-    "recline_view",
-  ],
-  "system": "CKAN",
-  "url": "https://ckan.open.nrw.de",
-  "version": "2.9.9"
-}
+                  value:
+                    cms: ''
+                    extensions:
+                     - text_view
+                     - image_view
+                     - recline_view
+                    system: CKAN
+                    url: https://ckan.open.nrw.de
+                    version: 2.9.9
+                         
         '400':
           description: Example of an error response
           content:
             application/json:
               examples:
                 unsetLink:
-                  value: >-
-                    { "error": 400, "message": "Bad Request. The underlying system could not be detected" }
+                  value:
+                    error: 400
+                    message: Bad Request. The underlying system could not be detected
       tags:
         - live
-  /quantity:
+  /datasets:
     get:
-      summary: Counts the number of records
-      description: Get the number of records in the system.
-      operationId: getQuantity
+      summary: Comming soon
+      responses:
+        '404':
+          description: Not found error
+          content:
+            application/json:
+              examples:
+                notFound:
+                  value:
+                    error: 404
+                    message: Not Found
+      tags:
+        - live
+  /datasets/count:
+    get:
+      summary: Counts the number of datasets
+      description: Get the number of datasets in the system.
+      operationId: getDatasetsCount
       parameters:
         - name: link
           in: query
@@ -120,17 +135,32 @@ paths:
             application/json:
               examples:
                 ckanSample:
-                  value: {
-  "amount": 42
-}
+                  value:
+                    amount: 42
         '400':
           description: Example of an error response
           content:
             application/json:
               examples:
                 unsetLink:
-                  value: >-
-                    { "error": 400, "message": "Bad Request. The underlying system could not be detected" }
+                  value: 
+                    error: 400
+                    message: Bad Request. The underlying system could not be detected
+      tags:
+        - live
+  /suppliers:
+    get:
+      summary: Comming soon
+      responses:
+        '404':
+          description: Not found error
+          content:
+            application/json:
+              examples:
+                notFound:
+                  value:
+                    error: 404
+                    message: Not Found
       tags:
         - live
 tags:
