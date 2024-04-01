@@ -17,16 +17,16 @@
 		exit;
 	}
 
-	if ('_CKAN' === $link->system) {
+	if ('CKAN' === $link->system) {
 		include 'datasets-count/datasets-count-ckan.php';
 		datasetsCountCKAN($link->url);
-	} else if ('_Piveau' === $link->system) {
+	} else if ('Piveau' === $link->system) {
 		include 'datasets-count/datasets-count-piveau.php';
 		datasetsCountPiveau($link->url);
 	} else if ('_ArcGIS' === $link->system) {
 		include 'datasets-count/datasets-count-arcgis.php';
 		datasetsCountArcGIS($link->url);
-	} else if ('_EntryStore' === $link->system) {
+	} else if ('EntryStore' === $link->system) {
 		include 'datasets-count/datasets-count-entrystore.php';
 		datasetsCountEntryStore($link->url);
 	} else if ('Opendatasoft' === $link->system) {
