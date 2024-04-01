@@ -18,20 +18,20 @@
 	}
 
 	if ('_CKAN' === $link->system) {
-		include 'quantity/quantity-ckan.php';
-		quantityCKAN($link->url);
+		include 'datasets-count/datasets-count-ckan.php';
+		datasetsCountCKAN($link->url);
 	} else if ('_Piveau' === $link->system) {
-		include 'quantity/quantity-piveau.php';
-		quantityPiveau($link->url);
+		include 'datasets-count/datasets-count-piveau.php';
+		datasetsCountPiveau($link->url);
 	} else if ('_ArcGIS' === $link->system) {
-		include 'quantity/quantity-arcgis.php';
-		quantityArcGIS($link->url);
+		include 'datasets-count/datasets-count-arcgis.php';
+		datasetsCountArcGIS($link->url);
 	} else if ('_EntryStore' === $link->system) {
-		include 'quantity/quantity-entrystore.php';
-		quantityEntryStore($link->url);
-	} else if ('_Opendatasoft' === $link->system) {
-		include 'quantity/quantity-opendatasoft.php';
-		quantityOpendatasoft($link->url);
+		include 'datasets-count/datasets-count-entrystore.php';
+		datasetsCountEntryStore($link->url);
+	} else if ('Opendatasoft' === $link->system) {
+		include 'datasets-count/datasets-count-opendatasoft.php';
+		datasetsCountOpendatasoft($link->url);
 	} else if ('unknown' !== $link->system) {
 		header('HTTP/1.0 400 Bad Request');
 		echo json_encode((object) array(

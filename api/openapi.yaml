@@ -73,7 +73,7 @@ paths:
               examples:
                 ckanSample:
                   value:
-                    amount: 42
+                    number: 42
         '400':
           description: Example of an error response
           content:
