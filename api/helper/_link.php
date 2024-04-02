@@ -241,6 +241,19 @@
 		}
 
 		if (!$error && ($system === 'unknown')) {
+			$host = explode('.', $link['host']);
+			$found = (count($host) >= 2) && ('mcloud.de' === ($host[count($host) - 2] . '.' . $host[count($host) - 1]));
+
+			if ($found) {
+				unset($link['path']);
+				unset($link['query']);
+				unset($link['fragment']);
+				$url = unparse_url($link);
+				$system = 'mcloud';
+			}
+		}
+
+		if (!$error && ($system === 'unknown')) {
 			$url = $link;
 		}
 

@@ -59,6 +59,9 @@ paths:
             entrystore:
               value: https://register.opendata.sachsen.de/store/
               summary: EntryStore portal
+            mcloud:
+              value: https://www.mcloud.de/web/guest/suche/
+              summary: mCloud
             ods:
               value: https://opendata.potsdam.de/api/explore/v2.1
               summary: Opendatasoft portal
@@ -129,6 +132,9 @@ paths:
             entrystore:
               value: https://register.opendata.sachsen.de/store/
               summary: EntryStore portal
+            mcloud:
+              value: https://www.mcloud.de/web/guest/suche/
+              summary: mCloud
             ods:
               value: https://opendata.potsdam.de/api/explore/v2.1
               summary: Opendatasoft portal

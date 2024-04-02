@@ -32,6 +32,9 @@
 	} else if ('EntryStore' === $link->system) {
 		include 'datasets-count/datasets-count-entrystore.php';
 		datasetsCountEntryStore($link->url);
+	} else if ('mcloud' === $link->system) {
+		include 'datasets-count/datasets-count-mcloud.php';
+		datasetsCountMCloud($link->url);
 	} else if ('Opendatasoft' === $link->system) {
 		include 'datasets-count/datasets-count-opendatasoft.php';
 		datasetsCountOpendatasoft($link->url);
