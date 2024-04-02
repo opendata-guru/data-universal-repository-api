@@ -23,7 +23,7 @@
 	} else if ('Piveau' === $link->system) {
 		include 'datasets-count/datasets-count-piveau.php';
 		datasetsCountPiveau($link->url);
-	} else if ('_ArcGIS' === $link->system) {
+	} else if ('ArcGIS' === $link->system) {
 		include 'datasets-count/datasets-count-arcgis.php';
 		datasetsCountArcGIS($link->url);
 	} else if ('datenadler' === $link->system) {
