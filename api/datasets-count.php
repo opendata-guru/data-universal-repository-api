@@ -26,6 +26,9 @@
 	} else if ('_ArcGIS' === $link->system) {
 		include 'datasets-count/datasets-count-arcgis.php';
 		datasetsCountArcGIS($link->url);
+	} else if ('datenadler' === $link->system) {
+		include 'datasets-count/datasets-count-datenadler.php';
+		datasetsCountDatenadler($link->url);
 	} else if ('EntryStore' === $link->system) {
 		include 'datasets-count/datasets-count-entrystore.php';
 		datasetsCountEntryStore($link->url);
