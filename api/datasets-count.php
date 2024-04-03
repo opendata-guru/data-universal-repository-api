@@ -32,6 +32,9 @@
 	} else if ('EntryStore' === $link->system) {
 		include 'datasets-count/datasets-count-entrystore.php';
 		datasetsCountEntryStore($link->url);
+	} else if ('geoportal.de' === $link->system) {
+		include 'datasets-count/datasets-count-geoportalde.php';
+		datasetsCountGeoportalDE($link->url);
 	} else if ('mcloud' === $link->system) {
 		include 'datasets-count/datasets-count-mcloud.php';
 		datasetsCountMCloud($link->url);

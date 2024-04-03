@@ -35,7 +35,7 @@
 		systemOpendatasoft($link->url);
 	} else if ('unknown' !== $link->system) {
 		echo json_encode((object) array(
-			'cms' => '',
+			'cms' => getCMS($link->url),
 			'extensions' => null,
 			'system' => $link->system,
 			'url' => $link->url,
