@@ -29,6 +29,8 @@
 		$val = /*json_decode*/($val . '}');
 		$val = null;
 
+		$val = 'Liferay';
+
 		return $val;
 	}
 

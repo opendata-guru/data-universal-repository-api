@@ -18,7 +18,7 @@
 			echo json_encode((object) array(
 				'cms' => $cms,
 				'extensions' => null,
-				'system' => (substr($cms, 0, 6) === 'Drupal') ? 'DKAN' : null,
+				'system' => (substr($cms, 0, 6) === 'Drupal') ? 'DKAN' : 'CKAN',
 				'url' => $url,
 				'version' => null,
 			));
