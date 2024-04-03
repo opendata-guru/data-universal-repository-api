@@ -169,6 +169,7 @@
 			$ODS_21_CATALOG_EXPORTS = '/api/explore/v2.1/catalog/exports';
 			$ODS_20_CATALOG_FACETS = '/api/explore/v2.0/catalog/facets';
 			$ODS_21_CATALOG_FACETS = '/api/explore/v2.1/catalog/facets';
+			$ODS_2_CATALOG_FACETS = '/api/v2/catalog/facets';
 			$ODS_20_MONITORING = '/api/explore/v2.0/monitoring';
 			$ODS_21_MONITORING = '/api/explore/v2.1/monitoring';
 			$ODS_20_CATALOG = '/api/explore/v2.0/catalog';
@@ -197,6 +198,8 @@
 				$found = substr($link['path'], 0, -strlen($ODS_20_CATALOG_FACETS));
 			} else if ($ODS_21_CATALOG_FACETS == substr($link['path'], -strlen($ODS_21_CATALOG_FACETS))) {
 				$found = substr($link['path'], 0, -strlen($ODS_21_CATALOG_FACETS));
+			} else if ($ODS_2_CATALOG_FACETS == substr($link['path'], -strlen($ODS_2_CATALOG_FACETS))) {
+				$found = substr($link['path'], 0, -strlen($ODS_2_CATALOG_FACETS));
 			} else if ($ODS_20_MONITORING == substr($link['path'], -strlen($ODS_20_MONITORING))) {
 				$found = substr($link['path'], 0, -strlen($ODS_20_MONITORING));
 			} else if ($ODS_21_MONITORING == substr($link['path'], -strlen($ODS_21_MONITORING))) {
