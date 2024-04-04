@@ -33,7 +33,7 @@
 	} else if ('_EntryStore' === $link->system) {
 		include 'suppliers/suppliers-entrystore.php';
 		suppliersEntryStore($link->url);
-	} else if ('_geoportal.de' === $link->system) {
+	} else if ('geoportal.de' === $link->system) {
 		include 'suppliers/suppliers-geoportalde.php';
 		suppliersGeoportalDE($link->url);
 	} else if ('mcloud' === $link->system) {
