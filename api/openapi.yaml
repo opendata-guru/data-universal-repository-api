@@ -93,17 +93,63 @@ paths:
         - live
   /suppliers:
     get:
-      summary: Coming soon
+      summary: Get a list of all suppliers
+      description: Obtain a list of all suppliers of the system used. Additional data is provided for each supplier, such as the number of records delivered.
+      operationId: getSuppliers
+      parameters:
+        - name: link
+          in: query
+          description: URL to the source system. The URL can also be a deep link to the data portal API. A smart algorithm helps correctly identify the endpoint.
+          required: true
+          allowEmptyValue: false
+          schema:
+            type: string
+          examples:
+            arcgis:
+              value: https://portal-chemnitz.opendata.arcgis.com
+              summary: ArcGIS portal
+            ckan:
+              value: https://ckan.govdata.de
+              summary: CKAN portal
+            ckan-long:
+              value: https://open.nrw/api/3/action/organization_list
+              summary: CKAN portal with long URL
+            datenadler:
+              value: https://datenadler.de/
+              summary: Datenadler portal
+            entrystore:
+              value: https://register.opendata.sachsen.de/store/
+              summary: EntryStore portal
+            gdide:
+              value: https://www.geoportal.de/
+              summary: GDI-DE portal
+            mcloud:
+              value: https://www.mcloud.de/web/guest/suche/
+              summary: mCloud portal
+            ods:
+              value: https://opendata.potsdam.de/api/explore/v2.1
+              summary: Opendatasoft portal
+            piveau:
+              value: https://opendata.bayern/api/hub/search/
+              summary: Piveau portal
       responses:
-        '404':
-          description: Not found error
+        '200':
+          description: Example of a successful answer
           content:
             application/json:
               examples:
-                notFound:
+                ckanSample:
                   value:
-                    error: 404
-                    message: Not Found
+                    number: 42
+        '400':
+          description: Example of an error response
+          content:
+            application/json:
+              examples:
+                unsetLink:
+                  value: 
+                    error: 400
+                    message: Bad Request. The underlying system could not be detected
       tags:
         - live
   /system:
