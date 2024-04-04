@@ -39,7 +39,7 @@
 	} else if ('mcloud' === $link->system) {
 		include 'suppliers/suppliers-mcloud.php';
 		suppliersMCloud($link->url);
-	} else if ('_Opendatasoft' === $link->system) {
+	} else if ('Opendatasoft' === $link->system) {
 		include 'suppliers/suppliers-opendatasoft.php';
 		suppliersOpendatasoft($link->url);
 	} else {
