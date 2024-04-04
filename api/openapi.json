@@ -141,7 +141,7 @@
     "/suppliers": {
       "get": {
         "summary": "Get a list of all suppliers",
-        "description": "Obtain a list of all suppliers of the system used. Additional data is provided for each supplier, such as the number of records delivered.",
+        "description": "Obtain a list of all suppliers of the system used. Additional data is provided for each supplier, such as the number of records delivered. If available, semantic IDs (Wikidata, official region keys) are added to the data.",
         "operationId": "getSuppliers",
         "parameters": [
           {
@@ -200,9 +200,21 @@
               "application/json": {
                 "examples": {
                   "ckanSample": {
-                    "value": {
-                      "number": 42
-                    }
+                    "value": [
+                      {
+                        "id": "StadtDortmund",
+                        "name": "StadtDortmund",
+                        "title": "Dortmund",
+                        "created": "",
+                        "packages": 489,
+                        "contributor": "",
+                        "type": "municipality",
+                        "wikidata": "Q1295",
+                        "link": "",
+                        "rs": "059130000000",
+                        "associated_rs": ""
+                      }
+                    ]
                   }
                 }
               }

@@ -27,13 +27,13 @@
 	} else if ('_ArcGIS' === $link->system) {
 		include 'suppliers/suppliers-arcgis.php';
 		suppliersArcGIS($link->url);
-	} else if ('datenadler' === $link->system) {
+	} else if ('_datenadler' === $link->system) {
 		include 'suppliers/suppliers-datenadler.php';
 		suppliersDatenadler($link->url);
 	} else if ('_EntryStore' === $link->system) {
 		include 'suppliers/suppliers-entrystore.php';
 		suppliersEntryStore($link->url);
-	} else if ('geoportal.de' === $link->system) {
+	} else if ('_geoportal.de' === $link->system) {
 		include 'suppliers/suppliers-geoportalde.php';
 		suppliersGeoportalDE($link->url);
 	} else if ('mcloud' === $link->system) {
