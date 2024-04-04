@@ -30,7 +30,7 @@
 	} else if ('_datenadler' === $link->system) {
 		include 'suppliers/suppliers-datenadler.php';
 		suppliersDatenadler($link->url);
-	} else if ('_EntryStore' === $link->system) {
+	} else if ('EntryStore' === $link->system) {
 		include 'suppliers/suppliers-entrystore.php';
 		suppliersEntryStore($link->url);
 	} else if ('geoportal.de' === $link->system) {
