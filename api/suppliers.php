@@ -18,7 +18,7 @@
 		exit;
 	}
 
-	if ('_CKAN' === $link->system) {
+	if ('CKAN' === $link->system) {
 		include 'suppliers/suppliers-ckan.php';
 		suppliersCKAN($link->url);
 	} else if ('Piveau' === $link->system) {
@@ -27,7 +27,7 @@
 	} else if ('_ArcGIS' === $link->system) {
 		include 'suppliers/suppliers-arcgis.php';
 		suppliersArcGIS($link->url);
-	} else if ('_datenadler' === $link->system) {
+	} else if ('datenadler' === $link->system) {
 		include 'suppliers/suppliers-datenadler.php';
 		suppliersDatenadler($link->url);
 	} else if ('EntryStore' === $link->system) {

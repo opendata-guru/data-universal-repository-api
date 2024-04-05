@@ -117,6 +117,9 @@ paths:
             datenadler:
               value: https://datenadler.de/
               summary: Datenadler portal
+            dkan:
+              value: https://open-data.bielefeld.de/api/3/action/group_list
+              summary: DKAN portal
             entrystore:
               value: https://register.opendata.sachsen.de/store/
               summary: EntryStore portal
