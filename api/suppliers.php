@@ -24,7 +24,7 @@
 	} else if ('Piveau' === $link->system) {
 		include 'suppliers/suppliers-piveau.php';
 		suppliersPiveau($link->url);
-	} else if ('_ArcGIS' === $link->system) {
+	} else if ('ArcGIS' === $link->system) {
 		include 'suppliers/suppliers-arcgis.php';
 		suppliersArcGIS($link->url);
 	} else if ('datenadler' === $link->system) {
