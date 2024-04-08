@@ -79,6 +79,10 @@
                 "value": "https://datenadler.de/",
                 "summary": "Datenadler portal"
               },
+              "dkan": {
+                "value": "https://open-data.bielefeld.de/api/3/action/group_list",
+                "summary": "DKAN portal"
+              },
               "entrystore": {
                 "value": "https://register.opendata.sachsen.de/store/",
                 "summary": "EntryStore portal"
@@ -122,7 +126,7 @@
             "content": {
               "application/json": {
                 "examples": {
-                  "unsetLink": {
+                  "badRequest": {
                     "value": {
                       "error": 400,
                       "message": "Bad Request. The underlying system could not be detected"
@@ -229,7 +233,7 @@
             "content": {
               "application/json": {
                 "examples": {
-                  "unsetLink": {
+                  "badRequest": {
                     "value": {
                       "error": 400,
                       "message": "Bad Request. The underlying system could not be detected"
@@ -276,6 +280,10 @@
               "datenadler": {
                 "value": "https://datenadler.de/",
                 "summary": "Datenadler portal"
+              },
+              "dkan": {
+                "value": "https://open-data.bielefeld.de/api/3/action/group_list",
+                "summary": "DKAN portal"
               },
               "entrystore": {
                 "value": "https://register.opendata.sachsen.de/store/",
@@ -328,7 +336,7 @@
             "content": {
               "application/json": {
                 "examples": {
-                  "unsetLink": {
+                  "badRequest": {
                     "value": {
                       "error": 400,
                       "message": "Bad Request. The underlying system could not be detected"
@@ -343,9 +351,62 @@
           "live"
         ]
       }
+    },
+    "/data-providers": {
+      "get": {
+        "summary": "Coming soon",
+        "description": "Coming soon",
+        "operationId": "getDataProviders",
+        "responses": {
+          "200": {
+            "description": "Example of a successful answer",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "ckanSample": {
+                    "value": [
+                      {
+                        "title": "Deutschland",
+                        "contributor": "https://www.govdata.de/",
+                        "type": "country",
+                        "rs": "",
+                        "associated_rs": "",
+                        "wikidata": "Q183",
+                        "link": "https://ckan.govdata.de/api/3/action/organization_list"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Example of an error response",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "badRequest": {
+                    "value": {
+                      "error": 400,
+                      "message": "Bad Request"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "maintained"
+        ]
+      }
     }
   },
   "tags": [
+    {
+      "name": "maintained",
+      "description": "This information provided here is maintained manually and can be accessed via the API."
+    },
     {
       "name": "live",
       "description": "The API endpoints call the source systems directly. Be careful during heavy use, there is no caching mechanism."
