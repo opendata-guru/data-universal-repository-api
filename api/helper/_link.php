@@ -4,6 +4,7 @@
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_URL, $url);
 		$data = curl_exec($ch);
+
 		curl_close($ch);
 
 		return $data;
@@ -54,6 +55,7 @@
 			$CKAN_ORGANIZATION_LIST = '/api/3/action/organization_list';
 			$CKAN_PACKAGE_SEARCH = '/api/3/action/package_search';
 			$CKAN_PACKAGE_SHOW = '/api/3/action/package_show';
+			$CKAN_PACKAGE_LIST = '/api/3/action/package_list';
 			$CKAN_STATUS_SHOW = '/api/3/action/status_show';
 			$CKAN_GROUP_LIST = '/api/3/action/group_list';
 			$CKAN_ACTION = '/api/3/action';
@@ -69,6 +71,8 @@
 				$found = substr($link['path'], 0, -strlen($CKAN_PACKAGE_SEARCH));
 			} else if ($CKAN_PACKAGE_SHOW == substr($link['path'], -strlen($CKAN_PACKAGE_SHOW))) {
 				$found = substr($link['path'], 0, -strlen($CKAN_PACKAGE_SHOW));
+			} else if ($CKAN_PACKAGE_LIST == substr($link['path'], -strlen($CKAN_PACKAGE_LIST))) {
+				$found = substr($link['path'], 0, -strlen($CKAN_PACKAGE_LIST));
 			} else if ($CKAN_STATUS_SHOW == substr($link['path'], -strlen($CKAN_STATUS_SHOW))) {
 				$found = substr($link['path'], 0, -strlen($CKAN_STATUS_SHOW));
 			} else if ($CKAN_ACTION == substr($link['path'], -strlen($CKAN_ACTION))) {
