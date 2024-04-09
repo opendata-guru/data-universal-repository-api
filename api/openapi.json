@@ -354,8 +354,8 @@
     },
     "/data-providers": {
       "get": {
-        "summary": "Coming soon",
-        "description": "Coming soon",
+        "summary": "Get a list of all data providers",
+        "description": "A list of all known data providers is returned. For each entry, a type, an official region key, and a Wikidata ID are returned where possible. The \"link\" parameter can be used in other API endpoints.",
         "operationId": "getDataProviders",
         "responses": {
           "200": {
@@ -363,7 +363,7 @@
             "content": {
               "application/json": {
                 "examples": {
-                  "ckanSample": {
+                  "govdataSample": {
                     "value": [
                       {
                         "title": "Deutschland",
@@ -389,6 +389,33 @@
                     "value": {
                       "error": 400,
                       "message": "Bad Request"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "maintained"
+        ]
+      },
+      "post": {
+        "summary": "Change the list of data providers",
+        "description": "Unfortunately, the list of data providers cannot be changed here. Please create an issue on GitHub at https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data",
+        "operationId": "postDataProviders",
+        "responses": {
+          "400": {
+            "description": "Example of an error response",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "badRequest": {
+                    "value": {
+                      "error": 400,
+                      "message": "Bad Request. Please create an issue on GitHub for your change request",
+                      "createIssue": "https://github.com/opendata-guru/data-universal-repository-api/issues/new",
+                      "repository": "https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data"
                     }
                   }
                 }
