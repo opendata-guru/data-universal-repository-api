@@ -21,7 +21,7 @@ RewriteEngine on
 RewriteRule ^$               /api/2/        [R,L,QSA]
 RewriteRule ^2$              /api/2/        [R,L,QSA]
 
-RewriteRule ^2/(suppliers|system)$ /api/$1.php               [L]
+RewriteRule ^2/(datasets|suppliers|system)$ /api/$1.php               [L]
 RewriteRule ^2/data-providers$     /api/data-providers.php   [L]
 RewriteRule ^2/datasets/count$     /api/datasets-count.php   [L]
 

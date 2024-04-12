@@ -18,6 +18,52 @@ paths:
   /datasets:
     get:
       summary: Coming soon
+      parameters:
+        - name: link
+          in: query
+          description: URL to the source system. The URL can also be a deep link to the data portal API. A smart algorithm helps correctly identify the endpoint.
+          required: true
+          allowEmptyValue: false
+          schema:
+            type: string
+          examples:
+            arcgis:
+              value: https://portal-chemnitz.opendata.arcgis.com
+              summary: ArcGIS portal
+            ckan:
+              value: https://ckan.govdata.de
+              summary: CKAN portal
+            ckan-long:
+              value: https://open.nrw/api/3/action/organization_list
+              summary: CKAN portal with long URL
+            datenadler:
+              value: https://datenadler.de/
+              summary: Datenadler portal
+            dkan:
+              value: https://open-data.bielefeld.de/api/3/action/group_list
+              summary: DKAN portal
+            entrystore:
+              value: https://register.opendata.sachsen.de/store/
+              summary: EntryStore portal
+            gdide:
+              value: https://www.geoportal.de/
+              summary: GDI-DE portal
+            mcloud:
+              value: https://www.mcloud.de/web/guest/suche/
+              summary: mCloud portal
+            ods:
+              value: https://opendata.potsdam.de/api/explore/v2.1
+              summary: Opendatasoft portal
+            piveau:
+              value: https://opendata.bayern/api/hub/search/
+              summary: Piveau portal
+        - name: sub_id
+          in: query
+          description: description to be done
+          required: false
+          allowEmptyValue: true
+          schema:
+            type: string
       responses:
         '404':
           description: Not found error
