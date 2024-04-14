@@ -274,6 +274,31 @@
 		}
 
 		if (!$error && ($system === 'unknown')) {
+			$MOBILITHEK_V1 = '/mobilithek/api/v1.0';
+			$MOBILITHEK_V2 = '/mdp-api/mdp-msa-metadata/v2';
+			$found = null;
+
+			$path = explode('/', $link['path']);
+			$path = array_slice($path, 0, 4);
+			$path = implode('/', $path);
+			$system = $path;
+
+			if ($MOBILITHEK_V1 == $path) {
+				$found = true;
+			} else if ($MOBILITHEK_V2 == $path) {
+				$found = true;
+			}
+
+			if ($found !== null) {
+				$link['path'] = '';
+				unset($link['query']);
+				unset($link['fragment']);
+				$url = unparse_url($link);
+				$system = 'mobilithek';
+			}
+		}
+
+		if (!$error && ($system === 'unknown')) {
 			$url = $link;
 		}
 

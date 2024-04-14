@@ -13,3 +13,4 @@ DKAN         | [Open API](https://demo.getdkan.org/api) + [GitHub](https://githu
 EntryStore   | [Open API](https://entrystore.org/api/)
 Opendatasoft | [Open API](https://help.opendatasoft.com/apis/ods-explore-v2/)
 Piveau       | [Open API hub-search](https://open.bydata.de/api/hub/search/) + [Open API hub-repo](https://open.bydata.de/api/hub/repo/)
+mobilithek   | [FAQ](https://mobilithek.info/help/FAQ)
