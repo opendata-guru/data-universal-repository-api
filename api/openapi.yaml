@@ -19,44 +19,7 @@ paths:
     get:
       summary: Coming soon
       parameters:
-        - name: link
-          in: query
-          description: URL to the source system. The URL can also be a deep link to the data portal API. A smart algorithm helps correctly identify the endpoint.
-          required: true
-          allowEmptyValue: false
-          schema:
-            type: string
-          examples:
-            arcgis:
-              value: https://portal-chemnitz.opendata.arcgis.com
-              summary: ArcGIS portal
-            ckan:
-              value: https://ckan.govdata.de
-              summary: CKAN portal
-            ckan-long:
-              value: https://open.nrw/api/3/action/organization_list
-              summary: CKAN portal with long URL
-            datenadler:
-              value: https://datenadler.de/
-              summary: Datenadler portal
-            dkan:
-              value: https://open-data.bielefeld.de/api/3/action/group_list
-              summary: DKAN portal
-            entrystore:
-              value: https://register.opendata.sachsen.de/store/
-              summary: EntryStore portal
-            gdide:
-              value: https://www.geoportal.de/
-              summary: GDI-DE portal
-            mcloud:
-              value: https://www.mcloud.de/web/guest/suche/
-              summary: mCloud portal
-            ods:
-              value: https://opendata.potsdam.de/api/explore/v2.1
-              summary: Opendatasoft portal
-            piveau:
-              value: https://opendata.bayern/api/hub/search/
-              summary: Piveau portal
+        - $ref: "#/components/parameters/linkParam"
         - name: sub_id
           in: query
           description: description to be done
@@ -82,44 +45,7 @@ paths:
       description: Get the number of datasets in the system.
       operationId: getDatasetsCount
       parameters:
-        - name: link
-          in: query
-          description: URL to the source system. The URL can also be a deep link to the data portal API. A smart algorithm helps correctly identify the endpoint.
-          required: true
-          allowEmptyValue: false
-          schema:
-            type: string
-          examples:
-            arcgis:
-              value: https://portal-chemnitz.opendata.arcgis.com
-              summary: ArcGIS portal
-            ckan:
-              value: https://ckan.govdata.de
-              summary: CKAN portal
-            ckan-long:
-              value: https://open.nrw/api/3/action/organization_list
-              summary: CKAN portal with long URL
-            datenadler:
-              value: https://datenadler.de/
-              summary: Datenadler portal
-            dkan:
-              value: https://open-data.bielefeld.de/api/3/action/group_list
-              summary: DKAN portal
-            entrystore:
-              value: https://register.opendata.sachsen.de/store/
-              summary: EntryStore portal
-            gdide:
-              value: https://www.geoportal.de/
-              summary: GDI-DE portal
-            mcloud:
-              value: https://www.mcloud.de/web/guest/suche/
-              summary: mCloud portal
-            ods:
-              value: https://opendata.potsdam.de/api/explore/v2.1
-              summary: Opendatasoft portal
-            piveau:
-              value: https://opendata.bayern/api/hub/search/
-              summary: Piveau portal
+        - $ref: "#/components/parameters/linkParam"
       responses:
         '200':
           description: Example of a successful answer
@@ -146,44 +72,7 @@ paths:
       description: Obtain a list of all suppliers of the system used. Additional data is provided for each supplier, such as the number of records delivered. If available, semantic IDs (Wikidata, official region keys) are added to the data.
       operationId: getSuppliers
       parameters:
-        - name: link
-          in: query
-          description: URL to the source system. The URL can also be a deep link to the data portal API. A smart algorithm helps correctly identify the endpoint.
-          required: true
-          allowEmptyValue: false
-          schema:
-            type: string
-          examples:
-            arcgis:
-              value: https://portal-chemnitz.opendata.arcgis.com
-              summary: ArcGIS portal
-            ckan:
-              value: https://ckan.govdata.de
-              summary: CKAN portal
-            ckan-long:
-              value: https://open.nrw/api/3/action/organization_list
-              summary: CKAN portal with long URL
-            datenadler:
-              value: https://datenadler.de/
-              summary: Datenadler portal
-            dkan:
-              value: https://open-data.bielefeld.de/api/3/action/group_list
-              summary: DKAN portal
-            entrystore:
-              value: https://register.opendata.sachsen.de/store/
-              summary: EntryStore portal
-            gdide:
-              value: https://www.geoportal.de/
-              summary: GDI-DE portal
-            mcloud:
-              value: https://www.mcloud.de/web/guest/suche/
-              summary: mCloud portal
-            ods:
-              value: https://opendata.potsdam.de/api/explore/v2.1
-              summary: Opendatasoft portal
-            piveau:
-              value: https://opendata.bayern/api/hub/search/
-              summary: Piveau portal
+        - $ref: "#/components/parameters/linkParam"
       responses:
         '200':
           description: Example of a successful answer
@@ -221,44 +110,7 @@ paths:
       description: Get information about the system used, the version number, extensions and a link.
       operationId: getSystem
       parameters:
-        - name: link
-          in: query
-          description: URL to the source system. The URL can also be a deep link to the data portal API. A smart algorithm helps correctly identify the endpoint.
-          required: true
-          allowEmptyValue: false
-          schema:
-            type: string
-          examples:
-            arcgis:
-              value: https://portal-chemnitz.opendata.arcgis.com
-              summary: ArcGIS portal
-            ckan:
-              value: https://ckan.govdata.de
-              summary: CKAN portal
-            ckan-long:
-              value: https://open.nrw/api/3/action/organization_list
-              summary: CKAN portal with long URL
-            datenadler:
-              value: https://datenadler.de/
-              summary: Datenadler portal
-            dkan:
-              value: https://open-data.bielefeld.de/api/3/action/group_list
-              summary: DKAN portal
-            entrystore:
-              value: https://register.opendata.sachsen.de/store/
-              summary: EntryStore portal
-            gdide:
-              value: https://www.geoportal.de/
-              summary: GDI-DE portal
-            mcloud:
-              value: https://www.mcloud.de/web/guest/suche/
-              summary: mCloud portal
-            ods:
-              value: https://opendata.potsdam.de/api/explore/v2.1
-              summary: Opendatasoft portal
-            piveau:
-              value: https://opendata.bayern/api/hub/search/
-              summary: Piveau portal
+        - $ref: "#/components/parameters/linkParam"
       responses:
         '200':
           description: Example of a successful answer
@@ -335,6 +187,50 @@ paths:
                     repository: https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data
       tags:
         - maintained
+components:
+  parameters:
+    linkParam:
+      name: link
+      in: query
+      description: URL to the source system. The URL can also be a deep link to the data portal API. A smart algorithm helps correctly identify the endpoint.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      examples:
+            arcgis:
+              value: https://portal-chemnitz.opendata.arcgis.com
+              summary: ArcGIS portal
+            ckan:
+              value: https://ckan.govdata.de
+              summary: CKAN portal
+            ckan-long:
+              value: https://open.nrw/api/3/action/organization_list
+              summary: CKAN portal with long URL
+            datenadler:
+              value: https://datenadler.de/
+              summary: Datenadler portal
+            dkan:
+              value: https://open-data.bielefeld.de/api/3/action/group_list
+              summary: DKAN portal
+            entrystore:
+              value: https://register.opendata.sachsen.de/store/
+              summary: EntryStore portal
+            gdide:
+              value: https://www.geoportal.de/
+              summary: GDI-DE portal
+            mcloud:
+              value: https://www.mcloud.de/web/guest/suche/
+              summary: mCloud portal
+            mobilithek:
+              value: https://mobilithek.info/mobilithek/api/v1.0/export/datasets/mobilithek
+              summary: mobilithek portal
+            ods:
+              value: https://opendata.potsdam.de/api/explore/v2.1
+              summary: Opendatasoft portal
+            piveau:
+              value: https://opendata.bayern/api/hub/search/
+              summary: Piveau portal
 tags:
   - name: maintained
     description: This information provided here is maintained manually and can be accessed via the API.
