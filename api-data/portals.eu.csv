@@ -39,7 +39,7 @@ title,parent_and_id_1,type,url,wikidata,api_list_children,last_check
 "🇱🇺 Luxemburg, Geodaten",data.europa.eu|geoportal-lu,portal,,,,2024-01-03
 🇱🇻 Lettland,data.europa.eu|data-gov-lv,country,https://data.gov.lv/lv,Q211,https://data.gov.lv/dati/lv/api/3/action/organization_list,2023-12-22
 "🇱🇻 Lettland, Geodaten",data.europa.eu|geolatvija,portal,,,,2024-01-03
-🇲🇩 Moldau,data.europa.eu|government-open-data-portal-moldova,country,https://dataset.gov.md/,Q217,https://dataset.gov.md/ckan/en/api/3/action/organization_list,2024-01-03
+🇲🇩 Moldau,data.europa.eu|government-open-data-portal-moldova,country,https://dataset.gov.md/,Q217,https://dataset.gov.md/api/3/action/organization_list,2024-04-15
 🇲🇪 Montenegro,data.europa.eu|data-gov-me,country,https://data.gov.me/,Q236,,2024-01-03
 🇲🇹 Malta,,country,https://open.data.gov.mt,Q233,,2024-04-07
 "🇲🇹 Malta, Geodaten",data.europa.eu|mita,portal,,,,2024-01-03
