@@ -38,6 +38,9 @@
 	} else if ('mcloud' === $link->system) {
 		include 'datasets-count/datasets-count-mcloud.php';
 		datasetsCountMCloud($link->url);
+	} else if ('mobilithek' === $link->system) {
+		include 'datasets-count/datasets-count-mobilithek.php';
+		datasetsCountMobilithek($link->url);
 	} else if ('Opendatasoft' === $link->system) {
 		include 'datasets-count/datasets-count-opendatasoft.php';
 		datasetsCountOpendatasoft($link->url);

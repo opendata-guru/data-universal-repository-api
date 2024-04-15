@@ -281,7 +281,6 @@
 			$path = explode('/', $link['path']);
 			$path = array_slice($path, 0, 4);
 			$path = implode('/', $path);
-			$system = $path;
 
 			if ($MOBILITHEK_V1 == $path) {
 				$found = true;
