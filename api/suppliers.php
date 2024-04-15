@@ -39,6 +39,9 @@
 	} else if ('mcloud' === $link->system) {
 		include 'suppliers/suppliers-mcloud.php';
 		suppliersMCloud($link->url);
+	} else if ('mobilithek' === $link->system) {
+		include 'suppliers/suppliers-mobilithek.php';
+		suppliersMobilithek($link->url);
 	} else if ('Opendatasoft' === $link->system) {
 		include 'suppliers/suppliers-opendatasoft.php';
 		suppliersOpendatasoft($link->url);
