@@ -45,6 +45,15 @@
 	} else if ('Opendatasoft' === $link->system) {
 		include 'suppliers/suppliers-opendatasoft.php';
 		suppliersOpendatasoft($link->url);
+	} else if ('Spain' === $link->system) {
+		include 'suppliers/suppliers-spain.php';
+		suppliersSpain($link->url);
+	} else if ('unknown' !== $link->system) {
+		header('HTTP/1.0 400 Bad Request');
+		echo json_encode((object) array(
+			'error' => 400,
+			'message' => 'Bad Request. Could not create a result for system \'' . $link->system . '\'',
+		));
 	} else {
 		header('HTTP/1.0 400 Bad Request');
 		echo json_encode((object) array(

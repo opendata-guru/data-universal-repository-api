@@ -44,6 +44,9 @@
 	} else if ('Opendatasoft' === $link->system) {
 		include 'datasets-count/datasets-count-opendatasoft.php';
 		datasetsCountOpendatasoft($link->url);
+	} else if ('Spain' === $link->system) {
+		include 'datasets-count/datasets-count-spain.php';
+		datasetsCountSpain($link->url);
 	} else if ('unknown' !== $link->system) {
 		header('HTTP/1.0 400 Bad Request');
 		echo json_encode((object) array(

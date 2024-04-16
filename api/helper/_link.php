@@ -298,6 +298,16 @@
 		}
 
 		if (!$error && ($system === 'unknown')) {
+			if ('datos.gob.es' == $link['host']) {
+				unset($link['path']);
+				unset($link['query']);
+				unset($link['fragment']);
+				$url = unparse_url($link);
+				$system = 'Spain';
+			}
+		}
+
+		if (!$error && ($system === 'unknown')) {
 			$url = $link;
 		}
 

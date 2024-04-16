@@ -352,6 +352,10 @@
           "piveau": {
             "value": "https://opendata.bayern/api/hub/search/",
             "summary": "Piveau portal"
+          },
+          "spain": {
+            "value": "https://datos.gob.es/en/catalogo",
+            "summary": "Portal from Spain"
           }
         }
       }

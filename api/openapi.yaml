@@ -231,6 +231,9 @@ components:
             piveau:
               value: https://opendata.bayern/api/hub/search/
               summary: Piveau portal
+            spain:
+              value: https://datos.gob.es/en/catalogo
+              summary: Portal from Spain
 tags:
   - name: maintained
     description: This information provided here is maintained manually and can be accessed via the API.
