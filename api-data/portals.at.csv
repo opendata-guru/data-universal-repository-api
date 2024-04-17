@@ -1,5 +1,5 @@
-title,parent_and_id_1,type,url,wikidata,api_list_children,last_check
-🇦🇹 Österreich,data.europa.eu|data-gv-at,country,https://www.data.gv.at/,Q40,https://www.data.gv.at/katalog/api/3/action/organization_list,2023-11-10
-"🇦🇹 Österreich, Open Data Portal",data.europa.eu|open-data-portal-austria,portal,https://www.opendataportal.at/,,https://www.opendataportal.at/katalog/api/3/action/organization_list,2023-11-10
-"🇦🇹 Österreich, INSPIRE",data.europa.eu|bmlfuw-at,portal,https://www.inspire.gv.at/,,,2023-06-21
-"🇦🇹 Österreich, Bundesamt für Eich- und Vermessungswesen",data.europa.eu|bev-at,portal,https://data.bev.gv.at/,,,2023-06-21
+sid,title,parent_and_id_1,type,url,wikidata,api_list_children,last_check
+sIok3,🇦🇹 Österreich,data.europa.eu|data-gv-at,country,https://www.data.gv.at/,Q40,https://www.data.gv.at/katalog/api/3/action/organization_list,2023-11-10
+sptcY,"🇦🇹 Österreich, Open Data Portal",data.europa.eu|open-data-portal-austria,portal,https://www.opendataportal.at/,,https://www.opendataportal.at/katalog/api/3/action/organization_list,2023-11-10
+sk1p8,"🇦🇹 Österreich, INSPIRE",data.europa.eu|bmlfuw-at,portal,https://www.inspire.gv.at/,,,2023-06-21
+sykcY,"🇦🇹 Österreich, Bundesamt für Eich- und Vermessungswesen",data.europa.eu|bev-at,portal,https://data.bev.gv.at/,,,2023-06-21

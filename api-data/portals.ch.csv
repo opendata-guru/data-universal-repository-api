@@ -1,11 +1,11 @@
-title,parent_and_id_1,type,url,wikidata,api_list_children,last_check
-🇨🇭 Schweiz,data.europa.eu|opendata-swiss,country,https://opendata.swiss/,Q39,https://ckan.opendata.swiss/api/3/action/organization_list,2023-06-16
-Zürich,ckan.opendata.swiss|stadt-zurich,municipality,https://data.stadt-zuerich.ch/,Q72,https://data.stadt-zuerich.ch/api/3/action/organization_list,2023-07-13
-Kanton Basel-Landschaft,ckan.opendata.swiss|kanton-basel-landschaft,state,https://data.bl.ch/,Q12146,https://data.bl.ch/api/explore/v2.1/catalog/facets,2023-07-13
-Kanton Basel-Stadt,ckan.opendata.swiss|kanton-basel-stadt,state,https://data.bs.ch/,Q12172,https://data.bs.ch/api/explore/v2.1/catalog/facets,2023-08-27
-Kanton Thurgau,ckan.opendata.swiss|kanton-thurgau,state,https://data.tg.ch/,Q12713,https://data.tg.ch/api/explore/v2.1/catalog/facets,2023-08-27
-Luzern,ckan.opendata.swiss|stadt-luzern,municipality,,Q4191,,2023-07-13
-Kanton Solothurn,ckan.opendata.swiss|kanton_solothurn,state,,Q11929,,2023-07-13
-Kanton Jura,ckan.opendata.swiss|canton-du-jura,state,,Q12755,,2023-07-13
-Winterthur,ckan.opendata.swiss|stadt-winterthur,municipality,,Q9125,,2023-07-13
-Emmen,ckan.opendata.swiss|gemeinde_emmen,municipality,,Q4225,,2023-07-13
+sid,title,parent_and_id_1,type,url,wikidata,api_list_children,last_check
+suNvO,🇨🇭 Schweiz,data.europa.eu|opendata-swiss,country,https://opendata.swiss/,Q39,https://ckan.opendata.swiss/api/3/action/organization_list,2023-06-16
+smJpP,Zürich,ckan.opendata.swiss|stadt-zurich,municipality,https://data.stadt-zuerich.ch/,Q72,https://data.stadt-zuerich.ch/api/3/action/organization_list,2023-07-13
+stNF6,Kanton Basel-Landschaft,ckan.opendata.swiss|kanton-basel-landschaft,state,https://data.bl.ch/,Q12146,https://data.bl.ch/api/explore/v2.1/catalog/facets,2023-07-13
+sNMyE,Kanton Basel-Stadt,ckan.opendata.swiss|kanton-basel-stadt,state,https://data.bs.ch/,Q12172,https://data.bs.ch/api/explore/v2.1/catalog/facets,2023-08-27
+srPfx,Kanton Thurgau,ckan.opendata.swiss|kanton-thurgau,state,https://data.tg.ch/,Q12713,https://data.tg.ch/api/explore/v2.1/catalog/facets,2023-08-27
+sOm5w,Luzern,ckan.opendata.swiss|stadt-luzern,municipality,,Q4191,,2023-07-13
+sk503,Kanton Solothurn,ckan.opendata.swiss|kanton_solothurn,state,,Q11929,,2023-07-13
+s5KoU,Kanton Jura,ckan.opendata.swiss|canton-du-jura,state,,Q12755,,2023-07-13
+s9o0N,Winterthur,ckan.opendata.swiss|stadt-winterthur,municipality,,Q9125,,2023-07-13
+sAvH6,Emmen,ckan.opendata.swiss|gemeinde_emmen,municipality,,Q4225,,2023-07-13
