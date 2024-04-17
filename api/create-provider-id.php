@@ -5,17 +5,36 @@
 	header('Content-Type: application/json; charset=utf-8');
 
 	// https://www.rechner.club/kombinatorik/anzahl-variationen-geordnet-ohne-wiederholung-berechnen
-	// 61 objects
-	// 4 draws
-	// 12.524.520 variants
+	// objects  | 61    | 61      | 61         | 61
+	// draws    | 2     | 3       | 4          | 5
+	// variants | 3,660 | 215,940 | 12,524,520 | 713,897,640
 
-	$ALLOWED_CHARS = '0123456789abcdefghijklmnoqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	$prefix = 'p';
+	$ALLOWED_CHARS = '0123456789abcdefghijklmnopqrtuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	$prefix = 's';
 	$length = 4;
 
-	$id = $prefix . substr(str_shuffle($ALLOWED_CHARS), 0, $length);
+	if ('GET' !== $_SERVER['REQUEST_METHOD']) {
+		header('HTTP/1.0 405 Method Not Allowed');
+		echo json_encode((object) array(
+			'error' => 405,
+			'message' => 'Method Not Allowed. HTTP verb used to access this page is not allowed',
+		));
+		return;
+	}
+
+	include('suppliers/_semantic.php');
+
+	$usedSIDs = [];
+	foreach($mapping as $line) {
+		$usedSIDs[] = $line[$mappingSID];
+	}
+	$usedSIDs = array_filter($usedSIDs);
+
+	do {
+		$sid = $prefix . substr(str_shuffle($ALLOWED_CHARS), 0, $length);
+	} while(in_array($sid, $usedSIDs));
 
 	echo json_encode((object) array(
-		'id' => $id,
+		'sid' => $sid,
 	));
 ?>

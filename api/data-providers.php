@@ -29,6 +29,7 @@
 
 	foreach($mapping as $line) {
 		$obj = [];
+		$obj['sid'] = $line[$mappingSID];
 		$obj['title'] = $line[$mappingTitle];
 		$obj['contributor'] = $line[$mappingContributor];
 		$obj['type'] = $line[$mappingType];

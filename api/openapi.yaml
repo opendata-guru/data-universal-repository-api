@@ -86,6 +86,7 @@ paths:
                       title: Dortmund
                       created: ''
                       packages: 489
+                      sid: s78h2
                       contributor: ''
                       type: municipality
                       wikidata: Q1295
@@ -141,7 +142,7 @@ paths:
   /data-providers:
     get:
       summary: Get a list of all data providers
-      description: A list of all known data providers is returned. For each entry, a type, an official region key, and a Wikidata ID are returned where possible. The "link" parameter can be used in other API endpoints.
+      description: A list of all known data providers is returned. For each entry, a type, an official region key, and a Wikidata ID are returned where possible. The "sid" and "link" parameter can be used in other API endpoints.
       operationId: getDataProviders
       responses:
         '200':
@@ -151,7 +152,8 @@ paths:
               examples:
                 govdataSample:
                   value:
-                    - title: Deutschland
+                    - sid: s78h2
+                      title: Deutschland
                       contributor: https://www.govdata.de/
                       type: country
                       rs: ''
@@ -200,7 +202,7 @@ paths:
               examples:
                 idSample:
                   value:
-                    id: p78h2
+                    sid: s78h2
       tags:
         - maintained
 components:

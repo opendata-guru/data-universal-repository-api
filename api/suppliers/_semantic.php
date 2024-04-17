@@ -1,15 +1,16 @@
 <?php
-	$mappingTitle = 0;
-	$mappingContributor = 1;
-	$mappingType = 2;
-	$mappingRS = 3;
-	$mappingAssociatedRS = 4;
-	$mappingWikidata = 5;
-	$mappingLink = 6;
-	$mappingURI1 = 7;
-	$mappingURI2 = 8;
-	$mappingURI3 = 9;
-	$mappingURI4 = 10;
+	$mappingSID = 0;
+	$mappingTitle = 1;
+	$mappingContributor = 2;
+	$mappingType = 3;
+	$mappingRS = 4;
+	$mappingAssociatedRS = 5;
+	$mappingWikidata = 6;
+	$mappingLink = 7;
+	$mappingURI1 = 8;
+	$mappingURI2 = 9;
+	$mappingURI3 = 10;
+	$mappingURI4 = 11;
 	$mapping = [];
 
 	loadMappingFile('../api-data/portals.at.csv', $mapping);
@@ -19,6 +20,7 @@
 
 	function loadMappingFile($file, &$mapping) {
 		$idRS = null;
+		$idSID = null;
 		$idURI1 = null;
 		$idURI2 = null;
 		$idURI3 = null;
@@ -42,6 +44,8 @@
 				$idURI3 = $m;
 			} else if ($mappingHeader[$m] === 'parent_and_id_4') {
 				$idURI4 = $m;
+			} else if ($mappingHeader[$m] === 'sid') {
+				$idSID = $m;
 			} else if ($mappingHeader[$m] === 'title') {
 				$idTitle = $m;
 			} else if ($mappingHeader[$m] === 'url') {
@@ -64,6 +68,7 @@
 			if ($line != '') {
 				$arr = str_getcsv($line, ',');
 				$mapping[] = [
+					$arr[$idSID] ?: '',
 					$arr[$idTitle] ?: '',
 					$arr[$idContributor] ?: '',
 					$arr[$idType] ?: '',
@@ -81,8 +86,9 @@
 	}
 
 	function semanticContributor($uriDomain, $obj) {
-		global $mapping, $mappingURI1, $mappingURI2, $mappingURI3, $mappingURI4, $mappingLink, $mappingType, $mappingTitle, $mappingRS, $mappingAssociatedRS, $mappingWikidata, $mappingContributor;
+		global $mapping, $mappingSID, $mappingURI1, $mappingURI2, $mappingURI3, $mappingURI4, $mappingLink, $mappingType, $mappingTitle, $mappingRS, $mappingAssociatedRS, $mappingWikidata, $mappingContributor;
 
+		$obj['sid'] = '';
 		$obj['contributor'] = '';
 		$obj['type'] = '';
 		$obj['wikidata'] = '';
@@ -94,6 +100,7 @@
 				|| ($line[$mappingURI3] && ($line[$mappingURI3] !== '') && ($line[$mappingURI3] == $obj['uri']))
 				|| ($line[$mappingURI4] && ($line[$mappingURI4] !== '') && ($line[$mappingURI4] == $obj['uri']))
 			) {
+				$obj['sid'] = $line[$mappingSID];
 				$obj['title'] = $line[$mappingTitle];
 				$obj['contributor'] = $line[$mappingContributor];
 				$obj['type'] = $line[$mappingType];
@@ -107,6 +114,7 @@
 				|| ($line[$mappingURI3] && ($line[$mappingURI3] !== '') && ($line[$mappingURI3] == ($uriDomain . '|' . $obj['name'])))
 				|| ($line[$mappingURI4] && ($line[$mappingURI4] !== '') && ($line[$mappingURI4] == ($uriDomain . '|' . $obj['name'])))
 			) {
+				$obj['sid'] = $line[$mappingSID];
 				$obj['title'] = $line[$mappingTitle];
 				$obj['contributor'] = $line[$mappingContributor];
 				$obj['type'] = $line[$mappingType];
