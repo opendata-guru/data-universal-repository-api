@@ -56,14 +56,7 @@ paths:
                   value:
                     number: 42
         '400':
-          description: Example of an error response
-          content:
-            application/json:
-              examples:
-                badRequest:
-                  value: 
-                    error: 400
-                    message: Bad Request. The underlying system could not be detected
+          $ref: "#/components/responses/400BadRequest"
       tags:
         - live
   /suppliers:
@@ -95,14 +88,7 @@ paths:
                       associated_rs: ''
                     
         '400':
-          description: Example of an error response
-          content:
-            application/json:
-              examples:
-                badRequest:
-                  value: 
-                    error: 400
-                    message: Bad Request. The underlying system could not be detected
+          $ref: "#/components/responses/400BadRequest"
       tags:
         - live
   /system:
@@ -129,14 +115,35 @@ paths:
                     url: https://ckan.open.nrw.de
                     version: 2.9.9
         '400':
-          description: Example of an error response
+          $ref: "#/components/responses/400BadRequest"
+      tags:
+        - live
+  /system/changelog:
+    get:
+      summary: Coming soon
+      parameters:
+        - name: system
+          in: query
+          description: description to be done
+          required: true
+          allowEmptyValue: false
+          schema:
+            type: string
+          examples:
+            ckan:
+              value: CKAN
+              summary: CKAN portal
+      responses:
+        '200':
+          description: Example of a successful answer
           content:
             application/json:
               examples:
-                badRequest:
+                ckanSample:
                   value:
-                    error: 400
-                    message: Bad Request. The underlying system could not be detected
+                    foo: bar
+        '400':
+          $ref: "#/components/responses/400BadRequest"
       tags:
         - live
   /data-providers:
@@ -161,14 +168,7 @@ paths:
                       wikidata: Q183
                       link: https://ckan.govdata.de/api/3/action/organization_list
         '400':
-          description: Example of an error response
-          content:
-            application/json:
-              examples:
-                badRequest:
-                  value: 
-                    error: 400
-                    message: Bad Request
+          $ref: "#/components/responses/400BadRequest"
       tags:
         - maintained
     post:
@@ -216,42 +216,52 @@ components:
       schema:
         type: string
       examples:
-            arcgis:
-              value: https://portal-chemnitz.opendata.arcgis.com
-              summary: ArcGIS portal
-            ckan:
-              value: https://ckan.govdata.de
-              summary: CKAN portal
-            ckan-long:
-              value: https://open.nrw/api/3/action/organization_list
-              summary: CKAN portal with long URL
-            datenadler:
-              value: https://datenadler.de/
-              summary: Datenadler portal
-            dkan:
-              value: https://open-data.bielefeld.de/api/3/action/group_list
-              summary: DKAN portal
-            entrystore:
-              value: https://register.opendata.sachsen.de/store/
-              summary: EntryStore portal
-            gdide:
-              value: https://www.geoportal.de/
-              summary: GDI-DE portal
-            mcloud:
-              value: https://www.mcloud.de/web/guest/suche/
-              summary: mCloud portal
-            mobilithek:
-              value: https://mobilithek.info/mobilithek/api/v1.0/export/datasets/mobilithek
-              summary: mobilithek portal
-            ods:
-              value: https://opendata.potsdam.de/api/explore/v2.1
-              summary: Opendatasoft portal
-            piveau:
-              value: https://opendata.bayern/api/hub/search/
-              summary: Piveau portal
-            spain:
-              value: https://datos.gob.es/en/catalogo
-              summary: Portal from Spain
+        arcgis:
+          value: https://portal-chemnitz.opendata.arcgis.com
+          summary: ArcGIS portal
+        ckan:
+          value: https://ckan.govdata.de
+          summary: CKAN portal
+        ckan-long:
+          value: https://open.nrw/api/3/action/organization_list
+          summary: CKAN portal with long URL
+        datenadler:
+          value: https://datenadler.de/
+          summary: Datenadler portal
+        dkan:
+          value: https://open-data.bielefeld.de/api/3/action/group_list
+          summary: DKAN portal
+        entrystore:
+          value: https://register.opendata.sachsen.de/store/
+          summary: EntryStore portal
+        gdide:
+          value: https://www.geoportal.de/
+          summary: GDI-DE portal
+        mcloud:
+          value: https://www.mcloud.de/web/guest/suche/
+          summary: mCloud portal
+        mobilithek:
+          value: https://mobilithek.info/mobilithek/api/v1.0/export/datasets/mobilithek
+          summary: mobilithek portal
+        ods:
+          value: https://opendata.potsdam.de/api/explore/v2.1
+          summary: Opendatasoft portal
+        piveau:
+          value: https://opendata.bayern/api/hub/search/
+          summary: Piveau portal
+        spain:
+          value: https://datos.gob.es/en/catalogo
+          summary: Portal from Spain
+  responses:
+    400BadRequest:
+      description: Example of an error response
+      content:
+        application/json:
+          examples:
+            badRequest:
+              value:
+                error: 400
+                message: Bad Request. The underlying system could not be detected
 tags:
   - name: maintained
     description: This information provided here is maintained manually and can be accessed via the API.

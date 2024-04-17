@@ -88,19 +88,7 @@
             }
           },
           "400": {
-            "description": "Example of an error response",
-            "content": {
-              "application/json": {
-                "examples": {
-                  "badRequest": {
-                    "value": {
-                      "error": 400,
-                      "message": "Bad Request. The underlying system could not be detected"
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/400BadRequest"
           }
         },
         "tags": [
@@ -147,19 +135,7 @@
             }
           },
           "400": {
-            "description": "Example of an error response",
-            "content": {
-              "application/json": {
-                "examples": {
-                  "badRequest": {
-                    "value": {
-                      "error": 400,
-                      "message": "Bad Request. The underlying system could not be detected"
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/400BadRequest"
           }
         },
         "tags": [
@@ -201,19 +177,52 @@
             }
           },
           "400": {
-            "description": "Example of an error response",
+            "$ref": "#/components/responses/400BadRequest"
+          }
+        },
+        "tags": [
+          "live"
+        ]
+      }
+    },
+    "/system/changelog": {
+      "get": {
+        "summary": "Coming soon",
+        "parameters": [
+          {
+            "name": "system",
+            "in": "query",
+            "description": "description to be done",
+            "required": true,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "ckan": {
+                "value": "CKAN",
+                "summary": "CKAN portal"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Example of a successful answer",
             "content": {
               "application/json": {
                 "examples": {
-                  "badRequest": {
+                  "ckanSample": {
                     "value": {
-                      "error": 400,
-                      "message": "Bad Request. The underlying system could not be detected"
+                      "foo": "bar"
                     }
                   }
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
           }
         },
         "tags": [
@@ -251,19 +260,7 @@
             }
           },
           "400": {
-            "description": "Example of an error response",
-            "content": {
-              "application/json": {
-                "examples": {
-                  "badRequest": {
-                    "value": {
-                      "error": 400,
-                      "message": "Bad Request"
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/400BadRequest"
           }
         },
         "tags": [
@@ -384,6 +381,23 @@
           "spain": {
             "value": "https://datos.gob.es/en/catalogo",
             "summary": "Portal from Spain"
+          }
+        }
+      }
+    },
+    "responses": {
+      "400BadRequest": {
+        "description": "Example of an error response",
+        "content": {
+          "application/json": {
+            "examples": {
+              "badRequest": {
+                "value": {
+                  "error": 400,
+                  "message": "Bad Request. The underlying system could not be detected"
+                }
+              }
+            }
           }
         }
       }
