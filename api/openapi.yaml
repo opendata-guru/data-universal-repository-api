@@ -187,6 +187,22 @@ paths:
                     repository: https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data
       tags:
         - maintained
+  /create-provider-id:
+    get:
+      summary: Create a unique ID for a new data provider
+      description: To maintain the list of data providers, unique IDs must be assigned. This endpoint helps generate these IDs.
+      operationId: createProviderID
+      responses:
+        '200':
+          description: Example of a created provider id
+          content:
+            application/json:
+              examples:
+                idSample:
+                  value:
+                    id: p78h2
+      tags:
+        - maintained
 components:
   parameters:
     linkParam:
