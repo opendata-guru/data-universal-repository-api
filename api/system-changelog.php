@@ -21,14 +21,41 @@
 	$content = preg_split("/\r\n|\n|\r/", $md);
 	$list = [];
 
+	$refMajor = null;
+	$refMinor = null;
+	$refPatch = null;
+	$refDate = null;
 	foreach ($content as $index=>$line) {
 		if (substr($line, 0, 1) === '=') {
 			$title = $content[$index - 1];
 			$parts = explode(' ', $title);
+			$date = new DateTime($parts[1]);
+			$version = trim($parts[0], 'v. ');
+			$major = explode('.', $version)[0];
+			$minor = explode('.', $version)[1];
+			$patch = explode('.', $version)[2];
+			if ($refMajor === null) {
+				$refMajor = $major;
+				$refMinor = $minor;
+				$refPatch = $patch;
+				$refDate = new DateTime($parts[1]);
+			}
+			$color = '';
+
+			if ($refDate->diff($date)->format('%a') <= 3) {
+				$color = 'green';
+			} else if (($major === $refMajor) && ($minor === $refMinor)) {
+				$color = 'yellow';
+			} else if (($major === $refMajor) && (intval($minor) === (intval($refMinor) - 1))) {
+				$color = 'yellow';
+			} else {
+				$color = 'red';
+			}
 
 			$list[] = (object) array(
-				'date' => $parts[1],
-				'version' => trim($parts[0], 'v. '),
+				'color' => $color,
+				'date' => $date->format('Y-m-d'),
+				'version' => $version,
 			);
 		}
 	}
