@@ -188,9 +188,25 @@
               "type": "string"
             },
             "examples": {
+              "arcgis": {
+                "value": "ArcGIS",
+                "summary": "ArcGIS portal"
+              },
               "ckan": {
                 "value": "CKAN",
                 "summary": "CKAN portal"
+              },
+              "entrystore": {
+                "value": "EntryStore",
+                "summary": "EntryStore portal"
+              },
+              "ods": {
+                "value": "Opendatasoft",
+                "summary": "Opendatasoft portal"
+              },
+              "piveau": {
+                "value": "Piveau",
+                "summary": "Piveau portal"
               }
             }
           }
@@ -220,6 +236,9 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
           }
         },
         "tags": [

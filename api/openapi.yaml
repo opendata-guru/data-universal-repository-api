@@ -124,9 +124,21 @@ paths:
           schema:
             type: string
           examples:
+            arcgis:
+              value: ArcGIS
+              summary: ArcGIS portal
             ckan:
               value: CKAN
               summary: CKAN portal
+            entrystore:
+              value: EntryStore
+              summary: EntryStore portal
+            ods:
+              value: Opendatasoft
+              summary: Opendatasoft portal
+            piveau:
+              value: Piveau
+              summary: Piveau portal
       responses:
         '200':
           description: Example of a successful answer
@@ -142,7 +154,8 @@ paths:
                       - color: yellow
                         date: '2023-12-13'
                         version: 2.10.3
-                        
+        '400':
+          $ref: "#/components/responses/400BadRequest"
       tags:
         - live
   /data-providers:

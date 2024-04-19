@@ -6,7 +6,18 @@
 
 	include('helper/_link.php');
 
-	$CHANGELOG = 'https://raw.githubusercontent.com/ckan/ckan/master/CHANGELOG.rst';
+	$link = (object) array(
+		'system' => htmlspecialchars($_GET['system']),
+	);
+
+	if ($link->system == '') {
+		$error = (object) array(
+			'error' => 400,
+			'header' => 'HTTP/1.0 400 Bad Request',
+			'message' => 'Bad Request. Parameter \'system\' is not set',
+		);
+		return;
+	}
 
 	if ('GET' !== $_SERVER['REQUEST_METHOD']) {
 		header('HTTP/1.0 405 Method Not Allowed');
@@ -17,30 +28,24 @@
 		return;
 	}
 
-	$md = get_contents($CHANGELOG);
-	$content = preg_split("/\r\n|\n|\r/", $md);
-	$list = [];
+	function addColors($list) {
+		$refMajor = null;
+		$refMinor = null;
+		$refPatch = null;
+		$refDate = null;
+		$minorVersions = 0;
+		$minorMax = 2;
+		$minorString = '-.-';
+		$minorColor = '';
 
-	$refMajor = null;
-	$refMinor = null;
-	$refPatch = null;
-	$refDate = null;
-	$minorVersions = 0;
-	$minorMax = 2;
-	$minorString = '-.-';
-	$minorColor = '';
+		foreach ($list as $item) {
+			$date = new DateTime($item->date);
+			$major = explode('.', $item->version)[0];
+			$minor = explode('.', $item->version)[1];
+			$patch = explode('.', $item->version)[2];
 
-	foreach ($content as $index=>$line) {
-		if (substr($line, 0, 1) === '=') {
-			$title = $content[$index - 1];
-			$parts = explode(' ', $title);
-			$date = new DateTime($parts[1]);
-			$version = trim($parts[0], 'v. ');
-			$major = explode('.', $version)[0];
-			$minor = explode('.', $version)[1];
-			$patch = explode('.', $version)[2];
 			if ($refDate === null) {
-				$refDate = new DateTime($parts[1]);
+				$refDate = new DateTime($item->date);
 			}
 			$color = '';
 
@@ -60,15 +65,38 @@
 				$color = $minorColor;
 			}
 
-			$list[] = (object) array(
-				'color' => $color,
-				'date' => $date->format('Y-m-d'),
-				'version' => $version,
-			);
+			$item->color = $color;
 		}
+
+		return $list;
 	}
 
-	echo json_encode((object) array(
-		'history' => $list,
-	));
+	if ('CKAN' === $link->system) {
+		include 'system-changelog/system-changelog-ckan.php';
+		systemChangelogCKAN();
+	} else if ('Piveau' === $link->system) {
+		include 'system-changelog/system-changelog-piveau.php';
+		systemChangelogPiveau();
+	} else if ('_ArcGIS' === $link->system) {
+		include 'system-changelog/system-changelog-arcgis.php';
+		systemChangelogArcGIS();
+	} else if ('_EntryStore' === $link->system) {
+		include 'system-changelog/system-changelog-entrystore.php';
+		systemChangelogEntryStore();
+	} else if ('_Opendatasoft' === $link->system) {
+		include 'system-changelog/system-changelog-opendatasoft.php';
+		systemChangelogOpendatasoft();
+	} else if ('unknown' !== $link->system) {
+		header('HTTP/1.0 400 Bad Request');
+		echo json_encode((object) array(
+			'error' => 400,
+			'message' => 'Bad Request. Could not create a result for system \'' . $link->system . '\'',
+		));
+	} else {
+		header('HTTP/1.0 400 Bad Request');
+		echo json_encode((object) array(
+			'error' => 400,
+			'message' => 'Bad Request. The underlying system could not be detected',
+		));
+	}
 ?>
