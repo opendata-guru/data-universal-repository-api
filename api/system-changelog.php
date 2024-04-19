@@ -25,6 +25,11 @@
 	$refMinor = null;
 	$refPatch = null;
 	$refDate = null;
+	$minorVersions = 0;
+	$minorMax = 2;
+	$minorString = '-.-';
+	$minorColor = '';
+
 	foreach ($content as $index=>$line) {
 		if (substr($line, 0, 1) === '=') {
 			$title = $content[$index - 1];
@@ -34,22 +39,25 @@
 			$major = explode('.', $version)[0];
 			$minor = explode('.', $version)[1];
 			$patch = explode('.', $version)[2];
-			if ($refMajor === null) {
-				$refMajor = $major;
-				$refMinor = $minor;
-				$refPatch = $patch;
+			if ($refDate === null) {
 				$refDate = new DateTime($parts[1]);
 			}
 			$color = '';
 
-			if ($refDate->diff($date)->format('%a') <= 3) {
-				$color = 'green';
-			} else if (($major === $refMajor) && ($minor === $refMinor)) {
-				$color = 'yellow';
-			} else if (($major === $refMajor) && (intval($minor) === (intval($refMinor) - 1))) {
-				$color = 'yellow';
+			if (($major . '.' . $minor) !== $minorString) {
+				$minorString = $major . '.' . $minor;
+				++$minorVersions;
+
+				if ($refDate->diff($date)->format('%a') <= 5) {
+					$color = 'green';
+					$minorColor = 'yellow';
+				} else if ($minorVersions <= $minorMax) {
+					$minorColor = $color = 'yellow';
+				} else {
+					$minorColor = $color = 'red';
+				}
 			} else {
-				$color = 'red';
+				$color = $minorColor;
 			}
 
 			$list[] = (object) array(

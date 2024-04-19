@@ -29,14 +29,7 @@ paths:
             type: string
       responses:
         '404':
-          description: Not found error
-          content:
-            application/json:
-              examples:
-                notFound:
-                  value:
-                    error: 404
-                    message: Not Found
+          $ref: "#/components/responses/404NotFound"
       tags:
         - live
   /datasets/count:
@@ -120,11 +113,12 @@ paths:
         - live
   /system/changelog:
     get:
-      summary: Coming soon
+      summary: Get the system software change history
+      description: The system software used has a change history. The complete history is returned with the version numbers, the update dates and an assessment of the updateability (in traffic light colors).
       parameters:
         - name: system
           in: query
-          description: description to be done
+          description: System software name
           required: true
           allowEmptyValue: false
           schema:
@@ -141,9 +135,14 @@ paths:
               examples:
                 ckanSample:
                   value:
-                    foo: bar
-        '400':
-          $ref: "#/components/responses/400BadRequest"
+                    history:
+                      - color: green
+                        date: '2024-03-13'
+                        version: 2.10.4
+                      - color: yellow
+                        date: '2023-12-13'
+                        version: 2.10.3
+                        
       tags:
         - live
   /data-providers:
@@ -262,6 +261,15 @@ components:
               value:
                 error: 400
                 message: Bad Request. The underlying system could not be detected
+    404NotFound:
+      description: Not found error
+      content:
+        application/json:
+          examples:
+            notFound:
+              value:
+                error: 404
+                message: Not Found
 tags:
   - name: maintained
     description: This information provided here is maintained manually and can be accessed via the API.
