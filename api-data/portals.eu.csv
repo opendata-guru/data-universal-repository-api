@@ -3,7 +3,7 @@ se6Cu,🇦🇱 Albanien,,country,https://opendata.gov.al/,Q222,,2024-04-07
 sMqPC,🇧🇪 Belgien,data.europa.eu|data-gov-be,country,https://data.gov.be/,Q31,,2023-09-19
 sB46x,🇧🇬 Bulgarien,data.europa.eu|open-data-bulgaria,country,https://data.egov.bg/,Q219,,2023-09-19
 seVwg,🇨🇾 Zypern,data.europa.eu|national-open-data-portal-cyprus,country,https://www.data.gov.cy/,Q229,https://www.data.gov.cy/api/3/action/group_list,2023-12-22
-sWpkw,🇨🇿 Tschechien,data.europa.eu|nkod-opendata-cz,country,https://data.gov.cz/,Q213,,2023-09-21
+sWpkw,🇨🇿 Tschechien,data.europa.eu|nkod-opendata-cz,country,https://data.gov.cz/,Q213,https://data.gov.cz/api/v1/solr/info,2023-09-21
 sYcVf,"🇨🇿 Tschechien, DGA-NSIP",data.europa.eu|nsip-cz,portal,,,,2024-01-03
 svwHM,"🇨🇿 Tschechien, Geodaten",data.europa.eu|cuzk,portal,,,,2023-09-21
 sm1SK,"🇨🇿 Tschechien, Geologischer Dienst",data.europa.eu|geology-cz,portal,,,,2024-01-03
@@ -18,7 +18,7 @@ slxDp,"🇪🇺 EU, Eurostat",data.europa.eu|estat,portal,https://ec.europa.eu/e
 sYyj9,🇪🇺 Europa,,root,https://data.europa.eu/,Q458,https://data.europa.eu/api/hub/search/,2024-04-17
 svqVB,🇫🇮 Finnland,data.europa.eu|open-data-finland,country,https://www.avoindata.fi/,Q33,https://www.avoindata.fi/data/fi/api/3/action/organization_list,2023-12-22
 sJS2x,"🇫🇮 Finnland, Wetteramt",data.europa.eu|fmi,federalAgency,,Q3266959,,2024-01-03
-sElCD,🇫🇷 Frankreich,data.europa.eu|plateforme-ouverte-des-donnees-publiques-francaises,country,https://www.data.gouv.fr/,Q142,,2023-09-19
+sElCD,🇫🇷 Frankreich,data.europa.eu|plateforme-ouverte-des-donnees-publiques-francaises,country,https://www.data.gouv.fr/,Q142,https://www.data.gouv.fr/api/1/activity,2023-09-19
 sLhfv,"🇫🇷 Frankreich, Geodaten",data.europa.eu|geocatalogue-fr,portal,,,,2023-09-21
 str4c,"🇫🇷 Frankreich, Wasserdaten",data.europa.eu|sandre,portal,,,,2024-01-03
 svqE0,🇬🇧 Großbritannien,data.europa.eu|data-gov-uk,country,https://www.data.gov.uk/,Q145,https://ckan.publishing.service.gov.uk/api/3/action/organization_list,2023-09-19
