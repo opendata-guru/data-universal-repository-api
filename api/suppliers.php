@@ -45,6 +45,9 @@
 	} else if ('Opendatasoft' === $link->system) {
 		include 'suppliers/suppliers-opendatasoft.php';
 		suppliersOpendatasoft($link->url);
+	} else if ('Czech' === $link->system) {
+		include 'suppliers/suppliers-czech.php';
+		suppliersCzech($link->url);
 	} else if ('Spain' === $link->system) {
 		include 'suppliers/suppliers-spain.php';
 		suppliersSpain($link->url);

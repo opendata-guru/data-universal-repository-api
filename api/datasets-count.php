@@ -44,6 +44,9 @@
 	} else if ('Opendatasoft' === $link->system) {
 		include 'datasets-count/datasets-count-opendatasoft.php';
 		datasetsCountOpendatasoft($link->url);
+	} else if ('Czech' === $link->system) {
+		include 'datasets-count/datasets-count-czech.php';
+		datasetsCountCzech($link->url);
 	} else if ('Spain' === $link->system) {
 		include 'datasets-count/datasets-count-spain.php';
 		datasetsCountSpain($link->url);

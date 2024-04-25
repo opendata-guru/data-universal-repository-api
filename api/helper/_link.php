@@ -303,6 +303,16 @@
 		}
 
 		if (!$error && ($system === 'unknown')) {
+			if ('data.gov.cz' == $link['host']) {
+				unset($link['path']);
+				unset($link['query']);
+				unset($link['fragment']);
+				$url = unparse_url($link);
+				$system = 'Czech';
+			}
+		}
+
+		if (!$error && ($system === 'unknown')) {
 			if ('datos.gob.es' == $link['host']) {
 				unset($link['path']);
 				unset($link['query']);
