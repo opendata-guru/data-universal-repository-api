@@ -201,6 +201,22 @@ paths:
                     repository: https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data
       tags:
         - maintained
+  /create-link-id:
+    get:
+      summary: Create a unique ID for a new data link
+      description: To maintain the list of data links, unique IDs must be assigned. This endpoint helps generate these IDs.
+      operationId: createLinkID
+      responses:
+        '200':
+          description: Example of a created link id
+          content:
+            application/json:
+              examples:
+                idSample:
+                  value:
+                    lid: l78h2
+      tags:
+        - maintained
   /create-provider-id:
     get:
       summary: Create a unique ID for a new data provider
@@ -209,6 +225,22 @@ paths:
       responses:
         '200':
           description: Example of a created provider id
+          content:
+            application/json:
+              examples:
+                idSample:
+                  value:
+                    pid: p78h
+      tags:
+        - maintained
+  /create-supplier-id:
+    get:
+      summary: Create a unique ID for a new data supplier
+      description: To maintain the list of data suppliers, unique IDs must be assigned. This endpoint helps generate these IDs.
+      operationId: createSupplierID
+      responses:
+        '200':
+          description: Example of a created supplier id
           content:
             application/json:
               examples:

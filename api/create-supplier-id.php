@@ -9,9 +9,9 @@
 	// draws    | 2     | 3       | 4          | 5
 	// variants | 3,660 | 215,940 | 12,524,520 | 713,897,640
 
-	$ALLOWED_CHARS = '0123456789abcdefghijklmnoqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	$prefix = 'p';
-	$length = 3;
+	$ALLOWED_CHARS = '0123456789abcdefghijklmnopqrtuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	$prefix = 's';
+	$length = 4;
 
 	if ('GET' !== $_SERVER['REQUEST_METHOD']) {
 		header('HTTP/1.0 405 Method Not Allowed');
@@ -24,17 +24,17 @@
 
 	include('suppliers/_semantic.php');
 
-	$usedPIDs = [];
+	$usedSIDs = [];
 	foreach($mapping as $line) {
-		$usedPIDs[] = $line[$mappingPID];
+		$usedSIDs[] = $line[$mappingSID];
 	}
-	$usedPIDs = array_filter($usedPIDs);
+	$usedSIDs = array_filter($usedSIDs);
 
 	do {
-		$pid = $prefix . substr(str_shuffle($ALLOWED_CHARS), 0, $length);
-	} while(in_array($pid, $usedPIDs));
+		$sid = $prefix . substr(str_shuffle($ALLOWED_CHARS), 0, $length);
+	} while(in_array($sid, $usedSIDs));
 
 	echo json_encode((object) array(
-		'pid' => $pid,
+		'sid' => $sid,
 	));
 ?>
