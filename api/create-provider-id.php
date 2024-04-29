@@ -22,11 +22,11 @@
 		return;
 	}
 
-	include('suppliers/_semantic.php');
+	include('helper/_provider.php');
 
 	$usedPIDs = [];
-	foreach($mapping as $line) {
-		$usedPIDs[] = $line[$mappingPID];
+	foreach($loadedProviders as $provider) {
+		$usedPIDs[] = providerGetPID($provider);
 	}
 	$usedPIDs = array_filter($usedPIDs);
 
