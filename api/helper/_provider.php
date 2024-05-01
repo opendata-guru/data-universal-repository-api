@@ -1,7 +1,7 @@
 <?php
 	$loadedProviders = [];
 
-	loadMappingFile('../api-data/providers.csv', $loadedProviders);
+	loadMappingFile(__DIR__ . '/../../api-data/providers.csv', $loadedProviders);
 
 	function loadMappingFile($file, &$mapping) {
 		$idServerURL = null;
