@@ -10,12 +10,20 @@
 	$link = getLink();
 
 	if ($link->error) {
-		header($link->error->header);
-		echo json_encode((object) array(
-			'error' => $link->error->error,
-			'message' => $link->error->message,
-		));
-		exit;
+		include('helper/_provider.php');
+
+		$provider = getProvider();
+		if ($provider->error) {
+			header($provider->error->header);
+			echo json_encode((object) array(
+				'error' => $provider->error->error,
+				'message' => $provider->error->message,
+			));
+			exit;
+		} else {
+			echo $provider->url;
+			exit;
+		}
 	}
 
 	if ('CKAN' === $link->system) {

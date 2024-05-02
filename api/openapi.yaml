@@ -58,7 +58,8 @@ paths:
       description: Obtain a list of all suppliers of the system used. Additional data is provided for each supplier, such as the number of records delivered. If available, semantic IDs (Wikidata, official region keys) are added to the data.
       operationId: getSuppliers
       parameters:
-        - $ref: "#/components/parameters/linkParam"
+        - $ref: "#/components/parameters/linkParamOptional"
+        - $ref: "#/components/parameters/pidParam"
       responses:
         '200':
           description: Example of a successful answer
@@ -299,6 +300,22 @@ components:
         spain:
           value: https://datos.gob.es/en/catalogo
           summary: Portal from Spain
+    linkParamOptional:
+      allOf:
+        - $ref: "#/components/parameters/linkParam"
+        - required: false
+    pidParam:
+      name: pID
+      in: query
+      description: The providers pID. You must provide either a link or an existing pID.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      examples:
+        root:
+          value: p000
+          summary: European data
   responses:
     400BadRequest:
       description: Example of an error response

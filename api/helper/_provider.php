@@ -1,9 +1,51 @@
 <?php
 	$loadedProviders = [];
 
-	loadMappingFile(__DIR__ . '/../../api-data/providers.csv', $loadedProviders);
+	loadMappingFileProviders(__DIR__ . '/../../api-data/providers.csv', $loadedProviders);
 
-	function loadMappingFile($file, &$mapping) {
+	function getProvider() {
+		global $loadedProviders;
+
+		$parameterPID = htmlspecialchars($_GET['pID']);
+		$parameterPID2 = htmlspecialchars($_GET['pid']);
+		$error = null;
+		$url = '';
+
+		if ($parameterPID == '') {
+			$parameterPID = $parameterPID2;
+			if ($parameterPID == '') {
+				$error = (object) array(
+					'error' => 400,
+					'header' => 'HTTP/1.0 400 Bad Request',
+					'message' => 'Bad Request. Parameter \'pID\' is not set',
+				);
+			}
+		}
+
+		if (!$error) {
+			foreach($loadedProviders as $provider) {
+				if (providerGetPID($provider) == $parameterPID) {
+					$url = providerGetServerURL($provider);
+				}
+			}
+
+			if ($url === '') {
+				$error = (object) array(
+					'error' => 400,
+					'header' => 'HTTP/1.0 400 Bad Request',
+					'message' => 'Bad Request. Unknown ID in the \'pID\' parameter.',
+				);
+			}
+		}
+
+		return (object) array(
+			'error' => $error,
+			'parameter' => $parameterPID,
+			'url' => $url,
+		);
+	}
+
+	function loadMappingFileProviders($file, &$mapping) {
 		$idServerURL = null;
 		$idModified = null;
 		$idPID = null;
