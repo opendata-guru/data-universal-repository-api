@@ -5,14 +5,21 @@
 	header('Content-Type: application/json; charset=utf-8');
 
 	include('helper/_link.php');
+	include('helper/_provider.php');
 	include('suppliers/_semantic.php');
 
 	$link = getLink();
+	$provider = getProvider();
 
-	if ($link->error) {
-		include('helper/_provider.php');
-
-		$provider = getProvider();
+	if (($link->parameter !== '') && ($provider->parameter !== '')) {
+		header('HTTP/1.0 400 Bad Request');
+		echo json_encode((object) array(
+			'error' => 400,
+			'message' => 'Bad Request. Both parameters \'link\' and \'pID\' are set',
+		));
+		exit;
+	}
+	if ($provider->parameter !== '') {
 		if ($provider->error) {
 			header($provider->error->header);
 			echo json_encode((object) array(
@@ -20,10 +27,16 @@
 				'message' => $provider->error->message,
 			));
 			exit;
-		} else {
-			echo $provider->url;
-			exit;
 		}
+		$link = getLinkWithParam($provider->url);
+	}
+	if ($link->error) {
+		header($link->error->header);
+		echo json_encode((object) array(
+			'error' => $link->error->error,
+			'message' => $link->error->message,
+		));
+		exit;
 	}
 
 	if ('CKAN' === $link->system) {

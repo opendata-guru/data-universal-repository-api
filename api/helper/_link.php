@@ -31,6 +31,11 @@
 
 	function getLink() {
 		$parameterLink = htmlspecialchars($_GET['link']);
+
+		return getLinkWithParam($parameterLink);
+	}
+
+	function getLinkWithParam($parameterLink) {
 		$system = 'unknown';
 		$error = null;
 		$link = '';
@@ -41,6 +46,7 @@
 				'error' => 400,
 				'header' => 'HTTP/1.0 400 Bad Request',
 				'message' => 'Bad Request. Parameter \'link\' is not set',
+				'parameter' => $parameterLink,
 			);
 		}
 
@@ -51,6 +57,7 @@
 					'error' => 400,
 					'header' => 'HTTP/1.0 400 Bad Request',
 					'message' => 'Bad Request. Parameter \'link\' contains a malformed URL',
+					'parameter' => $parameterLink,
 				);
 			}
 		}

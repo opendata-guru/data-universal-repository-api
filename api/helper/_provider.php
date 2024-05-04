@@ -18,6 +18,7 @@
 					'error' => 400,
 					'header' => 'HTTP/1.0 400 Bad Request',
 					'message' => 'Bad Request. Parameter \'pID\' is not set',
+					'parameter' => $parameterPID,
 				);
 			}
 		}
@@ -34,6 +35,7 @@
 					'error' => 400,
 					'header' => 'HTTP/1.0 400 Bad Request',
 					'message' => 'Bad Request. Unknown ID in the \'pID\' parameter.',
+					'parameter' => $parameterPID,
 				);
 			}
 		}
