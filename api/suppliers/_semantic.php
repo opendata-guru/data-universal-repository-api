@@ -98,7 +98,7 @@
 		$lobject = [];
 		$lobject['lid'] = '';
 		$lobject['pid'] = $pid;
-		$lobject['identifier'] = '';
+		$lobject['identifier'] = $obj['id'];
 		$lobject['sid'] = '';
 
 		foreach($mapping as $line) {
@@ -115,7 +115,6 @@
 				$obj['associated_rs'] = $line[$mappingAssociatedRS];
 				$obj['wikidata'] = $line[$mappingWikidata];
 				$obj['link'] = $line[$mappingLink];
-				$obj['lobject'] = $lobject;
 			} else if (
 				   (($line[$mappingURI1] !== '') && ($line[$mappingURI1] == ($uriDomain . '|' . $obj['name'])))
 				|| (($line[$mappingURI2] !== '') && ($line[$mappingURI2] == ($uriDomain . '|' . $obj['name'])))
@@ -130,8 +129,11 @@
 				$obj['associated_rs'] = $line[$mappingAssociatedRS];
 				$obj['wikidata'] = $line[$mappingWikidata];
 				$obj['link'] = $line[$mappingLink];
-				$obj['lobject'] = $lobject;
 			}
+		}
+
+		if ($pid !== '') {
+			$obj['lobject'] = $lobject;
 		}
 
 		unset($obj['uri']);
