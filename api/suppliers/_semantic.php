@@ -18,6 +18,8 @@
 	loadMappingFile('../api-data/portals.de.csv', $mapping);
 	loadMappingFile('../api-data/portals.eu.csv', $mapping);
 
+	include('_lobject.php');
+
 	function loadMappingFile($file, &$mapping) {
 		$idRS = null;
 		$idSID = null;
@@ -93,13 +95,6 @@
 		$obj['type'] = '';
 		$obj['wikidata'] = '';
 		$obj['link'] = '';
-		$obj['lobject'] = [];
-
-		$lobject = [];
-		$lobject['lid'] = '';
-		$lobject['pid'] = $pid;
-		$lobject['identifier'] = $obj['id'];
-		$lobject['sid'] = '';
 
 		foreach($mapping as $line) {
 			if (   (($line[$mappingURI1] !== '') && ($line[$mappingURI1] == $obj['uri']))
@@ -133,7 +128,18 @@
 		}
 
 		if ($pid !== '') {
-			$obj['lobject'] = $lobject;
+			$lObject = [];
+//			$lObject = findLObject($pid, $obj['id']);
+
+			if ($lObject === null) {
+				$lObject = [];
+				$lObject['lid'] = createLID();
+				$lObject['pid'] = $pid;
+				$lObject['identifier'] = $obj['id'];
+				$lObject['sid'] = '';
+			}
+
+			$obj['lobject'] = $lObject;
 		}
 
 		unset($obj['uri']);
