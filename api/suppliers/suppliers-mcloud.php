@@ -1,5 +1,5 @@
 <?php
-	function suppliersMCloud($url) {
+	function suppliersMCloud($url, $pid) {
 		$searchUri = $url . '/web/guest/suche/';
 
 		$uriDomain = 'mcloud.de';
@@ -24,7 +24,7 @@
 			$packages = intval($html);
 
 			$name = preg_replace('#[^a-z0-9]#i', '', $title);
-			$data[] = semanticContributor($uriDomain, array(
+			$data[] = semanticContributor($uriDomain, $pid, array(
 				'id' => $name,
 				'name' => $name,
 				'title' => $title,

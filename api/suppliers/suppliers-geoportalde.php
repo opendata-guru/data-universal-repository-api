@@ -1,5 +1,5 @@
 <?php
-	function suppliersGeoportalDE($url) {
+	function suppliersGeoportalDE($url, $pid) {
 		$gdideSuffix = 'https://geoportal.de';
 		$max = 30000;
 
@@ -50,7 +50,7 @@
 		foreach($json->aggregations->datenanbieter->buckets as $organisation) {
 //			if ($organisation->key > 5) {
 				$name = preg_replace('#[^a-z0-9]#i', '', $organisation->key);
-				$data[] = semanticContributor($uriDomain, array(
+				$data[] = semanticContributor($uriDomain, $pid, array(
 					'id' => $name,
 					'name' => $name,
 					'title' => $organisation->key,

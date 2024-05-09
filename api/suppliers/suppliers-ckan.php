@@ -30,7 +30,7 @@
 		);
 	}
 
-	function suppliersCKAN($url) {
+	function suppliersCKAN($url, $pid) {
 		$orgaListSuffix = '/api/3/action/organization_list';
 		$orgaShowSuffix = '/api/3/action/organization_show?id=';
 		$groupListSuffix = '/api/3/action/group_list';
@@ -64,7 +64,8 @@
 					}
 				}
 
-				$data[] = semanticContributor($uriDomain, array(
+				// extras - key=gnd - value
+				$data[] = semanticContributor($uriDomain, $pid, array(
 					'id' => $json->result->id,
 					'name' => $json->result->name,
 					'title' => $title,
@@ -89,7 +90,7 @@
 
 				if ($json) {
 					$uris = json_decode($json->result->extras[0]->value);
-					$data[] = semanticContributor($uriDomain, array(
+					$data[] = semanticContributor($uriDomain, $pid, array(
 						'id' => $json->result->id,
 						'name' => $json->result->name,
 						'title' => $json->result->title,
@@ -103,7 +104,7 @@
 
 					if ($json) {
 						$uris = json_decode($json->result->extras[0]->value);
-						$data[] = semanticContributor($uriDomain, array(
+						$data[] = semanticContributor($uriDomain, $pid, array(
 							'id' => $json->result->id,
 							'name' => $json->result->name,
 							'title' => $json->result->title,
@@ -112,7 +113,7 @@
 							'uri' => $uris[0]
 						));
 					} else*/ {
-						$data[] = semanticContributor($uriDomain, scrapeWebsite($groupID->name, $url, $groupWebsiteSuffix));
+						$data[] = semanticContributor($uriDomain, $pid, scrapeWebsite($groupID->name, $url, $groupWebsiteSuffix));
 					}
 				}
 			}

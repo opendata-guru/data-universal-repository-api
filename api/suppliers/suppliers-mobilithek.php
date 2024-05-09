@@ -17,7 +17,7 @@
 		return $ret;
 	}
 
-	function suppliersMobilithek($url) {
+	function suppliersMobilithek($url, $pid) {
 		$aggregateSuffix = '/mdp-api/mdp-msa-metadata/v2/offers/aggregate';
 
 		$uriDomain = explode('/', $url)[2];
@@ -37,7 +37,7 @@
 			$value = get_object_vars($obj)[$key];
 			$id = preg_replace('#[^a-z0-9-]#i', '', $key);
 
-			$data[] = semanticContributor($uriDomain, array(
+			$data[] = semanticContributor($uriDomain, $pid, array(
 				'id' => $id,
 				'name' => $key,
 				'title' => $key,

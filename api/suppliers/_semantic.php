@@ -85,7 +85,7 @@
 		}
 	}
 
-	function semanticContributor($uriDomain, $obj) {
+	function semanticContributor($uriDomain, $pid, $obj) {
 		global $mapping, $mappingSID, $mappingURI1, $mappingURI2, $mappingURI3, $mappingURI4, $mappingLink, $mappingType, $mappingTitle, $mappingRS, $mappingAssociatedRS, $mappingWikidata, $mappingContributor;
 
 		$obj['sid'] = '';
@@ -93,6 +93,13 @@
 		$obj['type'] = '';
 		$obj['wikidata'] = '';
 		$obj['link'] = '';
+		$obj['lobject'] = [];
+
+		$lobject = [];
+		$lobject['lid'] = '';
+		$lobject['pid'] = $pid;
+		$lobject['identifier'] = '';
+		$lobject['sid'] = '';
 
 		foreach($mapping as $line) {
 			if (   (($line[$mappingURI1] !== '') && ($line[$mappingURI1] == $obj['uri']))
@@ -108,6 +115,7 @@
 				$obj['associated_rs'] = $line[$mappingAssociatedRS];
 				$obj['wikidata'] = $line[$mappingWikidata];
 				$obj['link'] = $line[$mappingLink];
+				$obj['lobject'] = $lobject;
 			} else if (
 				   (($line[$mappingURI1] !== '') && ($line[$mappingURI1] == ($uriDomain . '|' . $obj['name'])))
 				|| (($line[$mappingURI2] !== '') && ($line[$mappingURI2] == ($uriDomain . '|' . $obj['name'])))
@@ -122,6 +130,7 @@
 				$obj['associated_rs'] = $line[$mappingAssociatedRS];
 				$obj['wikidata'] = $line[$mappingWikidata];
 				$obj['link'] = $line[$mappingLink];
+				$obj['lobject'] = $lobject;
 			}
 		}
 

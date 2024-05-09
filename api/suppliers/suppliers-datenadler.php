@@ -25,7 +25,7 @@
 		return $ret;
 	}
 
-	function suppliersDatenadler($url) {
+	function suppliersDatenadler($url, $pid) {
 		$curl = 'https://flask.datenadler.de/solr_search';
 
 		$query = '{'.
@@ -55,7 +55,7 @@
 				$item = $list[$l];
 
 				$name = preg_replace('#[^a-z0-9]#i', '', $item->val);
-				$data[] = semanticContributor($uriDomain, array(
+				$data[] = semanticContributor($uriDomain, $pid, array(
 					'id' => $name,
 					'name' => $name,
 					'title' => $item->val,

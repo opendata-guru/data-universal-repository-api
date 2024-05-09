@@ -1,5 +1,5 @@
 <?php
-	function suppliersEntryStore($url) {
+	function suppliersEntryStore($url, $pid) {
 		$entryScapeSuffix = '/store/';
 
 		$uriDomain = $url;
@@ -77,7 +77,7 @@
 			$nameEntry = get_object_vars(reset($metadata))['http://xmlns.com/foaf/0.1/name'];
 			$title = $nameEntry[0]->value;
 
-			$data[] = semanticContributor($uriDomain, array(
+			$data[] = semanticContributor($uriDomain, $pid, array(
 				'id' => $id,
 				'name' => $name,
 				'title' => $title,

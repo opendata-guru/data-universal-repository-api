@@ -1,5 +1,5 @@
 <?php
-	function suppliersPiveau($url) {
+	function suppliersPiveau($url, $pid) {
 		$catalogSuffix = '/api/hub/search/catalogues';
 		$catalogsSuffix = '/api/hub/search/catalogues/';
 		$countSuffix = '/api/hub/search/search?q=&filter=dataset&facets={%22catalog%22:[%22###%22]}&limit=0';
@@ -35,7 +35,7 @@
 			$is_part_of = $catalog->result->is_part_of;
 			$has_part = $catalog->result->has_part;
 
-			$data[] = semanticContributor($uriDomain, array(
+			$data[] = semanticContributor($uriDomain, $pid, array(
 				'id' => $id,
 				'name' => $id,
 				'title' => $title,

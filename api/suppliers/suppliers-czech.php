@@ -1,5 +1,5 @@
 <?php
-	function suppliersCzech($url) {
+	function suppliersCzech($url, $pid) {
 		$catalogSuffix = '/api/v2/dataset?language=en&keywordLimit=0&publisherLimit=1000&fileTypeLimit=0&dataServiceTypeLimit=0&themeLimit=0&isPartOfLimit=0&offset=0&limit=0&sort=title%20asc';
 		$translationSuffix = '/api/v2/init-data?language=en';
 
@@ -33,7 +33,7 @@
 				$value = $obj['count'];
 				$id = preg_replace('#[^a-z0-9-]#i', '', $key);
 
-				$data[] = semanticContributor($uriDomain, array(
+				$data[] = semanticContributor($uriDomain, $pid, array(
 					'id' => $id,
 					'name' => $key,
 					'title' => $translate[$key],

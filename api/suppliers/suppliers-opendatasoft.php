@@ -1,5 +1,5 @@
 <?php
-	function suppliersOpendatasoft($url) {
+	function suppliersOpendatasoft($url, $pid) {
 		$opendatasoftSuffix = '/api/explore/v2.1/catalog/facets';
 
 		$uriDomain = end(explode('/', $url));
@@ -26,7 +26,7 @@
 
 			$count = $entry->count;
 
-			$data[] = semanticContributor($uriDomain, array(
+			$data[] = semanticContributor($uriDomain, $pid, array(
 				'id' => $name,
 				'name' => $name,
 				'title' => $title,

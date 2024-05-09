@@ -1,5 +1,5 @@
 <?php
-	function suppliersSpain($url) {
+	function suppliersSpain($url, $pid) {
 		$catalogSuffix = '/en/catalogo?q=&_publisher_display_name_limit=0';
 		$uriDomain = explode('/', $url)[2];
 
@@ -31,7 +31,7 @@
 						$count = explode(')', $span[1])[0];
 						$name = preg_replace('#[^a-z0-9]#i', '', $title);
 
-						$data[] = semanticContributor($uriDomain, array(
+						$data[] = semanticContributor($uriDomain, $pid, array(
 							'id' => $name,
 							'name' => $name,
 							'title' => $title,

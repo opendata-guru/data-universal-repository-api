@@ -1,5 +1,5 @@
 <?php
-	function suppliersArcGIS($url) {
+	function suppliersArcGIS($url, $pid) {
 		echo json_encode([]);
 	}
 ?>
