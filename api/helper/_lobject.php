@@ -2,6 +2,7 @@
 	$loadedLObjects = [];
 
 	loadMappingFileLObjects(__DIR__ . '/../../api-data/links.csv', $loadedLObjects);
+	$hashLObjects = md5(serialize($loadedLObjects));
 
 	function loadMappingFileLObjects($file, &$mapping) {
 		$idIdentifier = null;
@@ -39,6 +40,16 @@
 					$arr[$idSID] ?: ''
 				];
 			}
+		}
+	}
+
+	function saveMappingFileLObjects() {
+		global $loadedLObjects;
+		global $hashLObjects;
+
+		$newHash = md5(serialize($loadedLObjects));
+
+		if ($hashLObjects !== $newHash) {
 		}
 	}
 

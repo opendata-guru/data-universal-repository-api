@@ -87,4 +87,6 @@
 			'message' => 'Bad Request. The underlying system could not be detected',
 		));
 	}
+
+	saveMappingFileLObjects();
 ?>
