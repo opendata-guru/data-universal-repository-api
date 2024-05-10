@@ -18,7 +18,7 @@
 	loadMappingFile('../api-data/portals.de.csv', $mapping);
 	loadMappingFile('../api-data/portals.eu.csv', $mapping);
 
-	include('_lobject.php');
+	include('helper/_lobject.php');
 
 	function loadMappingFile($file, &$mapping) {
 		$idRS = null;
@@ -128,14 +128,14 @@
 		}
 
 		if ($pid !== '') {
-			$lObject = [];
-//			$lObject = findLObject($pid, $obj['id']);
+			$lObject = findLObject($pid, $obj['id']);
 
 			if ($lObject === null) {
 				$lObject = [];
 				$lObject['lid'] = createLID();
 				$lObject['pid'] = $pid;
-				$lObject['identifier'] = $obj['id'];
+				$lObject['identifier'] = $obj['name'];
+				$lObject['title'] = $obj['title'];
 				$lObject['sid'] = '';
 			}
 

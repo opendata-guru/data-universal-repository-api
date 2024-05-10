@@ -5,6 +5,7 @@
 
 	function loadMappingFileLObjects($file, &$mapping) {
 		$idIdentifier = null;
+		$idTitle = null;
 		$idLID = null;
 		$idPID = null;
 		$idSID = null;
@@ -19,6 +20,8 @@
 				$idPID = $m;
 			} else if ($mappingHeader[$m] === 'identifier') {
 				$idIdentifier = $m;
+			} else if ($mappingHeader[$m] === 'title') {
+				$idTitle = $m;
 			} else if ($mappingHeader[$m] === 'sid') {
 				$idSID = $m;
 			}
@@ -32,6 +35,7 @@
 					$arr[$idLID] ?: '',
 					$arr[$idPID] ?: '',
 					$arr[$idIdentifier] ?: '',
+					$arr[$idTitle] ?: '',
 					$arr[$idSID] ?: ''
 				];
 			}
@@ -84,7 +88,10 @@
 	function linkGetIdentifier($lObject) {
 		return $lObject[2];
 	}
-	function linkGetSID($lObject) {
+	function linkGetTitle($lObject) {
 		return $lObject[3];
+	}
+	function linkGetSID($lObject) {
+		return $lObject[4];
 	}
 ?>
