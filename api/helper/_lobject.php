@@ -1,17 +1,20 @@
 <?php
 	$loadedLObjects = [];
+	$fileLObjects = __DIR__ . '/../../api-data/links.csv';
 
-	loadMappingFileLObjects(__DIR__ . '/../../api-data/links.csv', $loadedLObjects);
+	loadMappingFileLObjects($loadedLObjects);
 	$hashLObjects = md5(serialize($loadedLObjects));
 
-	function loadMappingFileLObjects($file, &$mapping) {
+	function loadMappingFileLObjects(&$mapping) {
+		global $fileLObjects;
+
 		$idIdentifier = null;
 		$idTitle = null;
 		$idLID = null;
 		$idPID = null;
 		$idSID = null;
 
-		$lines = explode("\n", file_get_contents($file));
+		$lines = explode("\n", file_get_contents($fileLObjects));
 		$mappingHeader = str_getcsv($lines[0], ',');
 
 		for ($m = 0; $m < count($mappingHeader); ++$m) {
@@ -66,8 +69,8 @@
 		$length = 4;
 
 		$usedLIDs = [];
-		foreach($loadedLObjects as $lObjects) {
-			$usedLIDs[] = linkGetLID($lObjects);
+		foreach($loadedLObjects as $lObject) {
+			$usedLIDs[] = linkGetLID($lObject);
 		}
 		$usedLIDs = array_filter($usedLIDs);
 
@@ -81,13 +84,37 @@
 	function findLObject($pid, $identifier) {
 		global $loadedLObjects;
 
-		foreach($loadedLObjects as $lObjects) {
-			if (($pid === linkGetPID($lObjects)) && ($identifier === linkGetIdentifier($lObjects))) {
-				return $lObjects;
+		foreach($loadedLObjects as $lObject) {
+			if (($pid === linkGetPID($lObject)) && ($identifier === linkGetIdentifier($lObject))) {
+				return $lObject;
 			}
 		}
 
 		return null;
+	}
+
+	function setLObject($obj) {
+		global $loadedLObjects;
+
+		$mapped = [
+			$obj['lid'],
+			$obj['pid'],
+			$obj['identifier'],
+			$obj['sid'],
+			$obj['title']
+		];
+
+		$pid = linkGetPID($mapped);
+		$identifier = linkGetIdentifier($mapped);
+
+		foreach($loadedLObjects as &$lObject) {
+			if (($pid === linkGetPID($lObject)) && ($identifier === linkGetIdentifier($lObject))) {
+				$lObject = $mapped;
+				return;
+			}
+		}
+
+		$loadedLObjects[] = $mapped;
 	}
 
 	function linkGetLID($lObject) {

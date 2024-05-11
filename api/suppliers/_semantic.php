@@ -96,6 +96,22 @@
 		$obj['wikidata'] = '';
 		$obj['link'] = '';
 
+		if ($pid !== '') {
+			$lObject = findLObject($pid, $obj['name']);
+
+			if ($lObject === null) {
+				$lObject = [];
+				$lObject['lid'] = createLID();
+				$lObject['pid'] = $pid;
+				$lObject['identifier'] = $obj['name'];
+				$lObject['sid'] = '';
+			}
+			$lObject['title'] = $obj['title'];
+
+			setLObject($lObject);
+			$obj['lobject'] = $lObject;
+		}
+
 		foreach($mapping as $line) {
 			if (   (($line[$mappingURI1] !== '') && ($line[$mappingURI1] == $obj['uri']))
 				|| (($line[$mappingURI2] !== '') && ($line[$mappingURI2] == $obj['uri']))
@@ -125,21 +141,6 @@
 				$obj['wikidata'] = $line[$mappingWikidata];
 				$obj['link'] = $line[$mappingLink];
 			}
-		}
-
-		if ($pid !== '') {
-			$lObject = findLObject($pid, $obj['id']);
-
-			if ($lObject === null) {
-				$lObject = [];
-				$lObject['lid'] = createLID();
-				$lObject['pid'] = $pid;
-				$lObject['identifier'] = $obj['name'];
-				$lObject['title'] = $obj['title'];
-				$lObject['sid'] = '';
-			}
-
-			$obj['lobject'] = $lObject;
 		}
 
 		unset($obj['uri']);
