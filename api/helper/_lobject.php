@@ -53,10 +53,28 @@
 	function saveMappingFileLObjects() {
 		global $loadedLObjects;
 		global $hashLObjects;
+		global $fileLObjects;
 
 		$newHash = md5(serialize($loadedLObjects));
 
 		if ($hashLObjects !== $newHash) {
+			$header = [
+				'lid',
+				'pid',
+				'identifier',
+				'title',
+				'sid',
+				'lastseen'
+			];
+
+			$fp = fopen($fileLObjects, 'wb');
+			fputcsv($fp, $header, ',');
+			foreach ($loadedLObjects as $line) {
+//				fputcsv($fp, $line, ',');
+			}
+			fclose($fp);
+
+			$hashLObjects = $newHash;
 		}
 	}
 
