@@ -9,6 +9,7 @@
 		global $fileLObjects;
 
 		$idIdentifier = null;
+		$lastSeen = null;
 		$idTitle = null;
 		$idLID = null;
 		$idPID = null;
@@ -28,6 +29,8 @@
 				$idTitle = $m;
 			} else if ($mappingHeader[$m] === 'sid') {
 				$idSID = $m;
+			} else if ($mappingHeader[$m] === 'lastseen') {
+				$lastSeen = $m;
 			}
 		}
 
@@ -40,7 +43,8 @@
 					$arr[$idPID] ?: '',
 					$arr[$idIdentifier] ?: '',
 					$arr[$idTitle] ?: '',
-					$arr[$idSID] ?: ''
+					$arr[$idSID] ?: '',
+					$arr[$lastSeen] ?: '',
 				];
 			}
 		}
@@ -93,15 +97,18 @@
 		return null;
 	}
 
-	function setLObject($obj) {
+	function updateLObject(&$obj) {
 		global $loadedLObjects;
+
+		$obj['lastseen'] = date('Y-m-d');
 
 		$mapped = [
 			$obj['lid'],
 			$obj['pid'],
 			$obj['identifier'],
+			$obj['title'],
 			$obj['sid'],
-			$obj['title']
+			$obj['lastseen']
 		];
 
 		$pid = linkGetPID($mapped);
@@ -131,5 +138,8 @@
 	}
 	function linkGetSID($lObject) {
 		return $lObject[4];
+	}
+	function linkGetLastSeen($lObject) {
+		return $lObject[5];
 	}
 ?>

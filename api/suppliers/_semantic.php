@@ -108,7 +108,7 @@
 			}
 			$lObject['title'] = $obj['title'];
 
-			setLObject($lObject);
+			updateLObject($lObject);
 			$obj['lobject'] = $lObject;
 		}
 
