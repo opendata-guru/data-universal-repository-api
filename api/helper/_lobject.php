@@ -9,7 +9,7 @@
 		global $fileLObjects;
 
 		$idIdentifier = null;
-		$lastSeen = null;
+		$idLastSeen = null;
 		$idTitle = null;
 		$idLID = null;
 		$idPID = null;
@@ -30,7 +30,7 @@
 			} else if ($mappingHeader[$m] === 'sid') {
 				$idSID = $m;
 			} else if ($mappingHeader[$m] === 'lastseen') {
-				$lastSeen = $m;
+				$idLastSeen = $m;
 			}
 		}
 
@@ -38,14 +38,16 @@
 		foreach($lines as $line) {
 			if ($line != '') {
 				$arr = str_getcsv($line, ',');
-				$mapping[] = [
-					$arr[$idLID] ?: '',
-					$arr[$idPID] ?: '',
-					$arr[$idIdentifier] ?: '',
-					$arr[$idTitle] ?: '',
-					$arr[$idSID] ?: '',
-					$arr[$lastSeen] ?: '',
-				];
+
+				$lObject = [];
+				$lObject['lid'] = $arr[$idLID] ?: '';
+				$lObject['pid'] = $arr[$idPID] ?: '';
+				$lObject['identifier'] = $arr[$idIdentifier] ?: '';
+				$lObject['title'] = $arr[$idTitle] ?: '';
+				$lObject['sid'] = $arr[$idSID] ?: '';
+				$lObject['lastseen'] = $arr[$idLastSeen] ?: '';
+
+				$mapping[] = $lObject;
 			}
 		}
 	}
@@ -70,7 +72,14 @@
 			$fp = fopen($fileLObjects, 'wb');
 			fputcsv($fp, $header, ',');
 			foreach ($loadedLObjects as $line) {
-//				fputcsv($fp, $line, ',');
+				fputcsv($fp, [
+					$line['lid'],
+					$line['pid'],
+					$line['identifier'],
+					$line['title'],
+					$line['sid'],
+					$line['lastseen']
+				], ',');
 			}
 			fclose($fp);
 
@@ -92,7 +101,7 @@
 
 		$usedLIDs = [];
 		foreach($loadedLObjects as $lObject) {
-			$usedLIDs[] = linkGetLID($lObject);
+			$usedLIDs[] = $lObject['lid'];
 		}
 		$usedLIDs = array_filter($usedLIDs);
 
@@ -107,7 +116,7 @@
 		global $loadedLObjects;
 
 		foreach($loadedLObjects as $lObject) {
-			if (($pid === linkGetPID($lObject)) && ($identifier === linkGetIdentifier($lObject))) {
+			if (($pid === $lObject['pid']) && ($identifier === $lObject['identifier'])) {
 				return $lObject;
 			}
 		}
@@ -118,46 +127,15 @@
 	function updateLObject(&$obj) {
 		global $loadedLObjects;
 
-		$obj['lastseen'] = date('Y-m-d');
-
-		$mapped = [
-			$obj['lid'],
-			$obj['pid'],
-			$obj['identifier'],
-			$obj['title'],
-			$obj['sid'],
-			$obj['lastseen']
-		];
-
-		$pid = linkGetPID($mapped);
-		$identifier = linkGetIdentifier($mapped);
-
 		foreach($loadedLObjects as &$lObject) {
-			if (($pid === linkGetPID($lObject)) && ($identifier === linkGetIdentifier($lObject))) {
-				$lObject = $mapped;
+			if (($obj['pid'] === $lObject['pid']) && ($obj['identifier'] === $lObject['identifier'])) {
+				$lObject['lastseen'] = date('Y-m-d');
 				return;
 			}
 		}
 
-		$loadedLObjects[] = $mapped;
-	}
+		$obj['lastseen'] = date('Y-m-d');
 
-	function linkGetLID($lObject) {
-		return $lObject[0];
-	}
-	function linkGetPID($lObject) {
-		return $lObject[1];
-	}
-	function linkGetIdentifier($lObject) {
-		return $lObject[2];
-	}
-	function linkGetTitle($lObject) {
-		return $lObject[3];
-	}
-	function linkGetSID($lObject) {
-		return $lObject[4];
-	}
-	function linkGetLastSeen($lObject) {
-		return $lObject[5];
+		$loadedLObjects[] = $obj;
 	}
 ?>
