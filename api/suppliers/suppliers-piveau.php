@@ -57,11 +57,11 @@
 				}
 				$reset = false;
 
-				for ($h = 0; $h < count($data[$d]['has_part']); ++$h) {
+				for ($h = 0; !$reset && ($h < count($data[$d]['has_part'])); ++$h) {
 					if ($data[$d]['id'] === $data[$d]['has_part'][$h]) {
 //						$data[$d]['parts'][] = '!!! error - recursion';
 					} else {
-						for ($d2 = 0; $d2 < count($data); ++$d2) {
+						for ($d2 = 0; !$reset && ($d2 < count($data)); ++$d2) {
 							if ($data[$d2]['id'] === $data[$d]['has_part'][$h]) {
 								if ($data[$d2]['has_part'] === null) {
 									unset($data[$d2]['has_part']);
@@ -80,12 +80,10 @@
 					}
 				}
 
-				if (0 === count($data[$d]['has_part'])) {
-					$data[$d]['has_part'] = null;
-				}
-
 				if ($reset) {
 					$d = -1;
+				} else if (0 === count($data[$d]['has_part'])) {
+					$data[$d]['has_part'] = null;
 				}
 			} else if ($data[$d]['has_part'] === null) {
 				unset($data[$d]['has_part']);
