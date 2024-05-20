@@ -117,7 +117,15 @@
                         "wikidata": "Q1295",
                         "link": "",
                         "rs": "059130000000",
-                        "associated_rs": ""
+                        "associated_rs": "",
+                        "lobject": {
+                          "lid": "lgRi3",
+                          "pid": "pANW",
+                          "identifier": "StadtDortmund",
+                          "title": "Dortmund",
+                          "sid": "",
+                          "lastseen": "2024-01-01"
+                        }
                       }
                     ]
                   }

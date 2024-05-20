@@ -31,6 +31,11 @@
 		}
 		$link = getLinkWithParam($provider->url);
 		$pid = $provider->parameter;
+	} else {
+		$pObject = findPObjectByLink($link);
+		if ($pObject) {
+			$pid = providerGetPID($pObject);
+		}
 	}
 	if ($link->error) {
 		header($link->error->header);

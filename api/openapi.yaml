@@ -80,7 +80,13 @@ paths:
                       link: ''
                       rs: '059130000000'
                       associated_rs: ''
-                    
+                      lobject:
+                        lid: lgRi3
+                        pid: pANW
+                        identifier: StadtDortmund
+                        title: Dortmund
+                        sid: ''
+                        lastseen: '2024-01-01'
         '400':
           $ref: "#/components/responses/400BadRequest"
       tags:

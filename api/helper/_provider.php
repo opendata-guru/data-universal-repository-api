@@ -91,4 +91,19 @@
 	function providerGetServerURL($provider) {
 		return $provider[2];
 	}
+
+	function findPObjectByLink($link) {
+		global $loadedProviders;
+
+		foreach($loadedProviders as $pObject) {
+			if (providerGetServerURL($pObject) == $link->url) {
+				return $pObject;
+			}
+			if (providerGetServerURL($pObject) == $link->parameter) {
+				return $pObject;
+			}
+		}
+
+		return null;
+	}
 ?>
