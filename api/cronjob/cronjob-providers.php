@@ -46,18 +46,17 @@
 		foreach($loadedProviders as $provider) {
 			$data[] = array(
 				'pid' => providerGetPID($provider),
-				'url' => providerGetServerURL($provider),
-				'duration' => null,
-				'modified' => null,
+				'suppliersDuration' => null,
+				'suppliersTimestamp' => null,
 			);
 		}
 
 		return $data;
 	}
 
-	function getAPIData($link) {
+	function curlSuppliersData($pID) {
 		$uri = 'https://opendata.guru/api/2';
-		$uri .= '/suppliers?link=' . urlencode($link);
+		$uri .= '/suppliers?pID=' . urlencode($pID);
 
 		$data = curl($uri);
 		$json = json_decode($data);
@@ -69,11 +68,25 @@
 		return $json;
 	}
 
-	function getProviderData($providerId, $url) {
-		$apiData = getAPIData($url);
+	function getSuppliersData($pID) {
+		global $basePath;
+
+		$apiData = curlSuppliersData($pID);
 
 		foreach($apiData as $newOrga) {
-/*			$newOrga->packagesInId = $providerId;
+//			$fileLID = $basePath . 'counts-date/' . date('Y-m') . '/counts-' . date('Y-m-d') . '.json';
+//			$fileLID = $basePath . 'counts-lid/' . 'foobar.json';
+var_dump($newOrga->lobject);
+var_dump($newOrga->packages);
+exit;
+			// lid
+			// pid
+			// nameInPortal
+			// sid
+			// datasetCount
+			// modDate
+
+/*			$newOrga->packagesInId = $pID;
 			$newOrga->packagesInPortal = $portalTitle;
 			$found = false;
 
@@ -93,17 +106,22 @@
 
 	function getNextData($data) {
 		foreach ($data as &$provider) {
-			$url = $provider->url;
-			$modified = $provider->modified;
+			$pid = $provider->pid;
 
-			if (!empty($url) && is_null($modified)) {
+			$modified = $provider->suppliersTimestamp;
+			if (!empty($pid) && is_null($modified)) {
 				$now = microtime(true);
 
-				getProviderData($provider->pid, $url);
+				getSuppliersData($pid);
 
-				$provider->duration = round(microtime(true) - $now, 3);
-				$provider->modified = date('Y-m-d H:i:s');
+				$provider->suppliersDuration = round(microtime(true) - $now, 3);
+				$provider->suppliersTimestamp = date('Y-m-d H:i:s');
+
+				return $data;
 			}
+
+			// todo: get count dataset data
+			// todo: get systems data
 		}
 
 		return $data;
@@ -116,8 +134,6 @@
 		$data = getInitialData();
 	} else {
 		$data = getNextData($data);
-var_dump($data);
-exit;
 	}
 
 	if ($dataHash == md5(serialize($data))) {
