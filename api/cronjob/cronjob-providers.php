@@ -18,13 +18,11 @@
 		return $ret;
 	}
 
-	function loadTempData() {
-		global $filePath;
-
-		$dir = dirname($filePath);
+	function loadCronjobData($file) {
+		$dir = dirname($file);
 		mkdir($dir, 0777, true);
 
-		$data = json_decode(file_get_contents($filePath));
+		$data = json_decode(file_get_contents($file));
 
 		if (is_null($data)) {
 			$data = array();
@@ -32,10 +30,8 @@
 		return $data;
 	}
 
-	function saveTempData($data) {
-		global $filePath;
-
-		file_put_contents($filePath, json_encode($data));
+	function saveCronjobData($file, $data) {
+		file_put_contents($file, json_encode($data));
 	}
 
 	function getInitialData() {
@@ -74,33 +70,19 @@
 		$apiData = curlSuppliersData($pID);
 
 		foreach($apiData as $newOrga) {
-//			$fileLID = $basePath . 'counts-date/' . date('Y-m') . '/counts-' . date('Y-m-d') . '.json';
-//			$fileLID = $basePath . 'counts-lid/' . 'foobar.json';
-var_dump($newOrga->lobject);
-var_dump($newOrga->packages);
-exit;
-			// lid
-			// pid
-			// nameInPortal
-			// sid
-			// datasetCount
-			// modDate
+			$date = date('Y-m-d');
+			$lid = $newOrga->lobject->lid;
+			$count = $newOrga->packages;
 
-/*			$newOrga->packagesInId = $pID;
-			$newOrga->packagesInPortal = $portalTitle;
-			$found = false;
+			$fileDate = $basePath . 'counts-date/' . date('Y-m') . '/counts-' . $date . '.json';
+			$data = (array) loadCronjobData($fileDate);
+			$data[$lid] = $count;
+			saveCronjobData($fileDate, $data);
 
-			foreach($data as $existingOrga) {
-				if ($newOrga->id == $existingOrga->id) {
-//				if (($newOrga->id == $existingOrga->id) && ($newOrga->packagesInPortal == $existingOrga->packagesInPortal)) {
-					$found = true;
-					break;
-				}
-			}
-
-			if ($found == false) {
-				$data[] = $newOrga;
-			}*/
+			$fileLID = $basePath . 'counts-lid/' . $lid . '.json';
+			$data = (array) loadCronjobData($fileLID);
+			$data[$date] = $count;
+			saveCronjobData($fileLID, $data);
 		}
 	}
 
@@ -127,7 +109,7 @@ exit;
 		return $data;
 	}
 
-	$data = loadTempData();
+	$data = loadCronjobData($filePath);
 	$dataHash = md5(serialize($data));
 
 	if (empty($data)) {
@@ -139,7 +121,7 @@ exit;
 	if ($dataHash == md5(serialize($data))) {
 		echo json_encode(array('result' => 'done'));
 	} else {
-		saveTempData($data);
+		saveCronjobData($filePath, $data);
 
 		echo json_encode(array('result' => 'in progress'));
 	}
