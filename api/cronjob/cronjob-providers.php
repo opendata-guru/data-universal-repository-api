@@ -44,6 +44,8 @@
 				'pid' => providerGetPID($provider),
 				'suppliersDuration' => null,
 				'suppliersTimestamp' => null,
+				'countDatasetDuration' => null,
+				'countDatasetTimestamp' => null,
 			);
 		}
 
@@ -64,26 +66,63 @@
 		return $json;
 	}
 
+	function curlCountDatasetData($pID) {
+		$uri = 'https://opendata.guru/api/2';
+		$uri .= '/datasets/count?pID=' . urlencode($pID);
+
+		$data = curl($uri);
+		$json = json_decode($data);
+
+		if ($json->error) {
+			$json = null;
+		}
+
+		return $json;
+	}
+
 	function getSuppliersData($pID) {
 		global $basePath;
 
+		$date = date('Y-m-d');
+		$fileDate = $basePath . 'counts-date/' . date('Y-m') . '/counts-' . $date . '.json';
+		$countsData = (array) loadCronjobData($fileDate);
+
 		$apiData = curlSuppliersData($pID);
 
-		foreach($apiData as $newOrga) {
-			$date = date('Y-m-d');
-			$lid = $newOrga->lobject->lid;
-			$count = $newOrga->packages;
-
-			$fileDate = $basePath . 'counts-date/' . date('Y-m') . '/counts-' . $date . '.json';
-			$data = (array) loadCronjobData($fileDate);
-			$data[$lid] = $count;
-			saveCronjobData($fileDate, $data);
+		foreach($apiData as $supplier) {
+			$lid = $supplier->lobject->lid;
+			$count = $supplier->packages;
 
 			$fileLID = $basePath . 'counts-lid/' . $lid . '.json';
-			$data = (array) loadCronjobData($fileLID);
-			$data[$date] = $count;
-			saveCronjobData($fileLID, $data);
+			$lidData = (array) loadCronjobData($fileLID);
+
+			$countsData[$lid] = $count;
+			$lidData[$date] = $count;
+
+			saveCronjobData($fileLID, $lidData);
 		}
+
+		saveCronjobData($fileDate, $countsData);
+	}
+
+	function getCountDatasetData($pID) {
+		global $basePath;
+
+		$date = date('Y-m-d');
+		$fileDate = $basePath . 'counts-date/' . date('Y-m') . '/counts-' . $date . '.json';
+		$countsData = (array) loadCronjobData($fileDate);
+
+		$apiData = curlCountDatasetData($pID);
+		$count = $apiData->number;
+
+		$filePID = $basePath . 'counts-pid/' . $pID . '.json';
+		$pidData = (array) loadCronjobData($filePID);
+
+		$countsData[$pID] = $count;
+		$pidData[$date] = $count;
+
+		saveCronjobData($filePID, $pidData);
+		saveCronjobData($fileDate, $countsData);
 	}
 
 	function getNextData($data) {
@@ -102,7 +141,18 @@
 				return $data;
 			}
 
-			// todo: get count dataset data
+			$modified = $provider->countDatasetTimestamp;
+			if (!empty($pid) && is_null($modified)) {
+				$now = microtime(true);
+
+				getCountDatasetData($pid);
+
+				$provider->countDatasetDuration = round(microtime(true) - $now, 3);
+				$provider->countDatasetTimestamp = date('Y-m-d H:i:s');
+
+				return $data;
+			}
+
 			// todo: get systems data
 		}
 
