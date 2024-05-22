@@ -42,6 +42,8 @@
 		foreach($loadedProviders as $provider) {
 			$data[] = array(
 				'pid' => providerGetPID($provider),
+				'systemDuration' => null,
+				'systemTimestamp' => null,
 				'suppliersDuration' => null,
 				'suppliersTimestamp' => null,
 				'countDatasetDuration' => null,
@@ -69,6 +71,20 @@
 	function curlCountDatasetData($pID) {
 		$uri = 'https://opendata.guru/api/2';
 		$uri .= '/datasets/count?pID=' . urlencode($pID);
+
+		$data = curl($uri);
+		$json = json_decode($data);
+
+		if ($json->error) {
+			$json = null;
+		}
+
+		return $json;
+	}
+
+	function curlSystemsData($pID) {
+		$uri = 'https://opendata.guru/api/2';
+		$uri .= '/system?pID=' . urlencode($pID);
 
 		$data = curl($uri);
 		$json = json_decode($data);
@@ -125,6 +141,20 @@
 		saveCronjobData($fileDate, $countsData);
 	}
 
+	function getSystemData($pID) {
+		global $basePath;
+
+		$date = date('Y-m-d');
+		$fileDate = $basePath . 'systems-date/' . date('Y-m') . '/systems-' . $date . '.json';
+		$systemsData = (array) loadCronjobData($fileDate);
+
+		$apiData = curlSystemsData($pID);
+
+		$systemsData[$pID] = $apiData;
+
+		saveCronjobData($fileDate, $systemsData);
+	}
+
 	function getNextData($data) {
 		foreach ($data as &$provider) {
 			$pid = $provider->pid;
@@ -154,6 +184,17 @@
 			}
 
 			// todo: get systems data
+			$modified = $provider->systemTimestamp;
+			if (!empty($pid) && is_null($modified)) {
+				$now = microtime(true);
+
+				getSystemData($pid);
+
+				$provider->systemDuration = round(microtime(true) - $now, 3);
+				$provider->systemTimestamp = date('Y-m-d H:i:s');
+
+				return $data;
+			}
 		}
 
 		return $data;
