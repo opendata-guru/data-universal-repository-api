@@ -98,7 +98,8 @@ paths:
       description: Get information about the system used, the version number, extensions and a link.
       operationId: getSystem
       parameters:
-        - $ref: "#/components/parameters/linkParam"
+        - $ref: "#/components/parameters/linkParamOptional"
+        - $ref: "#/components/parameters/pidParam"
       responses:
         '200':
           description: Example of a successful answer
