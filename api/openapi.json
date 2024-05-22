@@ -57,7 +57,10 @@
         "operationId": "getDatasetsCount",
         "parameters": [
           {
-            "$ref": "#/components/parameters/linkParam"
+            "$ref": "#/components/parameters/linkParamOptional"
+          },
+          {
+            "$ref": "#/components/parameters/pidParam"
           }
         ],
         "responses": {
@@ -462,7 +465,7 @@
         },
         "examples": {
           "empty": {
-            "value": null,
+            "value": "",
             "summary": "Empty value"
           },
           "root": {
