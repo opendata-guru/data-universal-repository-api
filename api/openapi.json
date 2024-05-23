@@ -22,6 +22,96 @@
     }
   ],
   "paths": {
+    "/p": {
+      "get": {
+        "summary": "Get a list of all portals",
+        "description": "A list of all known portals is returned.",
+        "operationId": "getPObjects",
+        "responses": {
+          "200": {
+            "description": "Example of a successful answer",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "allPortalsSample": {
+                    "value": [
+                      {
+                        "pid": "p000",
+                        "sid": "s78h2",
+                        "url": "https://data.europa.eu/api/hub/search/"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          }
+        },
+        "tags": [
+          "generally"
+        ]
+      },
+      "post": {
+        "summary": "Change the list of known portals",
+        "description": "Unfortunately, the list of portals cannot be changed here. Please create an issue on GitHub at https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data",
+        "operationId": "postPObjects",
+        "responses": {
+          "400": {
+            "description": "Example of an error response",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "badRequest": {
+                    "value": {
+                      "error": 400,
+                      "message": "Bad Request. Please create an issue on GitHub for your change request",
+                      "createIssue": "https://github.com/opendata-guru/data-universal-repository-api/issues/new",
+                      "repository": "https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "generally"
+        ]
+      }
+    },
+    "/p/{pID}": {
+      "get": {
+        "summary": "tbd.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pidPathParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Example of a successful answer",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "pSample": {
+                    "value": "tbd."
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          }
+        },
+        "tags": [
+          "generally"
+        ]
+      }
+    },
     "/datasets": {
       "get": {
         "summary": "Coming soon",
@@ -265,7 +355,7 @@
     },
     "/data-providers": {
       "get": {
-        "summary": "Get a list of all data providers",
+        "summary": "Deprecated",
         "description": "A list of all known data providers is returned. For each entry, a type, an official region key, and a Wikidata ID are returned where possible. The \"sid\" and \"link\" parameter can be used in other API endpoints.",
         "operationId": "getDataProviders",
         "responses": {
@@ -294,33 +384,6 @@
           },
           "400": {
             "$ref": "#/components/responses/400BadRequest"
-          }
-        },
-        "tags": [
-          "maintained"
-        ]
-      },
-      "post": {
-        "summary": "Change the list of data providers",
-        "description": "Unfortunately, the list of data providers cannot be changed here. Please create an issue on GitHub at https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data",
-        "operationId": "postDataProviders",
-        "responses": {
-          "400": {
-            "description": "Example of an error response",
-            "content": {
-              "application/json": {
-                "examples": {
-                  "badRequest": {
-                    "value": {
-                      "error": 400,
-                      "message": "Bad Request. Please create an issue on GitHub for your change request",
-                      "createIssue": "https://github.com/opendata-guru/data-universal-repository-api/issues/new",
-                      "repository": "https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data"
-                    }
-                  }
-                }
-              }
-            }
           }
         },
         "tags": [
@@ -476,6 +539,26 @@
             "summary": "European data"
           }
         }
+      },
+      "pidPathParam": {
+        "name": "pID",
+        "in": "path",
+        "description": "tbd.",
+        "required": true,
+        "allowEmptyValue": false,
+        "schema": {
+          "type": "string"
+        },
+        "examples": {
+          "empty": {
+            "value": "random",
+            "summary": "Random pID"
+          },
+          "root": {
+            "value": "p000",
+            "summary": "European data"
+          }
+        }
       }
     },
     "responses": {
@@ -513,12 +596,16 @@
   },
   "tags": [
     {
-      "name": "maintained",
-      "description": "This information provided here is maintained manually and can be accessed via the API."
+      "name": "generally",
+      "description": "General functions of the API can query both historical data from the database and live data from the source systems."
     },
     {
       "name": "live",
       "description": "The API endpoints call the source systems directly. Be careful during heavy use, there is no caching mechanism."
+    },
+    {
+      "name": "maintained",
+      "description": "This information provided here is maintained manually and can be accessed via the API."
     }
   ]
 }

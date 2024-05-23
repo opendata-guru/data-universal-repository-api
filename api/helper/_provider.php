@@ -91,6 +91,9 @@
 	function providerGetServerURL($provider) {
 		return $provider[2];
 	}
+	function providerGetModified($provider) {
+		return $provider[3];
+	}
 
 	function findPObjectByLink($link) {
 		global $loadedProviders;
