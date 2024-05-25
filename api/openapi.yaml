@@ -55,9 +55,69 @@ paths:
         - generally
   /p/{pID}:
     get:
+      summary: Learn more about a portal
+      description: The information about the specified portal is returned. Alternatively, the value “random” can be specified to receive information about a random portal.
+      operationId: getPObject
+      parameters:
+        - $ref: "#/components/parameters/pidPathParam"
+      responses:
+        '200':
+          description: Example of a successful answer
+          content:
+            application/json:
+              examples:
+                pSample:
+                  value:
+                    pid: p000
+                    sid: s78h2
+                    url: https://data.europa.eu/api/hub/search/
+        '400':
+          $ref: "#/components/responses/400BadRequest"
+      tags:
+        - generally
+  /p/{pID}/l:
+    get:
+      summary: tbd.
+      description: + Get a list of all linked ...
+      parameters:
+        - $ref: "#/components/parameters/pidPathParam"
+      responses:
+        '200':
+          description: Example of a successful answer
+          content:
+            application/json:
+              examples:
+                pSample:
+                  value:
+                    tbd.
+        '400':
+          $ref: "#/components/responses/400BadRequest"
+      tags:
+        - generally
+  /p/{pID}/system:
+    get:
       summary: tbd.
       parameters:
         - $ref: "#/components/parameters/pidPathParam"
+      responses:
+        '200':
+          description: Example of a successful answer
+          content:
+            application/json:
+              examples:
+                pSample:
+                  value:
+                    tbd.
+        '400':
+          $ref: "#/components/responses/400BadRequest"
+      tags:
+        - generally
+  /p/{pID}/{date}:
+    get:
+      summary: tbd.
+      parameters:
+        - $ref: "#/components/parameters/pidPathParam"
+        - $ref: "#/components/parameters/datePathParam"
       responses:
         '200':
           description: Example of a successful answer
@@ -282,6 +342,27 @@ paths:
         - maintained
 components:
   parameters:
+    datePathParam:
+      name: date
+      in: path
+      description: tbd. + 'today' + 'yesterday' + 'now'
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      examples:
+        today:
+          value: today
+          summary: Today
+        yesterday:
+          value: yesterday
+          summary: Yesterday
+        sampleDate:
+          value: 2024-02-24
+          summary: sample tbd.
+        now:
+          value: now
+          summary: now tbd.
     linkParam:
       name: link
       in: query
@@ -352,7 +433,7 @@ components:
     pidPathParam:
       name: pID
       in: path
-      description: tbd.
+      description: tbd. + 'random'
       required: true
       allowEmptyValue: false
       schema:

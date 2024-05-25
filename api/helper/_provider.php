@@ -109,4 +109,16 @@
 
 		return null;
 	}
+
+	function findPObjectByPID($pid) {
+		global $loadedProviders;
+
+		foreach($loadedProviders as $pObject) {
+			if (providerGetPID($pObject) == $pid) {
+				return $pObject;
+			}
+		}
+
+		return null;
+	}
 ?>
