@@ -169,6 +169,36 @@ paths:
           $ref: "#/components/responses/400BadRequest"
       tags:
         - live
+  /datasets/find:
+    get:
+      summary: Find all records of an identifier
+      description: Find all records of a specified identifier.
+      operationId: getDatasetsFind
+      parameters:
+        - $ref: "#/components/parameters/linkParamOptional"
+        - $ref: "#/components/parameters/pidParam"
+        - name: identifier
+          in: query
+          description: Unique identifier that identifies a data set
+          required: true
+          allowEmptyValue: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Example of a successful answer
+          content:
+            application/json:
+              examples:
+                ckanSample:
+                  value:
+                    - id: 3cf4e37c-3ae6-4c0c-a1e2-ff782ce47a03
+                      name: inspire-sh-gebaude-2d-alkis4cca8
+                      title: INSPIRE SH Gebäude – 2D ALKIS
+        '400':
+          $ref: "#/components/responses/400BadRequest"
+      tags:
+        - live
   /suppliers:
     get:
       summary: Get a list of all suppliers
