@@ -82,6 +82,31 @@
 		}
 	}
 
+	function createPID() {
+		global $loadedProviders;
+
+		// https://www.rechner.club/kombinatorik/anzahl-variationen-geordnet-ohne-wiederholung-berechnen
+		// objects  | 61    | 61      | 61         | 61
+		// draws    | 2     | 3       | 4          | 5
+		// variants | 3,660 | 215,940 | 12,524,520 | 713,897,640
+
+		$ALLOWED_CHARS = '0123456789abcdefghijklmnoqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$prefix = 'p';
+		$length = 3;
+
+		$usedPIDs = [];
+		foreach($loadedProviders as $pObject) {
+			$usedPIDs[] = providerGetPID($pObject);
+		}
+		$usedPIDs = array_filter($usedPIDs);
+
+		do {
+			$pid = $prefix . substr(str_shuffle($ALLOWED_CHARS), 0, $length);
+		} while(in_array($pid, $usedPIDs));
+
+		return $pid;
+	}
+
 	function providerGetPID($provider) {
 		return $provider[0];
 	}

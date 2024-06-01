@@ -51,6 +51,7 @@ paths:
                     message: Bad Request. Please create an issue on GitHub for your change request
                     createIssue: https://github.com/opendata-guru/data-universal-repository-api/issues/new
                     repository: https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data
+                    pid: pQrD
       tags:
         - generally
   /p/{pID}:
@@ -336,22 +337,6 @@ paths:
                       link: https://ckan.govdata.de/api/3/action/organization_list
         '400':
           $ref: "#/components/responses/400BadRequest"
-      tags:
-        - maintained
-  /create-provider-id:
-    get:
-      summary: Create a unique ID for a new data provider
-      description: To maintain the list of data providers, unique IDs must be assigned. This endpoint helps generate these IDs.
-      operationId: createProviderID
-      responses:
-        '200':
-          description: Example of a created provider id
-          content:
-            application/json:
-              examples:
-                idSample:
-                  value:
-                    pid: p78h
       tags:
         - maintained
   /create-supplier-id:
