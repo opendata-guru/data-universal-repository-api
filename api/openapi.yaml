@@ -132,6 +132,43 @@ paths:
           $ref: "#/components/responses/400BadRequest"
       tags:
         - generally
+  /s:
+    get:
+      summary: Get a list of all suppliers
+      description: A list of all known suppliers is returned.
+      operationId: getSObjects
+      responses:
+        '200':
+          description: Example of a successful answer
+          content:
+            application/json:
+              examples:
+                allPortalsSample:
+                  value:
+                    tbd.
+        '400':
+          $ref: "#/components/responses/400BadRequest"
+      tags:
+        - generally
+    post:
+      summary: Change the list of known suppliers
+      description: Unfortunately, the list of suppliers cannot be changed here. Please create an issue on GitHub at https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data
+      operationId: postSObjects
+      responses:
+        '400':
+          description: Example of an error response
+          content:
+            application/json:
+              examples:
+                badRequest:
+                  value: 
+                    error: 400
+                    message: Bad Request. Please create an issue on GitHub for your change request
+                    createIssue: https://github.com/opendata-guru/data-universal-repository-api/issues/new
+                    repository: https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data
+                    sid: sehZa
+      tags:
+        - generally
   /datasets:
     get:
       summary: Coming soon
@@ -337,22 +374,6 @@ paths:
                       link: https://ckan.govdata.de/api/3/action/organization_list
         '400':
           $ref: "#/components/responses/400BadRequest"
-      tags:
-        - maintained
-  /create-supplier-id:
-    get:
-      summary: Create a unique ID for a new data supplier
-      description: To maintain the list of data suppliers, unique IDs must be assigned. This endpoint helps generate these IDs.
-      operationId: createSupplierID
-      responses:
-        '200':
-          description: Example of a created supplier id
-          content:
-            application/json:
-              examples:
-                idSample:
-                  value:
-                    sid: s78h2
       tags:
         - maintained
 components:
