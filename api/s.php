@@ -30,9 +30,17 @@
 
 	foreach($loadedSObjects as $sObject) {
 		$obj = [];
-		$obj['pid'] = providerGetPID($sObject);
-		$obj['sid'] = providerGetSID($sObject);
-		$obj['url'] = providerGetServerURL($sObject);
+		$obj['sid'] = $sObject['sid'];
+		$obj['title'] = [];
+		$obj['title']['de'] = $sObject['title@DE'];
+		$obj['title']['en'] = $sObject['title@EN'];
+		$obj['type'] = $sObject['type'];
+		$obj['sameAs'] = [];
+		$obj['sameAs']['rs'] = $sObject['sameAsRS'];
+		$obj['sameAs']['wikidata'] = $sObject['sameAsWikidata'];
+		$obj['partOf'] = [];
+		$obj['partOf']['rs'] = $sObject['partOfRS'];
+		$obj['partOf']['wikidata'] = $sObject['partOfWikidata'];
 
 		$dataSuppliers[] = $obj;
 	}

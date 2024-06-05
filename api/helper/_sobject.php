@@ -1,36 +1,42 @@
 <?php
 	$loadedSObjects = [];
-//	$fileSObjects = __DIR__ . '/../../api-data/suppliers.csv';
-//
-//	loadMappingFileSObjects($loadedSObjects);
+	$fileSObjects = __DIR__ . '/../../api-data/suppliers.csv';
+
+	loadMappingFileSObjects($loadedSObjects);
 	$hashSObjects = md5(serialize($loadedSObjects));
 
 	function loadMappingFileSObjects(&$mapping) {
 		global $fileSObjects;
 
-		$idIdentifier = null;
-		$idLastSeen = null;
-		$idTitle = null;
-		$idLID = null;
-		$idPID = null;
+		$idPartOfWikidata = null;
+		$idSameAsWikidata = null;
+		$idPartOfRS = null;
+		$idSameAsRS = null;
+		$idTitleDE = null;
+		$idTitleEN = null;
+		$idType = null;
 		$idSID = null;
 
 		$lines = explode("\n", file_get_contents($fileSObjects));
 		$mappingHeader = str_getcsv($lines[0], ',');
 
 		for ($m = 0; $m < count($mappingHeader); ++$m) {
-			if ($mappingHeader[$m] === 'lid') {
-				$idLID = $m;
-			} else if ($mappingHeader[$m] === 'pid') {
-				$idPID = $m;
-			} else if ($mappingHeader[$m] === 'identifier') {
-				$idIdentifier = $m;
-			} else if ($mappingHeader[$m] === 'title') {
-				$idTitle = $m;
-			} else if ($mappingHeader[$m] === 'sid') {
+			if ($mappingHeader[$m] === 'sid') {
 				$idSID = $m;
-			} else if ($mappingHeader[$m] === 'lastseen') {
-				$idLastSeen = $m;
+			} else if ($mappingHeader[$m] === 'title@EN') {
+				$idTitleEN = $m;
+			} else if ($mappingHeader[$m] === 'title@DE') {
+				$idTitleDE = $m;
+			} else if ($mappingHeader[$m] === 'type') {
+				$idType = $m;
+			} else if ($mappingHeader[$m] === 'sameAsWikidata') {
+				$idSameAsWikidata = $m;
+			} else if ($mappingHeader[$m] === 'sameAsRS') {
+				$idSameAsRS = $m;
+			} else if ($mappingHeader[$m] === 'partOfWikidata') {
+				$idPartOfWikidata = $m;
+			} else if ($mappingHeader[$m] === 'partOfRS') {
+				$idPartOfRS = $m;
 			}
 		}
 
@@ -40,19 +46,21 @@
 				$arr = str_getcsv($line, ',');
 
 				$sObject = [];
-				$sObject['lid'] = $arr[$idLID] ?: '';
-				$sObject['pid'] = $arr[$idPID] ?: '';
-				$sObject['identifier'] = $arr[$idIdentifier] ?: '';
-				$sObject['title'] = $arr[$idTitle] ?: '';
 				$sObject['sid'] = $arr[$idSID] ?: '';
-				$sObject['lastseen'] = $arr[$idLastSeen] ?: '';
+				$sObject['title@EN'] = $arr[$idTitleEN] ?: '';
+				$sObject['title@DE'] = $arr[$idTitleDE] ?: '';
+				$sObject['type'] = $arr[$idType] ?: '';
+				$sObject['sameAsWikidata'] = $arr[$idSameAsWikidata] ?: '';
+				$sObject['sameAsRS'] = $arr[$idSameAsRS] ?: '';
+				$sObject['partOfWikidata'] = $arr[$idPartOfWikidata] ?: '';
+				$sObject['partOfRS'] = $arr[$idPartOfRS] ?: '';
 
 				$mapping[] = $sObject;
 			}
 		}
 	}
 
-	function saveMappingFileSObjects() {
+/*	function saveMappingFileSObjects() {
 		global $loadedSObjects;
 		global $hashSObjects;
 		global $fileSObjects;
@@ -61,31 +69,35 @@
 
 		if ($hashSObjects !== $newHash) {
 			$header = [
-				'lid',
-				'pid',
-				'identifier',
-				'title',
 				'sid',
-				'lastseen'
+				'title@EN',
+				'title@DE',
+				'type',
+				'sameAsWikidata',
+				'sameAsRS',
+				'partOfWikidata',
+				'partOfRS'
 			];
 
 			$fp = fopen($fileSObjects, 'wb');
 			fputcsv($fp, $header, ',');
 			foreach ($loadedSObjects as $line) {
 				fputcsv($fp, [
-					$line['lid'],
-					$line['pid'],
-					$line['identifier'],
-					$line['title'],
 					$line['sid'],
-					$line['lastseen']
+					$line['title@EN'],
+					$line['title@DE'],
+					$line['type'],
+					$line['sameAsWikidata'],
+					$line['sameAsRS'],
+					$line['partOfWikidata'],
+					$line['partOfRS']
 				], ',');
 			}
 			fclose($fp);
 
 			$hashSObjects = $newHash;
 		}
-	}
+	}*/
 
 	function createSID() {
 		global $loadedSObjects;
@@ -112,7 +124,7 @@
 		return $sid;
 	}
 
-	function findSObject($pid, $identifier) {
+/*	function findSObject($pid, $identifier) {
 		global $loadedSObjects;
 
 		foreach($loadedSObjects as $sObject) {
@@ -122,9 +134,9 @@
 		}
 
 		return null;
-	}
+	}*/
 
-	function updateSObject(&$obj) {
+/*	function updateSObject(&$obj) {
 		global $loadedSObjects;
 
 		foreach($loadedSObjects as &$sObject) {
@@ -137,5 +149,5 @@
 		$obj['lastseen'] = date('Y-m-d');
 
 		$loadedSObjects[] = $obj;
-	}
+	}*/
 ?>
