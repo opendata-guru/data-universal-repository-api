@@ -18,6 +18,8 @@ ErrorDocument 500 /api/error.php?error=500
 
 RewriteEngine on
 
+RewriteRule .* - [e=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
 RewriteRule ^$               /api/2/        [R,L,QSA]
 RewriteRule ^2$              /api/2/        [R,L,QSA]
 

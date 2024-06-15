@@ -5,6 +5,78 @@
 	loadMappingFileSObjects($loadedSObjects);
 	$hashSObjects = md5(serialize($loadedSObjects));
 
+	function get_contents_sparql($url){
+		$headers = [
+			'User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:28.0) Gecko/20100101 Firefox/28.0',
+			'Accept: application/sparql-results+json',
+		];
+
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		$data = curl_exec($ch);
+
+		curl_close($ch);
+
+		return $data;
+	}
+
+	function postSObject() {
+		global $loadedProviders;
+
+		$parameterWikidata = htmlspecialchars($_GET['wikidata']);
+
+		$basePath = 'https://query.wikidata.org/sparql';
+
+		$qID = end(explode('/', $parameterWikidata));
+
+        $sparqlQuery = 'SELECT ' .
+            '?item ' .
+            '(SAMPLE(?labelDE) as ?labelDE) ' .
+            '(SAMPLE(?labelEN) as ?labelEN) ' .
+            '(SAMPLE(?germanRegionalKey) as ?germanRegionalKey) ' .
+            '' .
+            'WHERE {' .
+            '  BIND(wd:' . $qID . ' as ?item)' .
+            '' .
+            '  OPTIONAL {' .
+			'    ?item rdfs:label ?labelDE .' .
+			'    filter(lang(?labelDE) = "de" )' .
+			'  }' .
+            '  BIND(IF( BOUND( ?labelDE), ?labelDE, "") AS ?labelDE)' .
+            '' .
+            '  OPTIONAL {' .
+			'    ?item rdfs:label ?labelEN .' .
+			'    filter(lang(?labelEN) = "en" )' .
+			'  }' .
+            '  BIND(IF( BOUND( ?labelEN), ?labelEN, "") AS ?labelEN)' .
+            '' .
+            '  OPTIONAL { ?item wdt:P1388 ?germanRegionalKey. }' .
+            '  BIND(IF( BOUND( ?germanRegionalKey), ?germanRegionalKey, "") AS ?germanRegionalKey)' .
+            '}' .
+            'GROUP BY ?item';
+
+        $url = $basePath . '?query=' . rawurlencode($sparqlQuery);
+		$data = get_contents_sparql($url);
+		$values = json_decode($data)->results->bindings[0];
+
+		return (object) array(
+			'sid' => createSID(),
+			'title' => array (
+				'de' => $values->labelDE->value,
+				'en' => $values->labelEN->value,
+			),
+			'type' => null,
+			'sameAs' => array (
+				'wikidata' => $values->item->value,
+			),
+			'geocoding' => array (
+				'germanRegionalKey' => $values->germanRegionalKey->value,
+			),
+		);
+	}
+
 	function loadMappingFileSObjects(&$mapping) {
 		global $fileSObjects;
 
