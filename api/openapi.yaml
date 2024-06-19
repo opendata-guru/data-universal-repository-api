@@ -39,19 +39,32 @@ paths:
       summary: Change the list of known portals
       description: Unfortunately, the list of portals cannot be changed here. Please create an issue on GitHub at https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data
       operationId: postPObjects
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: url
+          in: query
+          description: tbd.
+          required: true
+          allowEmptyValue: false
+          schema:
+            type: string
+          examples:
+            edp:
+              value: https://data.europa.eu/api/hub/search/
+              summary: URL of European data portal
       responses:
-        '400':
+        '403':
           description: Example of an error response
           content:
             application/json:
               examples:
                 badRequest:
                   value: 
-                    error: 400
-                    message: Bad Request. Please create an issue on GitHub for your change request
+                    error: 403
+                    message: Forbidden. Please create an issue on GitHub for your change request
                     createIssue: https://github.com/opendata-guru/data-universal-repository-api/issues/new
                     repository: https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data
-                    pid: pQrD
       tags:
         - generally
   /p/{pID}:

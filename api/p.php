@@ -7,14 +7,22 @@
 	include('helper/_provider.php');
 
 	if ('POST' === $_SERVER['REQUEST_METHOD']) {
-		header('HTTP/1.0 400 Bad Request');
-		echo json_encode((object) array(
-			'error' => 400,
-			'message' => 'Bad Request. Please create an issue on GitHub for your change request',
-			'createIssue' => 'https://github.com/opendata-guru/data-universal-repository-api/issues/new',
-			'repository' => 'https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data',
-			'pid' => createPID(),
-		));
+		include('helper/_post.php');
+
+		if (validPost()) {
+			echo json_encode((object) array(
+				'pid' => createPID(),
+			));
+		} else {
+			header('HTTP/1.0 403 Forbidden');
+			echo json_encode((object) array(
+				'error' => 403,
+				'message' => 'Forbidden. Please create an issue on GitHub for your change request',
+				'createIssue' => 'https://github.com/opendata-guru/data-universal-repository-api/issues/new',
+				'repository' => 'https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data',
+			));
+		}
+
 		return;
 	}
 	if ('GET' !== $_SERVER['REQUEST_METHOD']) {
