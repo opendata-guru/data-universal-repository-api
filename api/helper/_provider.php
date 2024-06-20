@@ -1,7 +1,9 @@
 <?php
 	$loadedProviders = [];
+	$filePObjects = __DIR__ . '/../../api-data/providers.csv';
 
-	loadMappingFileProviders(__DIR__ . '/../../api-data/providers.csv', $loadedProviders);
+	loadMappingFileProviders($filePObjects, $loadedProviders);
+	$hashPObjects = md5(serialize($loadedProviders));
 
 	function getProvider() {
 		global $loadedProviders;
@@ -76,22 +78,18 @@
 			'system' => null,
 			'url' => $url,
 		);
+
 		$pObject = findPObjectByLink($link);
-		if ($pObject) {
-			return (object) array(
-				'pid' => providerGetPID($pObject),
-				'sid' => providerGetSID($pObject),
-				'url' => providerGetURL($pObject),
-				'deepLink' => providerGetDeepLink($pObject),
-			);
+		if (!$pObject) {
+			$pObject = pushPObject(createPID(), '', $url, $deepLink);
 		}
+		saveMappingFilePObjects();
 
 		return (object) array(
-			'pid' => createPID(),
-			'sid' => '',
-			'url' => $url,
-			'deepLink' => $deepLink,
-			'NOT_SAVED_YET' => true,
+			'pid' => providerGetPID($pObject),
+			'sid' => providerGetSID($pObject),
+			'url' => providerGetURL($pObject),
+			'deepLink' => providerGetDeepLink($pObject),
 		);
 	}
 
@@ -132,6 +130,53 @@
 				];
 			}
 		}
+	}
+
+	function saveMappingFilePObjects() {
+		global $loadedProviders;
+		global $hashPObjects;
+		global $filePObjects;
+
+		$newHash = md5(serialize($loadedProviders));
+
+		if ($hashPObjects !== $newHash) {
+			$header = [
+				'pid',
+				'sid',
+				'url',
+				'deeplink',
+				'modified'
+			];
+
+			$fp = fopen($filePObjects, 'wb');
+			fputcsv($fp, $header, ',');
+			foreach ($loadedProviders as $line) {
+				fputcsv($fp, [
+					providerGetPID($line),
+					providerGetSID($line),
+					providerGetURL($line),
+					providerGetDeepLink($line),
+					providerGetModified($line),
+				], ',');
+			}
+			fclose($fp);
+
+			$hashPObjects = $newHash;
+		}
+	}
+
+	function pushPObject($pID, $sID, $url, $deepLink) {
+		global $loadedProviders;
+
+		$loadedProviders[] = [
+			$pID ?: createPID(),
+			$sID ?: '',
+			$url ?: '',
+			$deepLink ?: '',
+			date('Y-m-d')
+		];
+
+		return end($loadedProviders);
 	}
 
 	function createPID() {
