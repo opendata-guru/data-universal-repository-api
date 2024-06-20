@@ -10,9 +10,7 @@
 		include('helper/_post.php');
 
 		if (validPost()) {
-			echo json_encode((object) array(
-				'pid' => createPID(),
-			));
+			echo json_encode(postPObject());
 		} else {
 			header('HTTP/1.0 403 Forbidden');
 			echo json_encode((object) array(
@@ -40,7 +38,8 @@
 		$obj = [];
 		$obj['pid'] = providerGetPID($provider);
 		$obj['sid'] = providerGetSID($provider);
-		$obj['url'] = providerGetServerURL($provider);
+		$obj['url'] = providerGetURL($provider);
+		$obj['deeplink'] = providerGetDeepLink($provider);
 
 		$dataProviders[] = $obj;
 	}

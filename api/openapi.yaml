@@ -30,7 +30,8 @@ paths:
                   value:
                     - pid: p000
                       sid: s78h2
-                      url: https://data.europa.eu/api/hub/search/
+                      url: https://data.europa.eu
+                      deeplink: https://data.europa.eu/api/hub/search/
         '400':
           $ref: "#/components/responses/400BadRequest"
       tags:
@@ -84,7 +85,8 @@ paths:
                   value:
                     pid: p000
                     sid: s78h2
-                    url: https://data.europa.eu/api/hub/search/
+                    url: https://data.europa.eu
+                    deeplink: https://data.europa.eu/api/hub/search/
         '400':
           $ref: "#/components/responses/400BadRequest"
       tags:

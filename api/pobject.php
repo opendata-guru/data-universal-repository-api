@@ -35,7 +35,8 @@
 	$obj = [];
 	$obj['pid'] = providerGetPID($pObject);
 	$obj['sid'] = providerGetSID($pObject);
-	$obj['url'] = providerGetServerURL($pObject);
+	$obj['url'] = providerGetURL($pObject);
+	$obj['deeplink'] = providerGetDeepLink($pObject);
 
 	echo json_encode($obj);
 ?>

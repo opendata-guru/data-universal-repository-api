@@ -38,7 +38,8 @@
                       {
                         "pid": "p000",
                         "sid": "s78h2",
-                        "url": "https://data.europa.eu/api/hub/search/"
+                        "url": "https://data.europa.eu",
+                        "deeplink": "https://data.europa.eu/api/hub/search/"
                       }
                     ]
                   }
@@ -125,7 +126,8 @@
                     "value": {
                       "pid": "p000",
                       "sid": "s78h2",
-                      "url": "https://data.europa.eu/api/hub/search/"
+                      "url": "https://data.europa.eu",
+                      "deeplink": "https://data.europa.eu/api/hub/search/"
                     }
                   }
                 }

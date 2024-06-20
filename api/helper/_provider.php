@@ -26,7 +26,7 @@
 		if (!$error) {
 			foreach($loadedProviders as $provider) {
 				if (providerGetPID($provider) == $parameterPID) {
-					$url = providerGetServerURL($provider);
+					$url = providerGetDeepLink($provider);
 				}
 			}
 
@@ -47,11 +47,60 @@
 		);
 	}
 
+	function postPObject() {
+		include('helper/_link.php');
+
+		$parameterURL = trim(htmlspecialchars($_GET['url']));
+		$deepLink = '';
+
+		if ($parameterURL == '') {
+			header('HTTP/1.0 400 Bad Request');
+			echo json_encode((object) array(
+				'error' => 400,
+				'message' => 'Bad Request. Parameter \'url\' is not set',
+			));
+			exit;
+		} else {
+			$deepLink = $parameterURL;
+		}
+
+		$url = $deepLink;
+		$link = getLinkWithParam($deepLink);
+		if (is_string($link->url) && ($link->url !== '')) {
+			$url = $link->url;
+		}
+
+		$link = (object) array(
+			'error' => null,
+			'parameter' => $deepLink,
+			'system' => null,
+			'url' => $url,
+		);
+		$pObject = findPObjectByLink($link);
+		if ($pObject) {
+			return (object) array(
+				'pid' => providerGetPID($pObject),
+				'sid' => providerGetSID($pObject),
+				'url' => providerGetURL($pObject),
+				'deepLink' => providerGetDeepLink($pObject),
+			);
+		}
+
+		return (object) array(
+			'pid' => createPID(),
+			'sid' => '',
+			'url' => $url,
+			'deepLink' => $deepLink,
+			'NOT_SAVED_YET' => true,
+		);
+	}
+
 	function loadMappingFileProviders($file, &$mapping) {
-		$idServerURL = null;
+		$idDeepLink = null;
 		$idModified = null;
 		$idPID = null;
 		$idSID = null;
+		$idURL = null;
 
 		$lines = explode("\n", file_get_contents($file));
 		$mappingHeader = str_getcsv($lines[0], ',');
@@ -61,8 +110,10 @@
 				$idPID = $m;
 			} else if ($mappingHeader[$m] === 'sid') {
 				$idSID = $m;
-			} else if ($mappingHeader[$m] === 'serverurl') {
-				$idServerURL = $m;
+			} else if ($mappingHeader[$m] === 'url') {
+				$idURL = $m;
+			} else if ($mappingHeader[$m] === 'deeplink') {
+				$idDeepLink = $m;
 			} else if ($mappingHeader[$m] === 'modified') {
 				$idModified = $m;
 			}
@@ -75,7 +126,8 @@
 				$mapping[] = [
 					$arr[$idPID] ?: '',
 					$arr[$idSID] ?: '',
-					$arr[$idServerURL] ?: '',
+					$arr[$idURL] ?: '',
+					$arr[$idDeepLink] ?: '',
 					$arr[$idModified] ?: ''
 				];
 			}
@@ -113,22 +165,35 @@
 	function providerGetSID($provider) {
 		return $provider[1];
 	}
-	function providerGetServerURL($provider) {
+	function providerGetURL($provider) {
 		return $provider[2];
 	}
-	function providerGetModified($provider) {
+	function providerGetDeepLink($provider) {
 		return $provider[3];
+	}
+	function providerGetModified($provider) {
+		return $provider[4];
 	}
 
 	function findPObjectByLink($link) {
 		global $loadedProviders;
 
 		foreach($loadedProviders as $pObject) {
-			if (providerGetServerURL($pObject) == $link->url) {
-				return $pObject;
+			if ($link->url != '') {
+				if (providerGetURL($pObject) == $link->url) {
+					return $pObject;
+				}
+				if (providerGetDeepLink($pObject) == $link->url) {
+					return $pObject;
+				}
 			}
-			if (providerGetServerURL($pObject) == $link->parameter) {
-				return $pObject;
+			if ($link->parameter != '') {
+				if (providerGetURL($pObject) == $link->parameter) {
+					return $pObject;
+				}
+				if (providerGetDeepLink($pObject) == $link->parameter) {
+					return $pObject;
+				}
 			}
 		}
 
