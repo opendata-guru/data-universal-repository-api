@@ -34,25 +34,6 @@
 		return;
 	}
 
-	$dataSuppliers = [];
-
-	foreach($loadedSObjects as $sObject) {
-		$obj = [];
-		$obj['sid'] = $sObject['sid'];
-		$obj['title'] = [];
-		$obj['title']['de'] = $sObject['title@DE'];
-		$obj['title']['en'] = $sObject['title@EN'];
-		$obj['type'] = $sObject['type'];
-		$obj['sameAs'] = [];
-		$obj['sameAs']['rs'] = $sObject['sameAsRS'];
-		$obj['sameAs']['wikidata'] = $sObject['sameAsWikidata'];
-		$obj['partOf'] = [];
-		$obj['partOf']['rs'] = $sObject['partOfRS'];
-		$obj['partOf']['wikidata'] = $sObject['partOfWikidata'];
-
-		$dataSuppliers[] = $obj;
-	}
-
 	header('HTTP/1.0 400 Bad Request');
-	echo json_encode($dataSuppliers);
+	echo json_encode($loadedSObjects);
 ?>

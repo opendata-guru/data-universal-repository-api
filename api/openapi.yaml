@@ -166,11 +166,11 @@ paths:
                         en: Europe
                       type: root
                       sameAs:
-                        rs: ''
-                        wikidata: Q458
+                        wikidata: http://www.wikidata.org/entity/Q458
                       partOf:
-                        rs: ''
                         wikidata: ''
+                      geocoding:
+                        germanRegionalKey: ''
         '400':
           $ref: "#/components/responses/400BadRequest"
       tags:
