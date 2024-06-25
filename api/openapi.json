@@ -56,7 +56,7 @@
         ]
       },
       "post": {
-        "summary": "Change the list of known portals",
+        "summary": "Add a known portal",
         "description": "Unfortunately, the list of portals cannot be changed here. Please create an issue on GitHub at https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data",
         "operationId": "postPObjects",
         "security": [
@@ -281,7 +281,7 @@
         ]
       },
       "post": {
-        "summary": "Change the list of known suppliers",
+        "summary": "Add a known supplier",
         "description": "Unfortunately, the list of suppliers cannot be changed here. Please create an issue on GitHub at https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data",
         "operationId": "postSObjects",
         "security": [
@@ -291,7 +291,7 @@
         ],
         "parameters": [
           {
-            "name": "wikidata",
+            "name": "type",
             "in": "query",
             "description": "tbd.",
             "required": true,
@@ -300,6 +300,46 @@
               "type": "string"
             },
             "examples": {
+              "municipality": {
+                "value": "municipality",
+                "summary": "Municipality"
+              }
+            }
+          },
+          {
+            "name": "sameaswikidata",
+            "in": "query",
+            "description": "Same as Wikidata ... tbd.",
+            "required": false,
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "berlin": {
+                "value": "https://www.wikidata.org/entity/Q64",
+                "summary": "Wikidata path to Berlin"
+              },
+              "berlin-qid": {
+                "value": "Q64",
+                "summary": "Only the qid of Berlin"
+              }
+            }
+          },
+          {
+            "name": "partofwikidata",
+            "in": "query",
+            "description": "Part of Wikidata ... tbd.",
+            "required": false,
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "empty": {
+                "value": null,
+                "summary": "Empty value"
+              },
               "berlin": {
                 "value": "https://www.wikidata.org/entity/Q64",
                 "summary": "Wikidata path to Berlin"

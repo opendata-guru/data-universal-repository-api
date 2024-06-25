@@ -1,6 +1,7 @@
 <?php
 	$loadedSObjects = [];
 	$fileSObjects = __DIR__ . '/../../api-data/suppliers.csv';
+	$allowedValuesOfParameterType = array('root','municipality');
 
 	loadMappingFileSObjects($loadedSObjects);
 	$hashSObjects = md5(serialize($loadedSObjects));
@@ -22,16 +23,8 @@
 		return $data;
 	}
 
-	function postSObject() {
-		global $loadedProviders;
-
-		$parameterWikidata = htmlspecialchars($_GET['wikidata']);
-
-		$basePath = 'https://query.wikidata.org/sparql';
-
-		$qID = end(explode('/', $parameterWikidata));
-
-        $sparqlQuery = 'SELECT ' .
+	function getWikiQuery($qID) {
+        return 'SELECT ' .
             '?item ' .
             '(SAMPLE(?labelDE) as ?labelDE) ' .
             '(SAMPLE(?labelEN) as ?labelEN) ' .
@@ -56,23 +49,69 @@
             '  BIND(IF( BOUND( ?germanRegionalKey), ?germanRegionalKey, "") AS ?germanRegionalKey)' .
             '}' .
             'GROUP BY ?item';
+	}
 
-        $url = $basePath . '?query=' . rawurlencode($sparqlQuery);
-		$data = get_contents_sparql($url);
-		$values = json_decode($data)->results->bindings[0];
+	function postSObject() {
+		global $loadedProviders;
+		global $allowedValuesOfParameterType;
+
+		$parameterType = trim(htmlspecialchars($_GET['type']));
+		$parameterSameAsWikidata = trim(htmlspecialchars($_GET['sameaswikidata']));
+		$parameterPartOfWikidata = trim(htmlspecialchars($_GET['partofwikidata']));
+
+		if (($parameterSameAsWikidata == '') && ($parameterPartOfWikidata == '')) {
+			header('HTTP/1.0 400 Bad Request');
+			echo json_encode((object) array(
+				'error' => 400,
+				'message' => 'Bad Request. Parameter \'sameaswikidata\' and \'partofwikidata\' are not set',
+			));
+			exit;
+		}
+
+		$basePath = 'https://query.wikidata.org/sparql';
+		$qIDsameAs = '';
+		$qIDpartOf = '';
+		$valuesSameAs = null;
+		$valuesPartOf = null;
+
+		if ($parameterSameAsWikidata != '') {
+			$qIDsameAs = end(explode('/', $parameterSameAsWikidata));
+			$url = $basePath . '?query=' . rawurlencode(getWikiQuery($qIDsameAs));
+			$data = get_contents_sparql($url);
+			$valuesSameAs = json_decode($data)->results->bindings[0];
+		}
+
+		if ($parameterPartOfWikidata != '') {
+			$qIDpartOf = end(explode('/', $parameterPartOfWikidata));
+			$url = $basePath . '?query=' . rawurlencode(getWikiQuery($qIDpartOf));
+			$data = get_contents_sparql($url);
+			$valuesPartOf = json_decode($data)->results->bindings[0];
+		}
+
+		if (!in_array($parameterType, $allowedValuesOfParameterType)) {
+			header('HTTP/1.0 400 Bad Request');
+			echo json_encode((object) array(
+				'error' => 400,
+				'message' => 'Bad Request. Value of parameter \'type\' not allowed',
+			));
+			exit;
+		}
 
 		return (object) array(
 			'sid' => createSID(),
 			'title' => array (
-				'de' => $values->labelDE->value,
-				'en' => $values->labelEN->value,
+				'de' => !is_null($valuesSameAs) ? $valuesSameAs->labelDE->value : $valuesPartOf->labelDE->value,
+				'en' => !is_null($valuesSameAs) ? $valuesSameAs->labelEN->value : $valuesPartOf->labelEN->value,
 			),
-			'type' => null,
+			'type' => $parameterType,
 			'sameAs' => array (
-				'wikidata' => $values->item->value,
+				'wikidata' => !is_null($valuesSameAs) ? $valuesSameAs->item->value : '',
+			),
+			'partOf' => array (
+				'wikidata' => !is_null($valuesPartOf) ? $valuesPartOf->item->value : '',
 			),
 			'geocoding' => array (
-				'germanRegionalKey' => $values->germanRegionalKey->value,
+				'germanRegionalKey' => !is_null($valuesSameAs) ? $valuesSameAs->germanRegionalKey->value : $valuesPartOf->germanRegionalKey->value,
 			),
 		);
 	}
