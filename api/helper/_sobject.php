@@ -1,7 +1,18 @@
 <?php
 	$loadedSObjects = [];
 	$fileSObjects = __DIR__ . '/../../api-data/suppliers.csv';
-	$allowedValuesOfParameterType = array('root','municipality');
+	$allowedValuesOfParameterType = array(
+		'root',
+		'country',
+		'federal', 'federalPortal', 'federalAgency', 'federalCooperation',
+		'state', 'stateAgency',
+		'governmentRegion',
+		'regionalNetwork', 'regionalPortal',
+		'district', 'districtPortal', 'districtAgency',
+		'collectiveMunicipality',
+		'municipality', 'municipalityPortal', 'municipalityAgency',
+		'municipality+state',
+	);
 
 	loadMappingFileSObjects($loadedSObjects);
 	$hashSObjects = md5(serialize($loadedSObjects));
@@ -52,7 +63,6 @@
 	}
 
 	function postSObject() {
-		global $loadedProviders;
 		global $allowedValuesOfParameterType;
 
 		$parameterType = trim(htmlspecialchars($_GET['type']));
@@ -67,27 +77,6 @@
 			));
 			exit;
 		}
-
-		$basePath = 'https://query.wikidata.org/sparql';
-		$qIDsameAs = '';
-		$qIDpartOf = '';
-		$valuesSameAs = null;
-		$valuesPartOf = null;
-
-		if ($parameterSameAsWikidata != '') {
-			$qIDsameAs = end(explode('/', $parameterSameAsWikidata));
-			$url = $basePath . '?query=' . rawurlencode(getWikiQuery($qIDsameAs));
-			$data = get_contents_sparql($url);
-			$valuesSameAs = json_decode($data)->results->bindings[0];
-		}
-
-		if ($parameterPartOfWikidata != '') {
-			$qIDpartOf = end(explode('/', $parameterPartOfWikidata));
-			$url = $basePath . '?query=' . rawurlencode(getWikiQuery($qIDpartOf));
-			$data = get_contents_sparql($url);
-			$valuesPartOf = json_decode($data)->results->bindings[0];
-		}
-
 		if (!in_array($parameterType, $allowedValuesOfParameterType)) {
 			header('HTTP/1.0 400 Bad Request');
 			echo json_encode((object) array(
@@ -97,32 +86,47 @@
 			exit;
 		}
 
-		return (object) array(
-			'sid' => createSID(),
-			'title' => array (
-				'de' => !is_null($valuesSameAs) ? $valuesSameAs->labelDE->value : $valuesPartOf->labelDE->value,
-				'en' => !is_null($valuesSameAs) ? $valuesSameAs->labelEN->value : $valuesPartOf->labelEN->value,
-			),
-			'type' => $parameterType,
-			'sameAs' => array (
-				'wikidata' => !is_null($valuesSameAs) ? $valuesSameAs->item->value : '',
-			),
-			'partOf' => array (
-				'wikidata' => !is_null($valuesPartOf) ? $valuesPartOf->item->value : '',
-			),
-			'geocoding' => array (
-				'germanRegionalKey' => !is_null($valuesSameAs) ? $valuesSameAs->germanRegionalKey->value : $valuesPartOf->germanRegionalKey->value,
-			),
-		);
+		$basePath = 'https://query.wikidata.org/sparql';
+		$qIDsameAs = '';
+		$qIDpartOf = '';
+		$valuesSameAs = null;
+		$valuesPartOf = null;
+
+		$sObject = findSObjectByWikidata($parameterSameAsWikidata, $parameterPartOfWikidata);
+		if (!$sObject) {
+			if ($parameterSameAsWikidata != '') {
+				$qIDsameAs = end(explode('/', $parameterSameAsWikidata));
+				$url = $basePath . '?query=' . rawurlencode(getWikiQuery($qIDsameAs));
+				$data = get_contents_sparql($url);
+				$valuesSameAs = json_decode($data)->results->bindings[0];
+			}
+
+			if ($parameterPartOfWikidata != '') {
+				$qIDpartOf = end(explode('/', $parameterPartOfWikidata));
+				$url = $basePath . '?query=' . rawurlencode(getWikiQuery($qIDpartOf));
+				$data = get_contents_sparql($url);
+				$valuesPartOf = json_decode($data)->results->bindings[0];
+			}
+
+			$labelDE = !is_null($valuesSameAs) ? $valuesSameAs->labelDE->value : $valuesPartOf->labelDE->value;
+			$labelEN = !is_null($valuesSameAs) ? $valuesSameAs->labelEN->value : $valuesPartOf->labelEN->value;
+			$valuesSameAs_ = !is_null($valuesSameAs) ? $valuesSameAs->item->value : '';
+			$valuesPartOf_ = !is_null($valuesPartOf) ? $valuesPartOf->item->value : '';
+			$germanRegionalKey = !is_null($valuesSameAs) ? $valuesSameAs->germanRegionalKey->value : $valuesPartOf->germanRegionalKey->value;
+
+			$sObject = pushSObject($labelDE, $labelEN, $parameterType, $valuesSameAs_, $valuesPartOf_, $germanRegionalKey);
+		}
+		saveMappingFileSObjects();
+
+		return $sObject;
 	}
 
 	function loadMappingFileSObjects(&$mapping) {
 		global $fileSObjects;
 
+		$idGermanRegionalKey = null;
 		$idPartOfWikidata = null;
 		$idSameAsWikidata = null;
-		$idPartOfRS = null;
-		$idSameAsRS = null;
 		$idTitleDE = null;
 		$idTitleEN = null;
 		$idType = null;
@@ -142,12 +146,10 @@
 				$idType = $m;
 			} else if ($mappingHeader[$m] === 'sameAsWikidata') {
 				$idSameAsWikidata = $m;
-			} else if ($mappingHeader[$m] === 'sameAsRS') {
-				$idSameAsRS = $m;
 			} else if ($mappingHeader[$m] === 'partOfWikidata') {
 				$idPartOfWikidata = $m;
-			} else if ($mappingHeader[$m] === 'partOfRS') {
-				$idPartOfRS = $m;
+			} else if ($mappingHeader[$m] === 'germanRegionalKey') {
+				$idGermanRegionalKey = $m;
 			}
 		}
 
@@ -156,22 +158,28 @@
 			if ($line != '') {
 				$arr = str_getcsv($line, ',');
 
-				$sObject = [];
-				$sObject['sid'] = $arr[$idSID] ?: '';
-				$sObject['title@EN'] = $arr[$idTitleEN] ?: '';
-				$sObject['title@DE'] = $arr[$idTitleDE] ?: '';
-				$sObject['type'] = $arr[$idType] ?: '';
-				$sObject['sameAsWikidata'] = $arr[$idSameAsWikidata] ?: '';
-				$sObject['sameAsRS'] = $arr[$idSameAsRS] ?: '';
-				$sObject['partOfWikidata'] = $arr[$idPartOfWikidata] ?: '';
-				$sObject['partOfRS'] = $arr[$idPartOfRS] ?: '';
-
-				$mapping[] = $sObject;
+				$mapping[] = (object) array(
+					'sid' => $arr[$idSID] ?: '',
+					'title' => array (
+						'de' => $arr[$idTitleDE] ?: '',
+						'en' => $arr[$idTitleEN] ?: '',
+					),
+					'type' => $arr[$idType] ?: '',
+					'sameAs' => array (
+						'wikidata' => $arr[$idSameAsWikidata] ?: '',
+					),
+					'partOf' => array (
+						'wikidata' => $arr[$idPartOfWikidata] ?: '',
+					),
+					'geocoding' => array (
+						'germanRegionalKey' => $arr[$idGermanRegionalKey] ?: '',
+					),
+				);
 			}
 		}
 	}
 
-/*	function saveMappingFileSObjects() {
+	function saveMappingFileSObjects() {
 		global $loadedSObjects;
 		global $hashSObjects;
 		global $fileSObjects;
@@ -185,30 +193,52 @@
 				'title@DE',
 				'type',
 				'sameAsWikidata',
-				'sameAsRS',
 				'partOfWikidata',
-				'partOfRS'
+				'germanRegionalKey'
 			];
 
 			$fp = fopen($fileSObjects, 'wb');
 			fputcsv($fp, $header, ',');
-			foreach ($loadedSObjects as $line) {
+			foreach ($loadedSObjects as $sObject) {
 				fputcsv($fp, [
-					$line['sid'],
-					$line['title@EN'],
-					$line['title@DE'],
-					$line['type'],
-					$line['sameAsWikidata'],
-					$line['sameAsRS'],
-					$line['partOfWikidata'],
-					$line['partOfRS']
+					$sObject->sid,
+					$sObject->title['en'],
+					$sObject->title['de'],
+					$sObject->type,
+					$sObject->sameAs['wikidata'],
+					$sObject->partOf['wikidata'],
+					$sObject->geocoding['germanRegionalKey']
 				], ',');
 			}
 			fclose($fp);
 
 			$hashSObjects = $newHash;
 		}
-	}*/
+	}
+
+	function pushSObject($labelDE, $labelEN, $parameterType, $valuesSameAs, $valuesPartOf, $germanRegionalKey) {
+		global $loadedSObjects;
+
+		$loadedSObjects[] = (object) array(
+			'sid' => createSID(),
+			'title' => array (
+				'de' => $labelDE,
+				'en' => $labelEN,
+			),
+			'type' => $parameterType,
+			'sameAs' => array (
+				'wikidata' => $valuesSameAs,
+			),
+			'partOf' => array (
+				'wikidata' => $valuesPartOf,
+			),
+			'geocoding' => array (
+				'germanRegionalKey' => $germanRegionalKey,
+			),
+		);
+
+		return end($loadedSObjects);
+	}
 
 	function createSID() {
 		global $loadedSObjects;
@@ -224,7 +254,7 @@
 
 		$usedSIDs = [];
 		foreach($loadedSObjects as $sObject) {
-			$usedSIDs[] = $sObject['sid'];
+			$usedSIDs[] = $sObject->sid;
 		}
 		$usedSIDs = array_filter($usedSIDs);
 
@@ -239,7 +269,7 @@
 		global $loadedSObjects;
 
 		foreach($loadedSObjects as $sObject) {
-			if (($pid === $sObject['pid']) && ($identifier === $sObject['identifier'])) {
+			if (($pid === $sObject->pid) && ($identifier === $sObject->identifier)) {
 				return $sObject;
 			}
 		}
@@ -247,12 +277,37 @@
 		return null;
 	}*/
 
+	function findSObjectByWikidata($sameAsWikidata, $partOfWikidata) {
+		global $loadedSObjects;
+
+		if (($sameAsWikidata == '') && ($partOfWikidata == '')) {
+			return null;
+		}
+
+		$qIDsameAs = end(explode('/', $sameAsWikidata));
+		$qIDpartOf = end(explode('/', $partOfWikidata));
+
+		foreach($loadedSObjects as $sObject) {
+			if ($sameAsWikidata != '') {
+				if ($qIDsameAs == end(explode('/', $sObject->sameAs['wikidata']))) {
+					return $sObject;
+				}
+			} else {
+				if ($qIDpartOf == end(explode('/', $sObject->partOf['wikidata']))) {
+					return $sObject;
+				}
+			}
+		}
+
+		return null;
+	}
+
 /*	function updateSObject(&$obj) {
 		global $loadedSObjects;
 
 		foreach($loadedSObjects as &$sObject) {
-			if (($obj['pid'] === $sObject['pid']) && ($obj['identifier'] === $sObject['identifier'])) {
-				$sObject['lastseen'] = date('Y-m-d');
+			if (($obj['pid'] === $sObject->pid) && ($obj['identifier'] === $sObject->identifier)) {
+				$sObject->lastseen = date('Y-m-d');
 				return;
 			}
 		}
