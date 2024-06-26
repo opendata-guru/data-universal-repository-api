@@ -392,8 +392,24 @@
             "content": {
               "application/json": {
                 "examples": {
-                  "sSample": {
-                    "value": "tbd."
+                  "europeSample": {
+                    "value": {
+                      "sid": "sYyj9",
+                      "title": {
+                        "de": "Europa",
+                        "en": "Europe"
+                      },
+                      "type": "root",
+                      "sameAs": {
+                        "wikidata": "http://www.wikidata.org/entity/Q458"
+                      },
+                      "partOf": {
+                        "wikidata": ""
+                      },
+                      "geocoding": {
+                        "germanRegionalKey": ""
+                      }
+                    }
                   }
                 }
               }
@@ -866,7 +882,7 @@
       "pidPathParam": {
         "name": "pID",
         "in": "path",
-        "description": "tbd. + 'random'",
+        "description": "The unique pID of the provider must be specified. Alternatively, the value 'random' can be specified to obtain a random provider.",
         "required": true,
         "allowEmptyValue": false,
         "schema": {
@@ -886,7 +902,7 @@
       "sidPathParam": {
         "name": "sID",
         "in": "path",
-        "description": "tbd. + 'random'",
+        "description": "The unique sID of the supplier must be specified. Alternatively, the value 'random' can be specified to get a random supplier.",
         "required": true,
         "allowEmptyValue": false,
         "schema": {
