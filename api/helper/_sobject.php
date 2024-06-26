@@ -62,6 +62,46 @@
             'GROUP BY ?item';
 	}
 
+	function getSObject() {
+		global $loadedSObjects;
+
+		$parameterSID = htmlspecialchars($_GET['sid']);
+		$error = null;
+		$sObject = null;
+
+		if ($parameterSID == '') {
+			$error = (object) array(
+				'error' => 400,
+				'header' => 'HTTP/1.0 400 Bad Request',
+				'message' => 'Bad Request. Path parameter for \'sID\' is not set',
+				'parameter' => $parameterSID,
+			);
+		}
+
+		if (!$error) {
+			foreach($loadedSObjects as $object) {
+				if ($object->sid == $parameterSID) {
+					$sObject = $object;
+				}
+			}
+
+			if (is_null($sObject)) {
+				$error = (object) array(
+					'error' => 400,
+					'header' => 'HTTP/1.0 400 Bad Request',
+					'message' => 'Bad Request. Unknown ID in the \'sID\' path parameter.',
+					'parameter' => $parameterSID,
+				);
+			}
+		}
+
+		return (object) array(
+			'error' => $error,
+			'parameter' => $parameterSID,
+			'sObject' => $sObject,
+		);
+	}
+
 	function postSObject() {
 		global $allowedValuesOfParameterType;
 
@@ -265,11 +305,11 @@
 		return $sid;
 	}
 
-/*	function findSObject($pid, $identifier) {
+/*	function findSObject($sid, $identifier) {
 		global $loadedSObjects;
 
 		foreach($loadedSObjects as $sObject) {
-			if (($pid === $sObject->pid) && ($identifier === $sObject->identifier)) {
+			if (($sid === $sObject->sid) && ($identifier === $sObject->identifier)) {
 				return $sObject;
 			}
 		}
@@ -306,7 +346,7 @@
 		global $loadedSObjects;
 
 		foreach($loadedSObjects as &$sObject) {
-			if (($obj['pid'] === $sObject->pid) && ($obj['identifier'] === $sObject->identifier)) {
+			if (($obj['sid'] === $sObject->sid) && ($obj['identifier'] === $sObject->identifier)) {
 				$sObject->lastseen = date('Y-m-d');
 				return;
 			}
