@@ -74,7 +74,7 @@ paths:
       description: The information about the specified portal is returned. Alternatively, the value “random” can be specified to receive information about a random portal.
       operationId: getPObject
       parameters:
-        - $ref: "#/components/parameters/pidPathParam"
+        - $ref: "#/components/parameters/pidPathRandomParam"
       responses:
         '200':
           description: Example of a successful answer
@@ -91,12 +91,35 @@ paths:
           $ref: "#/components/responses/400BadRequest"
       tags:
         - generally
+    post:
+      summary: Changing the data of a portal
+      description: Unfortunately, the portal data cannot be changed here. Please create an issue on GitHub at https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data.
+      operationId: postPObject
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/pidPathParam"
+        - $ref: "#/components/parameters/sidParam"
+      responses:
+        '403':
+          description: Example of an error response
+          content:
+            application/json:
+              examples:
+                badRequest:
+                  value: 
+                    error: 403
+                    message: Forbidden. Please create an issue on GitHub for your change request
+                    createIssue: https://github.com/opendata-guru/data-universal-repository-api/issues/new
+                    repository: https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data
+      tags:
+        - generally
   /p/{pID}/l:
     get:
       summary: tbd.
       description: + Get a list of all linked ...
       parameters:
-        - $ref: "#/components/parameters/pidPathParam"
+        - $ref: "#/components/parameters/pidPathRandomParam"
       responses:
         '200':
           description: Example of a successful answer
@@ -114,7 +137,7 @@ paths:
     get:
       summary: tbd.
       parameters:
-        - $ref: "#/components/parameters/pidPathParam"
+        - $ref: "#/components/parameters/pidPathRandomParam"
       responses:
         '200':
           description: Example of a successful answer
@@ -132,7 +155,7 @@ paths:
     get:
       summary: tbd.
       parameters:
-        - $ref: "#/components/parameters/pidPathParam"
+        - $ref: "#/components/parameters/pidPathRandomParam"
         - $ref: "#/components/parameters/datePathParam"
       responses:
         '200':
@@ -568,18 +591,45 @@ components:
     pidPathParam:
       name: pID
       in: path
+      description: The unique pID of the provider must be specified.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      examples:
+        root:
+          value: p000
+          summary: European data
+    pidPathRandomParam:
+      name: pID
+      in: path
       description: The unique pID of the provider must be specified. Alternatively, the value 'random' can be specified to obtain a random provider.
       required: true
       allowEmptyValue: false
       schema:
         type: string
       examples:
-        empty:
+        random:
           value: random
           summary: Random pID
         root:
           value: p000
           summary: European data
+    sidParam:
+      name: sID
+      in: query
+      description: The supplier sID. You must provide an existing sID.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      examples:
+        empty:
+          value: ''
+          summary: Empty value
+        root:
+          value: sYyj9
+          summary: Europa
     sidPathParam:
       name: sID
       in: path

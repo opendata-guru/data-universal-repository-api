@@ -49,6 +49,42 @@
 		);
 	}
 
+	function postPID() {
+		global $loadedProviders;
+
+		$parameterPID = htmlspecialchars($_GET['pid']);
+		$error = null;
+		$url = '';
+
+		if ($parameterPID == '') {
+			$error = (object) array(
+				'error' => 400,
+				'header' => 'HTTP/1.0 400 Bad Request',
+				'message' => 'Bad Request. Path parameter \'pID\' is not set',
+				'parameter' => $parameterPID,
+			);
+		}
+
+		if (!$error) {
+			$pObject = findPObjectByPID($parameterPID);
+
+			if (is_null($pObject)) {
+				$error = (object) array(
+					'error' => 400,
+					'header' => 'HTTP/1.0 400 Bad Request',
+					'message' => 'Bad Request. Unknown ID in the \'pID\' path parameter.',
+					'parameter' => $parameterPID,
+				);
+			}
+		}
+
+		return (object) array(
+			'error' => $error,
+			'parameter' => $parameterPID,
+			'pObject' => $pObject,
+		);
+	}
+
 	function postPObject() {
 		include('helper/_link.php');
 
