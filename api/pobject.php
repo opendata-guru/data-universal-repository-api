@@ -25,10 +25,10 @@
 				$pObject = $provider->pObject;
 			}
 		} else {
-			header('HTTP/1.0 403 Forbidden');
+			header('HTTP/1.0 401 Unauthorized');
 			echo json_encode((object) array(
-				'error' => 403,
-				'message' => 'Forbidden. Please create an issue on GitHub for your change request',
+				'error' => 401,
+				'message' => 'Unauthorized. Please create an issue on GitHub for your change request',
 				'createIssue' => 'https://github.com/opendata-guru/data-universal-repository-api/issues/new',
 				'repository' => 'https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data',
 			));

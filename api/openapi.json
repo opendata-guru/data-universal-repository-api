@@ -83,22 +83,8 @@
           }
         ],
         "responses": {
-          "403": {
-            "description": "Example of an error response",
-            "content": {
-              "application/json": {
-                "examples": {
-                  "badRequest": {
-                    "value": {
-                      "error": 403,
-                      "message": "Forbidden. Please create an issue on GitHub for your change request",
-                      "createIssue": "https://github.com/opendata-guru/data-universal-repository-api/issues/new",
-                      "repository": "https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data"
-                    }
-                  }
-                }
-              }
-            }
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
           }
         },
         "tags": [
@@ -160,22 +146,8 @@
           }
         ],
         "responses": {
-          "403": {
-            "description": "Example of an error response",
-            "content": {
-              "application/json": {
-                "examples": {
-                  "badRequest": {
-                    "value": {
-                      "error": 403,
-                      "message": "Forbidden. Please create an issue on GitHub for your change request",
-                      "createIssue": "https://github.com/opendata-guru/data-universal-repository-api/issues/new",
-                      "repository": "https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data"
-                    }
-                  }
-                }
-              }
-            }
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
           }
         },
         "tags": [
@@ -393,22 +365,8 @@
           }
         ],
         "responses": {
-          "403": {
-            "description": "Example of an error response",
-            "content": {
-              "application/json": {
-                "examples": {
-                  "badRequest": {
-                    "value": {
-                      "error": 403,
-                      "message": "Forbidden. Please create an issue on GitHub for your change request",
-                      "createIssue": "https://github.com/opendata-guru/data-universal-repository-api/issues/new",
-                      "repository": "https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data"
-                    }
-                  }
-                }
-              }
-            }
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
           }
         },
         "tags": [
@@ -998,7 +956,7 @@
     },
     "responses": {
       "400BadRequest": {
-        "description": "Example of an error response",
+        "description": "Bad Request Error",
         "content": {
           "application/json": {
             "examples": {
@@ -1012,8 +970,25 @@
           }
         }
       },
+      "401Unauthorized": {
+        "description": "Unauthorized Error",
+        "content": {
+          "application/json": {
+            "examples": {
+              "unauthorized": {
+                "value": {
+                  "error": 401,
+                  "message": "Unauthorized. Please create an issue on GitHub for your change request",
+                  "createIssue": "https://github.com/opendata-guru/data-universal-repository-api/issues/new",
+                  "repository": "https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data"
+                }
+              }
+            }
+          }
+        }
+      },
       "404NotFound": {
-        "description": "Not found error",
+        "description": "Not Found Error",
         "content": {
           "application/json": {
             "examples": {
