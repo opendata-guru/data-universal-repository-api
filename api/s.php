@@ -34,6 +34,5 @@
 		return;
 	}
 
-	header('HTTP/1.0 400 Bad Request');
 	echo json_encode($loadedSObjects);
 ?>
