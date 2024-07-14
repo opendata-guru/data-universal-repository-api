@@ -320,48 +320,10 @@
             }
           },
           {
-            "name": "sameaswikidata",
-            "in": "query",
-            "description": "Same as Wikidata ... tbd.",
-            "required": false,
-            "allowEmptyValue": true,
-            "schema": {
-              "type": "string"
-            },
-            "examples": {
-              "berlin": {
-                "value": "https://www.wikidata.org/entity/Q64",
-                "summary": "Wikidata path to Berlin"
-              },
-              "berlin-qid": {
-                "value": "Q64",
-                "summary": "Only the qid of Berlin"
-              }
-            }
+            "$ref": "#/components/parameters/sameaswikidataParam"
           },
           {
-            "name": "partofwikidata",
-            "in": "query",
-            "description": "Part of Wikidata ... tbd.",
-            "required": false,
-            "allowEmptyValue": true,
-            "schema": {
-              "type": "string"
-            },
-            "examples": {
-              "empty": {
-                "value": null,
-                "summary": "Empty value"
-              },
-              "berlin": {
-                "value": "https://www.wikidata.org/entity/Q64",
-                "summary": "Wikidata path to Berlin"
-              },
-              "berlin-qid": {
-                "value": "Q64",
-                "summary": "Only the qid of Berlin"
-              }
-            }
+            "$ref": "#/components/parameters/partofwikidataParam"
           }
         ],
         "responses": {
@@ -381,7 +343,7 @@
         "operationId": "getSObject",
         "parameters": [
           {
-            "$ref": "#/components/parameters/sidPathParam"
+            "$ref": "#/components/parameters/sidPathRandomParam"
           }
         ],
         "responses": {
@@ -415,6 +377,35 @@
           },
           "400": {
             "$ref": "#/components/responses/400BadRequest"
+          }
+        },
+        "tags": [
+          "generally"
+        ]
+      },
+      "post": {
+        "summary": "Changing the data of a supplier",
+        "description": "Unfortunately, the supplier data cannot be changed here. Please create an issue on GitHub at https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data.",
+        "operationId": "postSObject",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/sidPathParam"
+          },
+          {
+            "$ref": "#/components/parameters/sameaswikidataParam"
+          },
+          {
+            "$ref": "#/components/parameters/partofwikidataParam"
+          }
+        ],
+        "responses": {
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
           }
         },
         "tags": [
@@ -857,6 +848,30 @@
           }
         ]
       },
+      "partofwikidataParam": {
+        "name": "partofwikidata",
+        "in": "query",
+        "description": "The Wikidata QID or the URL to the Wikidata object as a part-of parameter.",
+        "required": false,
+        "allowEmptyValue": true,
+        "schema": {
+          "type": "string"
+        },
+        "examples": {
+          "empty": {
+            "value": null,
+            "summary": "Empty value"
+          },
+          "berlin": {
+            "value": "https://www.wikidata.org/entity/Q64",
+            "summary": "Wikidata path to Berlin"
+          },
+          "berlin-qid": {
+            "value": "Q64",
+            "summary": "Only the qid of Berlin"
+          }
+        }
+      },
       "pidParam": {
         "name": "pID",
         "in": "query",
@@ -913,6 +928,30 @@
           }
         }
       },
+      "sameaswikidataParam": {
+        "name": "sameaswikidata",
+        "in": "query",
+        "description": "The Wikidata QID or the URL to the Wikidata object as a same-as parameter.",
+        "required": false,
+        "allowEmptyValue": true,
+        "schema": {
+          "type": "string"
+        },
+        "examples": {
+          "empty": {
+            "value": null,
+            "summary": "Empty value"
+          },
+          "berlin": {
+            "value": "https://www.wikidata.org/entity/Q64",
+            "summary": "Wikidata path to Berlin"
+          },
+          "berlin-qid": {
+            "value": "Q64",
+            "summary": "Only the qid of Berlin"
+          }
+        }
+      },
       "sidParam": {
         "name": "sID",
         "in": "query",
@@ -934,6 +973,22 @@
         }
       },
       "sidPathParam": {
+        "name": "sID",
+        "in": "path",
+        "description": "The unique sID of the supplier must be specified.",
+        "required": true,
+        "allowEmptyValue": false,
+        "schema": {
+          "type": "string"
+        },
+        "examples": {
+          "root": {
+            "value": "sYyj9",
+            "summary": "Europa"
+          }
+        }
+      },
+      "sidPathRandomParam": {
         "name": "sID",
         "in": "path",
         "description": "The unique sID of the supplier must be specified. Alternatively, the value 'random' can be specified to get a random supplier.",

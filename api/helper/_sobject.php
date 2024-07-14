@@ -102,6 +102,40 @@
 		);
 	}
 
+	function postSID() {
+		$parameterSID = htmlspecialchars($_GET['sid']);
+		$error = null;
+		$url = '';
+
+		if ($parameterSID == '') {
+			$error = (object) array(
+				'error' => 400,
+				'header' => 'HTTP/1.0 400 Bad Request',
+				'message' => 'Bad Request. Path parameter \'sID\' is not set',
+				'parameter' => $parameterSID,
+			);
+		}
+
+		if (!$error) {
+			$sObject = findSObject($parameterSID);
+
+			if (is_null($sObject)) {
+				$error = (object) array(
+					'error' => 400,
+					'header' => 'HTTP/1.0 400 Bad Request',
+					'message' => 'Bad Request. Unknown ID in the \'sID\' path parameter.',
+					'parameter' => $parameterSID,
+				);
+			}
+		}
+
+		return (object) array(
+			'error' => $error,
+			'parameter' => $parameterSID,
+			'sObject' => $sObject,
+		);
+	}
+
 	function postSObject() {
 		global $allowedValuesOfParameterType;
 
