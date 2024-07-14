@@ -544,12 +544,12 @@ components:
         empty:
           value: 
           summary: Empty value
-        berlin:
-          value: https://www.wikidata.org/entity/Q64
-          summary: Wikidata path to Berlin
-        berlin-qid:
-          value: Q64
-          summary: Only the qid of Berlin
+        europe:
+          value: https://www.wikidata.org/entity/Q458
+          summary: Wikidata path to European Union
+        europe-qid:
+          value: Q458
+          summary: Only the qid of European Union
     pidParam:
       name: pID
       in: query
@@ -604,12 +604,12 @@ components:
         empty:
           value: 
           summary: Empty value
-        berlin:
-          value: https://www.wikidata.org/entity/Q64
-          summary: Wikidata path to Berlin
-        berlin-qid:
-          value: Q64
-          summary: Only the qid of Berlin
+        europe:
+          value: https://www.wikidata.org/entity/Q458
+          summary: Wikidata path to European Union
+        europe-qid:
+          value: Q458
+          summary: Only the qid of European Union
     sidParam:
       name: sID
       in: query

@@ -862,13 +862,13 @@
             "value": null,
             "summary": "Empty value"
           },
-          "berlin": {
-            "value": "https://www.wikidata.org/entity/Q64",
-            "summary": "Wikidata path to Berlin"
+          "europe": {
+            "value": "https://www.wikidata.org/entity/Q458",
+            "summary": "Wikidata path to European Union"
           },
-          "berlin-qid": {
-            "value": "Q64",
-            "summary": "Only the qid of Berlin"
+          "europe-qid": {
+            "value": "Q458",
+            "summary": "Only the qid of European Union"
           }
         }
       },
@@ -942,13 +942,13 @@
             "value": null,
             "summary": "Empty value"
           },
-          "berlin": {
-            "value": "https://www.wikidata.org/entity/Q64",
-            "summary": "Wikidata path to Berlin"
+          "europe": {
+            "value": "https://www.wikidata.org/entity/Q458",
+            "summary": "Wikidata path to European Union"
           },
-          "berlin-qid": {
-            "value": "Q64",
-            "summary": "Only the qid of Berlin"
+          "europe-qid": {
+            "value": "Q458",
+            "summary": "Only the qid of European Union"
           }
         }
       },

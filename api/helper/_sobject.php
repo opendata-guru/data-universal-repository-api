@@ -129,6 +129,43 @@
 			}
 		}
 
+		if (!$error) {
+			$parameterSameAsWikidata = trim(htmlspecialchars($_GET['sameaswikidata']));
+			$parameterPartOfWikidata = trim(htmlspecialchars($_GET['partofwikidata']));
+
+			$basePath = 'https://query.wikidata.org/sparql';
+			$qIDsameAs = '';
+			$qIDpartOf = '';
+			$valuesSameAs = null;
+			$valuesPartOf = null;
+
+			if ($parameterSameAsWikidata != '') {
+				$qIDsameAs = end(explode('/', $parameterSameAsWikidata));
+				$url = $basePath . '?query=' . rawurlencode(getWikiQuery($qIDsameAs));
+				$data = get_contents_sparql($url);
+				$valuesSameAs = json_decode($data)->results->bindings[0];
+			}
+
+			if ($parameterPartOfWikidata != '') {
+				$qIDpartOf = end(explode('/', $parameterPartOfWikidata));
+				$url = $basePath . '?query=' . rawurlencode(getWikiQuery($qIDpartOf));
+				$data = get_contents_sparql($url);
+				$valuesPartOf = json_decode($data)->results->bindings[0];
+			}
+
+			if (!is_null($valuesSameAs) || !is_null($valuesPartOf)) {
+				$labelDE = !is_null($valuesSameAs) ? $valuesSameAs->labelDE->value : $valuesPartOf->labelDE->value;
+				$labelEN = !is_null($valuesSameAs) ? $valuesSameAs->labelEN->value : $valuesPartOf->labelEN->value;
+				$valuesSameAs_ = !is_null($valuesSameAs) ? $valuesSameAs->item->value : '';
+				$valuesPartOf_ = !is_null($valuesPartOf) ? $valuesPartOf->item->value : '';
+				$germanRegionalKey = !is_null($valuesSameAs) ? $valuesSameAs->germanRegionalKey->value : $valuesPartOf->germanRegionalKey->value;
+
+				$sObject = updateSObject($parameterSID, $labelDE, $labelEN, $valuesSameAs_, $valuesPartOf_, $germanRegionalKey);
+
+				saveMappingFileSObjects();
+			}
+		}
+
 		return (object) array(
 			'error' => $error,
 			'parameter' => $parameterSID,
@@ -314,6 +351,31 @@
 		return end($loadedSObjects);
 	}
 
+	function updateSObject($sid, $labelDE, $labelEN, $valuesSameAs, $valuesPartOf, $germanRegionalKey) {
+		global $loadedSObjects;
+
+		foreach($loadedSObjects as &$sObject) {
+			if ($sid === $sObject->sid) {
+				$sObject->title = array (
+					'de' => $labelDE,
+					'en' => $labelEN,
+				);
+				$sObject->sameAs = array (
+					'wikidata' => $valuesSameAs,
+				);
+				$sObject->partOf = array (
+					'wikidata' => $valuesPartOf,
+				);
+				$sObject->geocoding = array (
+					'germanRegionalKey' => $germanRegionalKey,
+				);
+				return $sObject;
+			}
+		}
+
+		return null;
+	}
+
 	function createSID() {
 		global $loadedSObjects;
 
@@ -379,19 +441,4 @@
 
 		return null;
 	}
-
-/*	function updateSObject(&$obj) {
-		global $loadedSObjects;
-
-		foreach($loadedSObjects as &$sObject) {
-			if (($obj['sid'] === $sObject->sid) && ($obj['identifier'] === $sObject->identifier)) {
-				$sObject->lastseen = date('Y-m-d');
-				return;
-			}
-		}
-
-		$obj['lastseen'] = date('Y-m-d');
-
-		$loadedSObjects[] = $obj;
-	}*/
 ?>
