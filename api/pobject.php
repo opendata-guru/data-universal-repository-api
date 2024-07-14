@@ -11,6 +11,7 @@
 
 		if (validPost()) {
 			include('helper/_provider.php');
+			include('helper/_sobject.php');
 
 			$provider = postPID();
 

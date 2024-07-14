@@ -78,6 +78,28 @@
 			}
 		}
 
+		$parameterSID = htmlspecialchars($_GET['sid']);
+		if ($parameterSID == '') {
+			$parameterSID = htmlspecialchars($_GET['sID']);
+		}
+		if ($parameterSID != '') {
+			$sObject = findSObject($parameterSID);
+
+			if (is_null($sObject)) {
+				$error = (object) array(
+					'error' => 400,
+					'header' => 'HTTP/1.0 400 Bad Request',
+					'message' => 'Bad Request. Unknown ID in the \'sID\' path parameter.',
+					'parameter' => $parameterSID,
+				);
+			} else {
+				providerSetSID($pObject, $parameterSID);
+				$pObject = findPObjectByPID($parameterPID);
+
+				saveMappingFilePObjects();
+			}
+		}
+
 		return (object) array(
 			'error' => $error,
 			'parameter' => $parameterPID,
@@ -245,6 +267,16 @@
 	}
 	function providerGetSID($provider) {
 		return $provider[1];
+	}
+	function providerSetSID($provider, $sID) {
+		global $loadedProviders;
+		$pid = providerGetPID($provider);
+
+		foreach($loadedProviders as &$pObject) {
+			if (providerGetPID($pObject) == $pid) {
+				$pObject[1] = $sID;
+			}
+		}
 	}
 	function providerGetURL($provider) {
 		return $provider[2];

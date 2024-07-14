@@ -305,17 +305,21 @@
 		return $sid;
 	}
 
-/*	function findSObject($sid, $identifier) {
+	function findSObject($sid) {
 		global $loadedSObjects;
 
+		if ($sid == '') {
+			return null;
+		}
+
 		foreach($loadedSObjects as $sObject) {
-			if (($sid === $sObject->sid) && ($identifier === $sObject->identifier)) {
+			if ($sid == $sObject->sid) {
 				return $sObject;
 			}
 		}
 
 		return null;
-	}*/
+	}
 
 	function findSObjectByWikidata($sameAsWikidata, $partOfWikidata) {
 		global $loadedSObjects;
