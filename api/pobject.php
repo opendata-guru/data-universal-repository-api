@@ -44,6 +44,7 @@
 		return;
 	} else {
 		include('helper/_provider.php');
+		include('helper/_sobject.php');
 
 		$provider = getProvider();
 		$pid = $provider->parameter;
@@ -63,9 +64,12 @@
 		}
 	}
 
+	$sid = providerGetSID($pObject);
+	$sObject = findSObject($sid);
+
 	$obj = [];
 	$obj['pid'] = providerGetPID($pObject);
-	$obj['sid'] = providerGetSID($pObject);
+	$obj['sobject'] = $sObject;
 	$obj['url'] = providerGetURL($pObject);
 	$obj['deeplink'] = providerGetDeepLink($pObject);
 

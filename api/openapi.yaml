@@ -29,7 +29,18 @@ paths:
                 allPortalsSample:
                   value:
                     - pid: p000
-                      sid: s78h2
+                      sobject:
+                        sid: sYyj9
+                        title:
+                          de: Europäische Union
+                          en: European Union
+                        type: root
+                        sameAs:
+                          wikidata: http://www.wikidata.org/entity/Q458
+                        partOf:
+                          wikidata: ''
+                        geocoding:
+                          germanRegionalKey: ''
                       url: https://data.europa.eu
                       deeplink: https://data.europa.eu/api/hub/search/
         '400':
@@ -75,7 +86,18 @@ paths:
                 pSample:
                   value:
                     pid: p000
-                    sid: s78h2
+                    sobject:
+                      sid: sYyj9
+                      title:
+                        de: Europäische Union
+                        en: European Union
+                      type: root
+                      sameAs:
+                        wikidata: http://www.wikidata.org/entity/Q458
+                      partOf:
+                        wikidata: ''
+                      geocoding:
+                        germanRegionalKey: ''
                     url: https://data.europa.eu
                     deeplink: https://data.europa.eu/api/hub/search/
         '400':
@@ -167,8 +189,8 @@ paths:
                   value:
                     - sid: sYyj9
                       title:
-                        de: Europa
-                        en: Europe
+                        de: Europäische Union
+                        en: European Union
                       type: root
                       sameAs:
                         wikidata: http://www.wikidata.org/entity/Q458
@@ -222,8 +244,8 @@ paths:
                   value:
                     sid: sYyj9
                     title:
-                      de: Europa
-                      en: Europe
+                      de: Europäische Union
+                      en: European Union
                     type: root
                     sameAs:
                       wikidata: http://www.wikidata.org/entity/Q458

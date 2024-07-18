@@ -32,12 +32,17 @@
 		return;
 	}
 
+	include('helper/_sobject.php');
+
 	$dataProviders = [];
 
 	foreach($loadedProviders as $provider) {
+		$sid = providerGetSID($provider);
+		$sObject = findSObject($sid);
+
 		$obj = [];
 		$obj['pid'] = providerGetPID($provider);
-		$obj['sid'] = providerGetSID($provider);
+		$obj['sobject'] = $sObject;
 		$obj['url'] = providerGetURL($provider);
 		$obj['deeplink'] = providerGetDeepLink($provider);
 
