@@ -40,6 +40,9 @@
             '(SAMPLE(?labelDE) as ?labelDE) ' .
             '(SAMPLE(?labelEN) as ?labelEN) ' .
             '(SAMPLE(?germanRegionalKey) as ?germanRegionalKey) ' .
+            '(SAMPLE(?flag) as ?flag) ' .
+            '(SAMPLE(?coat) as ?coat) ' .
+            '(SAMPLE(?logo) as ?logo) ' .
             '' .
             'WHERE {' .
             '  BIND(wd:' . $qID . ' as ?item)' .
@@ -58,6 +61,15 @@
             '' .
             '  OPTIONAL { ?item wdt:P1388 ?germanRegionalKey. }' .
             '  BIND(IF( BOUND( ?germanRegionalKey), ?germanRegionalKey, "") AS ?germanRegionalKey)' .
+            '' .
+            '  OPTIONAL { ?item wdt:P41 ?flag. }' .
+            '  BIND(IF( BOUND( ?flag), ?flag, "") AS ?flag)' .
+            '' .
+            '  OPTIONAL { ?item wdt:P94 ?coat. }' .
+            '  BIND(IF( BOUND( ?coat), ?coat, "") AS ?coat)' .
+            '' .
+            '  OPTIONAL { ?item wdt:P154 ?logo. }' .
+            '  BIND(IF( BOUND( ?logo), ?logo, "") AS ?logo)' .
             '}' .
             'GROUP BY ?item';
 	}
@@ -100,6 +112,37 @@
 			'parameter' => $parameterSID,
 			'sObject' => $sObject,
 		);
+	}
+
+	function updateWikiImage($sid, $valuesSameAs, $valuesPartOf) {
+		$images = [];
+
+		if (!is_null($valuesSameAs)) {
+			$images[] = $valuesSameAs->flag->value;
+			$images[] = $valuesSameAs->coat->value;
+			$images[] = $valuesSameAs->logo->value;
+		}
+		if (!is_null($valuesPartOf)) {
+			$images[] = $valuesPartOf->flag->value;
+			$images[] = $valuesPartOf->coat->value;
+			$images[] = $valuesPartOf->logo->value;
+		}
+		$images = array_filter($images);
+
+		if (count($images) === 0) {
+			return '';
+		}
+
+		$url = $images[0];
+		$file = $sid . '.' . end(explode('.', $url));
+		$path = '../api-data/assets/' . $file;
+		$output = 'https://opendata.guru/api-data/assets/' . $file;
+
+		if (!file_put_contents($path, file_get_contents($url))) {
+			return '';
+		}
+
+		return $output;
 	}
 
 	function postSID() {
@@ -161,6 +204,8 @@
 				$germanRegionalKey = !is_null($valuesSameAs) ? $valuesSameAs->germanRegionalKey->value : $valuesPartOf->germanRegionalKey->value;
 
 				$sObject = updateSObject($parameterSID, $labelDE, $labelEN, $valuesSameAs_, $valuesPartOf_, $germanRegionalKey);
+
+				updateWikiImage($sObject->sid, $valuesSameAs, $valuesPartOf);
 
 				saveMappingFileSObjects();
 			}
@@ -226,6 +271,8 @@
 			$germanRegionalKey = !is_null($valuesSameAs) ? $valuesSameAs->germanRegionalKey->value : $valuesPartOf->germanRegionalKey->value;
 
 			$sObject = pushSObject($labelDE, $labelEN, $parameterType, $valuesSameAs_, $valuesPartOf_, $germanRegionalKey);
+
+			updateWikiImage($sObject->sid, $valuesSameAs, $valuesPartOf);
 		}
 		saveMappingFileSObjects();
 
