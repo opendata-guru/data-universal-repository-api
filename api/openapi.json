@@ -68,7 +68,7 @@
           }
         },
         "tags": [
-          "generally"
+          "portal"
         ]
       },
       "post": {
@@ -104,7 +104,7 @@
           }
         },
         "tags": [
-          "generally"
+          "portal"
         ]
       }
     },
@@ -157,7 +157,7 @@
           }
         },
         "tags": [
-          "generally"
+          "portal"
         ]
       },
       "post": {
@@ -183,7 +183,7 @@
           }
         },
         "tags": [
-          "generally"
+          "portal"
         ]
       }
     },
@@ -214,7 +214,7 @@
           }
         },
         "tags": [
-          "generally"
+          "portal"
         ]
       }
     },
@@ -244,7 +244,7 @@
           }
         },
         "tags": [
-          "generally"
+          "portal"
         ]
       }
     },
@@ -277,7 +277,7 @@
           }
         },
         "tags": [
-          "generally"
+          "portal"
         ]
       }
     },
@@ -322,7 +322,7 @@
           }
         },
         "tags": [
-          "generally"
+          "supplier"
         ]
       },
       "post": {
@@ -338,11 +338,33 @@
           {
             "name": "type",
             "in": "query",
-            "description": "tbd.",
+            "description": "Type of the supplier.",
             "required": true,
             "allowEmptyValue": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "enum": [
+                "supranational",
+                "supranationalAgency",
+                "country",
+                "countryAgency",
+                "federal",
+                "federalPortal",
+                "federalAgency",
+                "state",
+                "stateAgency",
+                "state+municipality",
+                "governmentRegion",
+                "regionalNetwork",
+                "regionalPortal",
+                "district",
+                "districtPortal",
+                "districtAgency",
+                "collectiveMunicipality",
+                "municipality",
+                "municipalityPortal",
+                "municipalityAgency"
+              ]
             },
             "examples": {
               "municipality": {
@@ -364,7 +386,7 @@
           }
         },
         "tags": [
-          "generally"
+          "supplier"
         ]
       }
     },
@@ -412,7 +434,7 @@
           }
         },
         "tags": [
-          "generally"
+          "supplier"
         ]
       },
       "post": {
@@ -441,7 +463,7 @@
           }
         },
         "tags": [
-          "generally"
+          "supplier"
         ]
       }
     },
@@ -1099,8 +1121,12 @@
   },
   "tags": [
     {
-      "name": "generally",
-      "description": "General functions of the API can query both historical data from the database and live data from the source systems."
+      "name": "portal",
+      "description": "Portal functions of the API can query both historical data from the database and live data from the source systems."
+    },
+    {
+      "name": "supplier",
+      "description": "Supplier functions of the API can query both historical data from the database and live data from the source systems."
     },
     {
       "name": "live",

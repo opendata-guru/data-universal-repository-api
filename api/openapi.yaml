@@ -46,7 +46,7 @@ paths:
         '400':
           $ref: "#/components/responses/400BadRequest"
       tags:
-        - generally
+        - portal
     post:
       summary: Add a known portal
       description: Unfortunately, the list of portals cannot be changed here. Please create an issue on GitHub at https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data
@@ -69,7 +69,7 @@ paths:
         '401':
           $ref: '#/components/responses/401Unauthorized'
       tags:
-        - generally
+        - portal
   /p/{pID}:
     get:
       summary: Learn more about a portal
@@ -103,7 +103,7 @@ paths:
         '400':
           $ref: "#/components/responses/400BadRequest"
       tags:
-        - generally
+        - portal
     post:
       summary: Changing the data of a portal
       description: Unfortunately, the portal data cannot be changed here. Please create an issue on GitHub at https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data.
@@ -117,7 +117,7 @@ paths:
         '401':
           $ref: '#/components/responses/401Unauthorized'
       tags:
-        - generally
+        - portal
   /p/{pID}/l:
     get:
       summary: tbd.
@@ -136,7 +136,7 @@ paths:
         '400':
           $ref: "#/components/responses/400BadRequest"
       tags:
-        - generally
+        - portal
   /p/{pID}/system:
     get:
       summary: tbd.
@@ -154,7 +154,7 @@ paths:
         '400':
           $ref: "#/components/responses/400BadRequest"
       tags:
-        - generally
+        - portal
   /p/{pID}/{date}:
     get:
       summary: tbd.
@@ -173,7 +173,7 @@ paths:
         '400':
           $ref: "#/components/responses/400BadRequest"
       tags:
-        - generally
+        - portal
   /s:
     get:
       summary: Get a list of all suppliers
@@ -201,7 +201,7 @@ paths:
         '400':
           $ref: "#/components/responses/400BadRequest"
       tags:
-        - generally
+        - supplier
     post:
       summary: Add a known supplier
       description: Unfortunately, the list of suppliers cannot be changed here. Please create an issue on GitHub at https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data
@@ -211,11 +211,12 @@ paths:
       parameters:
         - name: type
           in: query
-          description: tbd.
+          description: Type of the supplier.
           required: true
           allowEmptyValue: false
           schema:
             type: string
+            enum: [supranational,supranationalAgency,country,countryAgency,federal,federalPortal,federalAgency,state,stateAgency,state+municipality,governmentRegion,regionalNetwork,regionalPortal,district,districtPortal,districtAgency,collectiveMunicipality,municipality,municipalityPortal,municipalityAgency]
           examples:
             municipality:
               value: municipality
@@ -226,7 +227,7 @@ paths:
         '401':
           $ref: '#/components/responses/401Unauthorized'
       tags:
-        - generally
+        - supplier
   /s/{sID}:
     get:
       summary: Learn more about a supplier
@@ -256,7 +257,7 @@ paths:
         '400':
           $ref: "#/components/responses/400BadRequest"
       tags:
-        - generally
+        - supplier
     post:
       summary: Changing the data of a supplier
       description: Unfortunately, the supplier data cannot be changed here. Please create an issue on GitHub at https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data.
@@ -271,7 +272,7 @@ paths:
         '401':
           $ref: '#/components/responses/401Unauthorized'
       tags:
-        - generally
+        - supplier
   /datasets:
     get:
       summary: Coming soon
@@ -709,8 +710,10 @@ components:
       type: http
       scheme: bearer
 tags:
-  - name: generally
-    description: General functions of the API can query both historical data from the database and live data from the source systems.
+  - name: portal
+    description: Portal functions of the API can query both historical data from the database and live data from the source systems.
+  - name: supplier
+    description: Supplier functions of the API can query both historical data from the database and live data from the source systems.
   - name: live
     description: The API endpoints call the source systems directly. Be careful during heavy use, there is no caching mechanism.
   - name: maintained

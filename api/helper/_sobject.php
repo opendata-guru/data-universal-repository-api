@@ -2,10 +2,10 @@
 	$loadedSObjects = [];
 	$fileSObjects = __DIR__ . '/../../api-data/suppliers.csv';
 	$allowedValuesOfParameterType = array(
-		'root',
-		'country',
-		'federal', 'federalPortal', 'federalAgency', 'federalCooperation',
-		'state', 'stateAgency',
+		'supranational', 'supranationalAgency',
+		'country', 'countryAgency',
+		'federal', 'federalPortal', 'federalAgency',
+		'state', 'stateAgency', 'state+municipality',
 		'governmentRegion',
 		'regionalNetwork', 'regionalPortal',
 		'district', 'districtPortal', 'districtAgency',
