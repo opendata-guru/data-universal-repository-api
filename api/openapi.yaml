@@ -196,6 +196,9 @@ paths:
                         wikidata: http://www.wikidata.org/entity/Q458
                       partOf:
                         wikidata: ''
+                      image:
+                        source: http://commons.wikimedia.org/wiki/Special:FilePath/Flag%20of%20Europe.svg
+                        url: https://opendata.guru/api-data/assets/sYyj9.svg
                       geocoding:
                         germanRegionalKey: ''
         '400':
@@ -217,10 +220,6 @@ paths:
           schema:
             type: string
             enum: [supranational,supranationalAgency,country,countryAgency,federal,federalPortal,federalAgency,state,stateAgency,state+municipality,governmentRegion,regionalNetwork,regionalPortal,district,districtPortal,districtAgency,collectiveMunicipality,municipality,municipalityPortal,municipalityAgency]
-          examples:
-            municipality:
-              value: municipality
-              summary: Municipality
         - $ref: "#/components/parameters/sameaswikidataParam"
         - $ref: "#/components/parameters/partofwikidataParam"
       responses:
@@ -252,6 +251,9 @@ paths:
                       wikidata: http://www.wikidata.org/entity/Q458
                     partOf:
                       wikidata: ''
+                    image:
+                      source: http://commons.wikimedia.org/wiki/Special:FilePath/Flag%20of%20Europe.svg
+                      url: https://opendata.guru/api-data/assets/sYyj9.svg
                     geocoding:
                       germanRegionalKey: ''
         '400':

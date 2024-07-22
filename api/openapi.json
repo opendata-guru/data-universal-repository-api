@@ -307,6 +307,10 @@
                         "partOf": {
                           "wikidata": ""
                         },
+                        "image": {
+                          "source": "http://commons.wikimedia.org/wiki/Special:FilePath/Flag%20of%20Europe.svg",
+                          "url": "https://opendata.guru/api-data/assets/sYyj9.svg"
+                        },
                         "geocoding": {
                           "germanRegionalKey": ""
                         }
@@ -365,12 +369,6 @@
                 "municipalityPortal",
                 "municipalityAgency"
               ]
-            },
-            "examples": {
-              "municipality": {
-                "value": "municipality",
-                "summary": "Municipality"
-              }
             }
           },
           {
@@ -419,6 +417,10 @@
                       },
                       "partOf": {
                         "wikidata": ""
+                      },
+                      "image": {
+                        "source": "http://commons.wikimedia.org/wiki/Special:FilePath/Flag%20of%20Europe.svg",
+                        "url": "https://opendata.guru/api-data/assets/sYyj9.svg"
                       },
                       "geocoding": {
                         "germanRegionalKey": ""

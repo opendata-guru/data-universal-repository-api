@@ -6,6 +6,7 @@
     header('Access-Control-Allow-Authorization: true');
     header('Content-Type: application/json; charset=utf-8');
 
+	include('helper/_link.php');
 	include('helper/_sobject.php');
 
 	if ('POST' === $_SERVER['REQUEST_METHOD']) {

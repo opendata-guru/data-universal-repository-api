@@ -127,10 +127,13 @@
 			$images[] = $valuesPartOf->coat->value;
 			$images[] = $valuesPartOf->logo->value;
 		}
-		$images = array_filter($images);
+		$images = array_values(array_filter($images));
 
 		if (count($images) === 0) {
-			return '';
+			return array(
+				'source' => '',
+				'url' => '',
+			);
 		}
 
 		$url = $images[0];
@@ -138,11 +141,17 @@
 		$path = '../api-data/assets/' . $file;
 		$output = 'https://opendata.guru/api-data/assets/' . $file;
 
-		if (!file_put_contents($path, file_get_contents($url))) {
-			return '';
+		if (!file_put_contents($path, get_contents($url))) {
+			return array(
+				'source' => '',
+				'url' => '',
+			);
 		}
 
-		return $output;
+		return array(
+			'source' => $url,
+			'url' => $output,
+		);
 	}
 
 	function postSID() {
@@ -181,6 +190,7 @@
 			$qIDpartOf = '';
 			$valuesSameAs = null;
 			$valuesPartOf = null;
+			$image = null;
 
 			if ($parameterSameAsWikidata != '') {
 				$qIDsameAs = end(explode('/', $parameterSameAsWikidata));
@@ -202,10 +212,10 @@
 				$valuesSameAs_ = !is_null($valuesSameAs) ? $valuesSameAs->item->value : '';
 				$valuesPartOf_ = !is_null($valuesPartOf) ? $valuesPartOf->item->value : '';
 				$germanRegionalKey = !is_null($valuesSameAs) ? $valuesSameAs->germanRegionalKey->value : $valuesPartOf->germanRegionalKey->value;
+				$image = updateWikiImage($sObject->sid, $valuesSameAs, $valuesPartOf);
 
-				$sObject = updateSObject($parameterSID, $labelDE, $labelEN, $valuesSameAs_, $valuesPartOf_, $germanRegionalKey);
+				$sObject = updateSObject($parameterSID, $labelDE, $labelEN, $valuesSameAs_, $valuesPartOf_, $image, $germanRegionalKey);
 
-				updateWikiImage($sObject->sid, $valuesSameAs, $valuesPartOf);
 
 				saveMappingFileSObjects();
 			}
@@ -247,6 +257,7 @@
 		$qIDpartOf = '';
 		$valuesSameAs = null;
 		$valuesPartOf = null;
+		$image = null;
 
 		$sObject = findSObjectByWikidata($parameterSameAsWikidata, $parameterPartOfWikidata);
 		if (!$sObject) {
@@ -269,10 +280,11 @@
 			$valuesSameAs_ = !is_null($valuesSameAs) ? $valuesSameAs->item->value : '';
 			$valuesPartOf_ = !is_null($valuesPartOf) ? $valuesPartOf->item->value : '';
 			$germanRegionalKey = !is_null($valuesSameAs) ? $valuesSameAs->germanRegionalKey->value : $valuesPartOf->germanRegionalKey->value;
+			$sid = createSID();
+			$image = updateWikiImage($sid, $valuesSameAs, $valuesPartOf);
 
-			$sObject = pushSObject($labelDE, $labelEN, $parameterType, $valuesSameAs_, $valuesPartOf_, $germanRegionalKey);
+			$sObject = pushSObject($sid, $labelDE, $labelEN, $parameterType, $valuesSameAs_, $valuesPartOf_, $image, $germanRegionalKey);
 
-			updateWikiImage($sObject->sid, $valuesSameAs, $valuesPartOf);
 		}
 		saveMappingFileSObjects();
 
@@ -285,6 +297,8 @@
 		$idGermanRegionalKey = null;
 		$idPartOfWikidata = null;
 		$idSameAsWikidata = null;
+		$idImageSource = null;
+		$idImageURL = null;
 		$idTitleDE = null;
 		$idTitleEN = null;
 		$idType = null;
@@ -306,6 +320,10 @@
 				$idSameAsWikidata = $m;
 			} else if ($mappingHeader[$m] === 'partOfWikidata') {
 				$idPartOfWikidata = $m;
+			} else if ($mappingHeader[$m] === 'imageSource') {
+				$idImageSource = $m;
+			} else if ($mappingHeader[$m] === 'imageURL') {
+				$idImageURL = $m;
 			} else if ($mappingHeader[$m] === 'germanRegionalKey') {
 				$idGermanRegionalKey = $m;
 			}
@@ -328,6 +346,10 @@
 					),
 					'partOf' => array (
 						'wikidata' => $arr[$idPartOfWikidata] ?: '',
+					),
+					'image' => array (
+						'source' => $arr[$idImageSource] ?: '',
+						'url' => $arr[$idImageURL] ?: '',
 					),
 					'geocoding' => array (
 						'germanRegionalKey' => $arr[$idGermanRegionalKey] ?: '',
@@ -352,6 +374,8 @@
 				'type',
 				'sameAsWikidata',
 				'partOfWikidata',
+				'imageSource',
+				'imageURL',
 				'germanRegionalKey'
 			];
 
@@ -365,6 +389,8 @@
 					$sObject->type,
 					$sObject->sameAs['wikidata'],
 					$sObject->partOf['wikidata'],
+					$sObject->image['source'],
+					$sObject->image['url'],
 					$sObject->geocoding['germanRegionalKey']
 				], ',');
 			}
@@ -374,11 +400,11 @@
 		}
 	}
 
-	function pushSObject($labelDE, $labelEN, $parameterType, $valuesSameAs, $valuesPartOf, $germanRegionalKey) {
+	function pushSObject($sid, $labelDE, $labelEN, $parameterType, $valuesSameAs, $valuesPartOf, $image, $germanRegionalKey) {
 		global $loadedSObjects;
 
 		$loadedSObjects[] = (object) array(
-			'sid' => createSID(),
+			'sid' => $sid,
 			'title' => array (
 				'de' => $labelDE,
 				'en' => $labelEN,
@@ -390,6 +416,7 @@
 			'partOf' => array (
 				'wikidata' => $valuesPartOf,
 			),
+			'image' => $image,
 			'geocoding' => array (
 				'germanRegionalKey' => $germanRegionalKey,
 			),
@@ -398,7 +425,7 @@
 		return end($loadedSObjects);
 	}
 
-	function updateSObject($sid, $labelDE, $labelEN, $valuesSameAs, $valuesPartOf, $germanRegionalKey) {
+	function updateSObject($sid, $labelDE, $labelEN, $valuesSameAs, $valuesPartOf, $image, $germanRegionalKey) {
 		global $loadedSObjects;
 
 		foreach($loadedSObjects as &$sObject) {
@@ -413,6 +440,7 @@
 				$sObject->partOf = array (
 					'wikidata' => $valuesPartOf,
 				);
+				$sObject->image = $image;
 				$sObject->geocoding = array (
 					'germanRegionalKey' => $germanRegionalKey,
 				);

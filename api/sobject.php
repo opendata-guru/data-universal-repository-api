@@ -4,6 +4,8 @@
     header('Access-Control-Allow-Headers: X-Requested-With');
 	header('Content-Type: application/json; charset=utf-8');
 
+	include('helper/_link.php');
+
 	if ('POST' === $_SERVER['REQUEST_METHOD']) {
 		include('helper/_post.php');
 
