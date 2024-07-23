@@ -214,7 +214,19 @@ paths:
       parameters:
         - name: type
           in: query
-          description: Type of the supplier.
+          description: |
+            Type of the supplier. The types are grouped by:
+
+            - international (currently missing)
+            - supranational (e.g. Europe)
+            - country (e.g. Germany)
+            - federal (e.g. Bundesministerium des Innern)
+            - state (e.g. Saarland)
+            - governmentRegion
+            - regional
+            - district
+            - collectiveMunicipality
+            - municipality
           required: true
           allowEmptyValue: false
           schema:

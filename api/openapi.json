@@ -342,7 +342,7 @@
           {
             "name": "type",
             "in": "query",
-            "description": "Type of the supplier.",
+            "description": "Type of the supplier. The types are grouped by:\n\n- international (currently missing)\n- supranational (e.g. Europe)\n- country (e.g. Germany)\n- federal (e.g. Bundesministerium des Innern)\n- state (e.g. Saarland)\n- governmentRegion\n- regional\n- district\n- collectiveMunicipality\n- municipality\n",
             "required": true,
             "allowEmptyValue": false,
             "schema": {
