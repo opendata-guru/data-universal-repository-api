@@ -287,6 +287,22 @@
 		}
 
 		if (!$error && ($system === 'unknown')) {
+			$SPARQL = '/sparql';
+
+			if ($SPARQL == substr($link['path'], -strlen($SPARQL))) {
+				$found = substr($link['path'], 0, -strlen($SPARQL));
+			}
+
+			if ($found !== null) {
+				$link['path'] = $found . $SPARQL;
+				unset($link['query']);
+				unset($link['fragment']);
+				$url = unparse_url($link);
+				$system = 'SPARQL';
+			}
+		}
+
+		if (!$error && ($system === 'unknown')) {
 			$MOBILITHEK_V1 = '/mobilithek/api/v1.0';
 			$MOBILITHEK_V2 = '/mdp-api/mdp-msa-metadata/v2';
 			$found = null;
