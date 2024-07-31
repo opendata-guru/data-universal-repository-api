@@ -521,9 +521,9 @@
 					return $sObject;
 				}
 			} else {
-				if ($qIDpartOf == end(explode('/', $sObject->partOf['wikidata']))) {
-					return $sObject;
-				}
+//				if ($qIDpartOf == end(explode('/', $sObject->partOf['wikidata']))) {
+//					return $sObject;
+//				}
 			}
 		}
 
