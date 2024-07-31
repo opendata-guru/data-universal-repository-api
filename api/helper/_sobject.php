@@ -2,16 +2,17 @@
 	$loadedSObjects = [];
 	$fileSObjects = __DIR__ . '/../../api-data/suppliers.csv';
 	$allowedValuesOfParameterType = array(
+		'international',
 		'supranational', 'supranationalAgency',
 		'country', 'countryAgency',
-		'federal', 'federalPortal', 'federalAgency',
+		'federal', 'federalAgency',
 		'state', 'stateAgency', 'state+municipality',
 		'governmentRegion',
-		'regionalNetwork', 'regionalPortal',
-		'district', 'districtPortal', 'districtAgency',
+		'regionalNetwork',
+		'district', 'districtAgency',
 		'collectiveMunicipality',
-		'municipality', 'municipalityPortal', 'municipalityAgency',
-		'municipality+state',
+		'municipality', 'municipalityAgency',
+		'business','civilSociety','research',
 	);
 
 	loadMappingFileSObjects($loadedSObjects);
@@ -182,15 +183,21 @@
 		}
 
 		if (!$error) {
+			$parameterTitle = trim(htmlspecialchars($_GET['title']));
 			$parameterSameAsWikidata = trim(htmlspecialchars($_GET['sameaswikidata']));
 			$parameterPartOfWikidata = trim(htmlspecialchars($_GET['partofwikidata']));
 
 			$basePath = 'https://query.wikidata.org/sparql';
 			$qIDsameAs = '';
 			$qIDpartOf = '';
+			$valuesTitle = null;
 			$valuesSameAs = null;
 			$valuesPartOf = null;
 			$image = null;
+
+			if ($parameterTitle != '') {
+				$valuesTitle = $parameterTitle;
+			}
 
 			if ($parameterSameAsWikidata != '') {
 				$qIDsameAs = end(explode('/', $parameterSameAsWikidata));
@@ -206,12 +213,12 @@
 				$valuesPartOf = json_decode($data)->results->bindings[0];
 			}
 
-			if (!is_null($valuesSameAs) || !is_null($valuesPartOf)) {
-				$labelDE = !is_null($valuesSameAs) ? $valuesSameAs->labelDE->value : $valuesPartOf->labelDE->value;
-				$labelEN = !is_null($valuesSameAs) ? $valuesSameAs->labelEN->value : $valuesPartOf->labelEN->value;
+			if (!is_null($valuesTitle) || !is_null($valuesSameAs) || !is_null($valuesPartOf)) {
+				$labelDE = !is_null($valuesTitle) ? '' : (!is_null($valuesSameAs) ? $valuesSameAs->labelDE->value : $valuesPartOf->labelDE->value);
+				$labelEN = !is_null($valuesTitle) ? $valuesTitle : (!is_null($valuesSameAs) ? $valuesSameAs->labelEN->value : $valuesPartOf->labelEN->value);
 				$valuesSameAs_ = !is_null($valuesSameAs) ? $valuesSameAs->item->value : '';
 				$valuesPartOf_ = !is_null($valuesPartOf) ? $valuesPartOf->item->value : '';
-				$germanRegionalKey = !is_null($valuesSameAs) ? $valuesSameAs->germanRegionalKey->value : $valuesPartOf->germanRegionalKey->value;
+				$germanRegionalKey = !is_null($valuesSameAs) ? $valuesSameAs->germanRegionalKey->value : (!is_null($valuesPartOf) ? $valuesPartOf->germanRegionalKey->value : '');
 				$image = updateWikiImage($sObject->sid, $valuesSameAs, $valuesPartOf);
 
 				$sObject = updateSObject($parameterSID, $labelDE, $labelEN, $valuesSameAs_, $valuesPartOf_, $image, $germanRegionalKey);
@@ -232,14 +239,15 @@
 		global $allowedValuesOfParameterType;
 
 		$parameterType = trim(htmlspecialchars($_GET['type']));
+		$parameterTitle = trim(htmlspecialchars($_GET['title']));
 		$parameterSameAsWikidata = trim(htmlspecialchars($_GET['sameaswikidata']));
 		$parameterPartOfWikidata = trim(htmlspecialchars($_GET['partofwikidata']));
 
-		if (($parameterSameAsWikidata == '') && ($parameterPartOfWikidata == '')) {
+		if (($parameterTitle == '') && ($parameterSameAsWikidata == '') && ($parameterPartOfWikidata == '')) {
 			header('HTTP/1.0 400 Bad Request');
 			echo json_encode((object) array(
 				'error' => 400,
-				'message' => 'Bad Request. Parameter \'sameaswikidata\' and \'partofwikidata\' are not set',
+				'message' => 'Bad Request. Parameter \'title\', \'sameaswikidata\' and \'partofwikidata\' are not set',
 			));
 			exit;
 		}
@@ -255,12 +263,17 @@
 		$basePath = 'https://query.wikidata.org/sparql';
 		$qIDsameAs = '';
 		$qIDpartOf = '';
+		$valuesTitle = null;
 		$valuesSameAs = null;
 		$valuesPartOf = null;
 		$image = null;
 
 		$sObject = findSObjectByWikidata($parameterSameAsWikidata, $parameterPartOfWikidata);
 		if (!$sObject) {
+			if ($parameterTitle != '') {
+				$valuesTitle = $parameterTitle;
+			}
+
 			if ($parameterSameAsWikidata != '') {
 				$qIDsameAs = end(explode('/', $parameterSameAsWikidata));
 				$url = $basePath . '?query=' . rawurlencode(getWikiQuery($qIDsameAs));
@@ -275,11 +288,11 @@
 				$valuesPartOf = json_decode($data)->results->bindings[0];
 			}
 
-			$labelDE = !is_null($valuesSameAs) ? $valuesSameAs->labelDE->value : $valuesPartOf->labelDE->value;
-			$labelEN = !is_null($valuesSameAs) ? $valuesSameAs->labelEN->value : $valuesPartOf->labelEN->value;
+			$labelDE = !is_null($valuesTitle) ? '' : (!is_null($valuesSameAs) ? $valuesSameAs->labelDE->value : $valuesPartOf->labelDE->value);
+			$labelEN = !is_null($valuesTitle) ? $valuesTitle : (!is_null($valuesSameAs) ? $valuesSameAs->labelEN->value : $valuesPartOf->labelEN->value);
 			$valuesSameAs_ = !is_null($valuesSameAs) ? $valuesSameAs->item->value : '';
 			$valuesPartOf_ = !is_null($valuesPartOf) ? $valuesPartOf->item->value : '';
-			$germanRegionalKey = !is_null($valuesSameAs) ? $valuesSameAs->germanRegionalKey->value : $valuesPartOf->germanRegionalKey->value;
+			$germanRegionalKey = !is_null($valuesSameAs) ? $valuesSameAs->germanRegionalKey->value : (!is_null($valuesPartOf) ? $valuesPartOf->germanRegionalKey->value : '');
 			$sid = createSID();
 			$image = updateWikiImage($sid, $valuesSameAs, $valuesPartOf);
 

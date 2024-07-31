@@ -217,7 +217,7 @@ paths:
           description: |
             Type of the supplier. The types are grouped by:
 
-            - international (currently missing)
+            - international
             - supranational (e.g. Europe)
             - country (e.g. Germany)
             - federal (e.g. Bundesministerium des Innern)
@@ -227,13 +227,25 @@ paths:
             - district
             - collectiveMunicipality
             - municipality
+            - business, civilSociety and research
           required: true
           allowEmptyValue: false
           schema:
             type: string
-            enum: [supranational,supranationalAgency,country,countryAgency,federal,federalPortal,federalAgency,state,stateAgency,state+municipality,governmentRegion,regionalNetwork,regionalPortal,district,districtPortal,districtAgency,collectiveMunicipality,municipality,municipalityPortal,municipalityAgency]
+            enum: [international,supranational,supranationalAgency,country,countryAgency,federal,federalAgency,state,stateAgency,state+municipality,governmentRegion,regionalNetwork,district,districtAgency,collectiveMunicipality,municipality,municipalityAgency,business,civilSociety,research]
         - $ref: "#/components/parameters/sameaswikidataParam"
         - $ref: "#/components/parameters/partofwikidataParam"
+        - name: title
+          in: query
+          description: Name of the supplier. The entry is used as the English name.
+          required: false
+          allowEmptyValue: true
+          schema:
+            type: string
+          examples:
+            eu:
+              value: European Union
+              summary: European Union
       responses:
         '401':
           $ref: '#/components/responses/401Unauthorized'
@@ -282,6 +294,17 @@ paths:
         - $ref: "#/components/parameters/sidPathParam"
         - $ref: "#/components/parameters/sameaswikidataParam"
         - $ref: "#/components/parameters/partofwikidataParam"
+        - name: title
+          in: query
+          description: Name of the supplier. The entry is used as the English name.
+          required: false
+          allowEmptyValue: true
+          schema:
+            type: string
+          examples:
+            eu:
+              value: European Union
+              summary: European Union
       responses:
         '401':
           $ref: '#/components/responses/401Unauthorized'

@@ -342,32 +342,32 @@
           {
             "name": "type",
             "in": "query",
-            "description": "Type of the supplier. The types are grouped by:\n\n- international (currently missing)\n- supranational (e.g. Europe)\n- country (e.g. Germany)\n- federal (e.g. Bundesministerium des Innern)\n- state (e.g. Saarland)\n- governmentRegion\n- regional\n- district\n- collectiveMunicipality\n- municipality\n",
+            "description": "Type of the supplier. The types are grouped by:\n\n- international\n- supranational (e.g. Europe)\n- country (e.g. Germany)\n- federal (e.g. Bundesministerium des Innern)\n- state (e.g. Saarland)\n- governmentRegion\n- regional\n- district\n- collectiveMunicipality\n- municipality\n- business, civilSociety and research\n",
             "required": true,
             "allowEmptyValue": false,
             "schema": {
               "type": "string",
               "enum": [
+                "international",
                 "supranational",
                 "supranationalAgency",
                 "country",
                 "countryAgency",
                 "federal",
-                "federalPortal",
                 "federalAgency",
                 "state",
                 "stateAgency",
                 "state+municipality",
                 "governmentRegion",
                 "regionalNetwork",
-                "regionalPortal",
                 "district",
-                "districtPortal",
                 "districtAgency",
                 "collectiveMunicipality",
                 "municipality",
-                "municipalityPortal",
-                "municipalityAgency"
+                "municipalityAgency",
+                "business",
+                "civilSociety",
+                "research"
               ]
             }
           },
@@ -376,6 +376,22 @@
           },
           {
             "$ref": "#/components/parameters/partofwikidataParam"
+          },
+          {
+            "name": "title",
+            "in": "query",
+            "description": "Name of the supplier. The entry is used as the English name.",
+            "required": false,
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "eu": {
+                "value": "European Union",
+                "summary": "European Union"
+              }
+            }
           }
         ],
         "responses": {
@@ -457,6 +473,22 @@
           },
           {
             "$ref": "#/components/parameters/partofwikidataParam"
+          },
+          {
+            "name": "title",
+            "in": "query",
+            "description": "Name of the supplier. The entry is used as the English name.",
+            "required": false,
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "eu": {
+                "value": "European Union",
+                "summary": "European Union"
+              }
+            }
           }
         ],
         "responses": {
