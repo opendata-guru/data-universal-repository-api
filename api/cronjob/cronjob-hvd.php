@@ -36,7 +36,10 @@
 			mkdir($dir, 0777, true);
 		}
 
-		$data = json_decode(file_get_contents($file));
+		$data = null;
+		if (file_exists($file)) {
+			$data = json_decode(file_get_contents($file));
+		}
 
 		if (is_null($data)) {
 			$data = array();
@@ -49,73 +52,79 @@
 	}
 
 	function getInitialData() {
-		$data = array(
-			'europe' => array(
+		global $euPath;
+
+		include('cronjob-hvd-queries.php');
+
+		$url = $euPath . '?query=' . rawurlencode(getSPARQLgetEUcatalogs());
+		$data = get_contents_sparql($url);
+		$result = json_decode($data)->results->bindings;
+
+		$data = array();
+		foreach($result as $object) {
+			$data[] = array(
+				'catalog' => $object->catalog->value,
+				'title' => $object->title->value,
 				'countDatasetsDuration' => null,
 				'countDatasetsTimestamp' => null,
 				'countDistributionsDuration' => null,
 				'countDistributionsTimestamp' => null,
 				'distributionsDuration' => null,
 				'distributionsTimestamp' => null,
-			),
-			'govdata' => array(
-			)
-		);
+			);
+		}
 
 		return $data;
 	}
 
-	function getEUCountDatasetsData() {
+	function getEUCountDatasetsData($catalog) {
 		global $basePath;
 		global $euPath;
-
-		include('cronjob-hvd-queries.php');
 
 		$date = date('Y-m-d');
 		$fileDate = $basePath . 'hvd-date/' . date('Y-m') . '/hvd-' . $date . '.json';
 		$countsData = (array) loadCronjobData($fileDate);
 
-		$url = $euPath . '?query=' . rawurlencode(getSPARQLcountEUdatasetsForMemberStates(getMemberStateCatalogGovData()));
+		$url = $euPath . '?query=' . rawurlencode(getSPARQLcountEUdatasetsByCatalog($catalog));
 		$data = get_contents_sparql($url);
 		$result = json_decode($data)->results->bindings[0];
 		$count = intval($result->count->value);
 
-		$countsData['eu-govdata-datasets'] = $count;
+		$countsData[$catalog] = array(
+			'datasets' => $count,
+			'distributions' => null,
+		);
 
 		saveCronjobData($fileDate, $countsData);
 	}
 
-	function getEUCountDistributionsData() {
+	function getEUCountDistributionsData($catalog) {
 		global $basePath;
 		global $euPath;
-
-		include('cronjob-hvd-queries.php');
 
 		$date = date('Y-m-d');
 		$fileDate = $basePath . 'hvd-date/' . date('Y-m') . '/hvd-' . $date . '.json';
 		$countsData = (array) loadCronjobData($fileDate);
 
-		$url = $euPath . '?query=' . rawurlencode(getSPARQLcountEUdistributionsForMemberStates(getMemberStateCatalogGovData()));
+		$url = $euPath . '?query=' . rawurlencode(getSPARQLcountEUdistributionsByCatalog($catalog));
 		$data = get_contents_sparql($url);
 		$result = json_decode($data)->results->bindings[0];
 		$count = intval($result->count->value);
 
-		$countsData['eu-govdata-distributions'] = $count;
+		$countsData[$catalog]->distributions = $count;
 
 		saveCronjobData($fileDate, $countsData);
 	}
 
-	function getEUaccessURLsData() {
+	function getEUaccessURLsData($catalog) {
 		global $basePath;
 		global $euPath;
-
-		include('cronjob-hvd-queries.php');
 
 		$date = date('Y-m-d');
 		$fileDate = $basePath . 'hvd-access-url-date/' . date('Y-m') . '/hvd-access-date-' . $date . '.json';
 		$accessData = (array) loadCronjobData($fileDate);
 
-		$url = $euPath . '?query=' . rawurlencode(getSPARQLgetEUaccessURLsForMemberStates(getMemberStateCatalogGovData()));
+		$url = $euPath . '?query=' . rawurlencode(getSPARQLgetEUaccessURLsByCatalog($catalog));
 		$data = get_contents_sparql($url);
 		$result = json_decode($data)->results->bindings;
 
@@ -130,41 +139,48 @@
 	}
 
 	function getNextData($data) {
+		include('cronjob-hvd-queries.php');
 
-		$modified = $data->europe->countDatasetsTimestamp;
-		if (is_null($modified)) {
-			$now = microtime(true);
+		foreach ($data as &$object) {
+			$catalog = $object->catalog;
 
-			getEUCountDatasetsData();
+			$modified = $object->countDatasetsTimestamp;
+			if (is_null($modified)) {
+				$now = microtime(true);
 
-			$data->europe->countDatasetsDuration = round(microtime(true) - $now, 3);
-			$data->europe->countDatasetsTimestamp = date('Y-m-d H:i:s');
+				getEUCountDatasetsData($catalog);
 
-			return $data;
-		}
+				$object->countDatasetsDuration = round(microtime(true) - $now, 3);
+				$object->countDatasetsTimestamp = date('Y-m-d H:i:s');
 
-		$modified = $data->europe->countDistributionsTimestamp;
-		if (is_null($modified)) {
-			$now = microtime(true);
+				return $data;
+			}
 
-			getEUCountDistributionsData();
+			$modified = $object->countDistributionsTimestamp;
+			if (is_null($modified)) {
+				$now = microtime(true);
 
-			$data->europe->countDistributionsDuration = round(microtime(true) - $now, 3);
-			$data->europe->countDistributionsTimestamp = date('Y-m-d H:i:s');
+				getEUCountDistributionsData($catalog);
 
-			return $data;
-		}
+				$object->countDistributionsDuration = round(microtime(true) - $now, 3);
+				$object->countDistributionsTimestamp = date('Y-m-d H:i:s');
 
-		$modified = $data->europe->distributionsTimestamp;
-		if (is_null($modified)) {
-			$now = microtime(true);
+				return $data;
+			}
 
-			getEUaccessURLsData();
+			$modified = $object->distributionsTimestamp;
+			if (is_null($modified)) {
+				$now = microtime(true);
 
-			$data->europe->distributionsDuration = round(microtime(true) - $now, 3);
-			$data->europe->distributionsTimestamp = date('Y-m-d H:i:s');
+				if (getEUcatalogGovData() === $catalog) {
+					getEUaccessURLsData($catalog);
+				}
 
-			return $data;
+				$object->distributionsDuration = round(microtime(true) - $now, 3);
+				$object->distributionsTimestamp = date('Y-m-d H:i:s');
+
+				return $data;
+			}
 		}
 
 		return $data;

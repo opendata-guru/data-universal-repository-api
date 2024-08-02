@@ -1,9 +1,25 @@
 <?php
-	function getMemberStateCatalogGovData() {
+	function getEUcatalogGovData() {
 		return 'http://data.europa.eu/88u/catalogue/govdata';
 	}
 
-	function getSPARQLcountEUdatasetsForMemberStates($msCat) {
+	function getSPARQLgetEUcatalogs() {
+		$sparql = '
+prefix dct: <http://purl.org/dc/terms/>
+prefix dcat: <http://www.w3.org/ns/dcat#>
+
+select ?catalog ?title ?description
+where {
+  ?catalog a dcat:Catalog.
+  ?catalog dct:title ?title.
+  ?catalog dct:description ?description.
+}
+		';
+
+		return $sparql;
+	}
+
+	function getSPARQLcountEUdatasetsByCatalog($catalog) {
 		$sparql = '
 prefix r5r: <http://data.europa.eu/r5r/>
 prefix dcat: <http://www.w3.org/ns/dcat#>
@@ -15,10 +31,10 @@ select count(?d) as ?count where {
 }
 		';
 
-		return str_replace('?MSCat?', $msCat, $sparql);
+		return str_replace('?MSCat?', $catalog, $sparql);
 	}
 
-	function getSPARQLcountEUdistributionsForMemberStates($msCat) {
+	function getSPARQLcountEUdistributionsByCatalog($catalog) {
 		$sparql = '
 prefix r5r: <http://data.europa.eu/r5r/>
 prefix dcat: <http://www.w3.org/ns/dcat#>
@@ -32,10 +48,10 @@ select count(?dist) as ?count where {
 }
 		';
 
-		return str_replace('?MSCat?', $msCat, $sparql);
+		return str_replace('?MSCat?', $catalog, $sparql);
 	}
 
-	function getSPARQLgetEUaccessURLsForMemberStates($msCat) {
+	function getSPARQLgetEUaccessURLsByCatalog($catalog) {
 		$sparql = '
 prefix dct: <http://purl.org/dc/terms/>
 prefix r5r: <http://data.europa.eu/r5r/>
@@ -53,7 +69,7 @@ select ?identifier ?accessURL where {
 }
 		';
 
-		return str_replace('?MSCat?', $msCat, $sparql);
+		return str_replace('?MSCat?', $catalog, $sparql);
 	}
 
 	// -----------------------------------------------------
@@ -75,7 +91,7 @@ construct {?s ?p ?o.
            ?API ?APIp ?APIo.
 } where {
 # <?MSCat?> ?cp ?s.
-  <http://data.europa.eu/88u/catalogue/govdata> ?cp ?d.
+  <http://data.europa.eu/88u/catalogue/govdata> ?cp ?s.
 ?s <http://data.europa.eu/r5r/applicableLegislation> <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
 { ?s ?p ?o. }
 union {
