@@ -160,7 +160,7 @@ paths:
       summary: tbd.
       parameters:
         - $ref: "#/components/parameters/pidPathRandomParam"
-        - $ref: "#/components/parameters/datePathParam"
+        - $ref: "#/components/parameters/dateNowPathParam"
       responses:
         '200':
           description: Example of a successful answer
@@ -310,6 +310,46 @@ paths:
           $ref: '#/components/responses/401Unauthorized'
       tags:
         - supplier
+  /hvd/statistics/{date}:
+    get:
+      summary: Experimental
+      description: Experimental
+      operationId: getHVDStatisticsDate
+      parameters:
+        - $ref: "#/components/parameters/datePathParam"
+      responses:
+        '200':
+          description: Example of a successful answer
+          content:
+            application/json:
+              examples:
+                pSample:
+                  value:
+                    tbd.
+        '400':
+          $ref: "#/components/responses/400BadRequest"
+      tags:
+        - hvd
+  /hvd/accessurls/{date}:
+    get:
+      summary: Experimental
+      description: Experimental
+      operationId: getHVDAccessURLsDate
+      parameters:
+        - $ref: "#/components/parameters/datePathParam"
+      responses:
+        '200':
+          description: Example of a successful answer
+          content:
+            application/json:
+              examples:
+                pSample:
+                  value:
+                    tbd.
+        '400':
+          $ref: "#/components/responses/400BadRequest"
+      tags:
+        - hvd
   /datasets:
     get:
       summary: Coming soon
@@ -522,7 +562,7 @@ components:
     datePathParam:
       name: date
       in: path
-      description: tbd. + 'today' + 'yesterday' + 'now'
+      description: tbd. + 'today' + 'yesterday' + '2024-02-24'
       required: true
       allowEmptyValue: false
       schema:
@@ -535,7 +575,25 @@ components:
           value: yesterday
           summary: Yesterday
         sampleDate:
-          value: 2024-02-24
+          value: '2024-02-24'
+          summary: sample tbd.
+    dateNowPathParam:
+      name: date
+      in: path
+      description: tbd. + 'today' + 'yesterday' + 'now' + '2024-02-24'
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      examples:
+        today:
+          value: today
+          summary: Today
+        yesterday:
+          value: yesterday
+          summary: Yesterday
+        sampleDate:
+          value: '2024-02-24'
           summary: sample tbd.
         now:
           value: now
@@ -751,6 +809,8 @@ tags:
     description: Portal functions of the API can query both historical data from the database and live data from the source systems.
   - name: supplier
     description: Supplier functions of the API can query both historical data from the database and live data from the source systems.
+  - name: hvd
+    description: Experimental! This group contains endpoints that work with High Value Datasets. Everything here is still very experimental.
   - name: live
     description: The API endpoints call the source systems directly. Be careful during heavy use, there is no caching mechanism.
   - name: maintained
