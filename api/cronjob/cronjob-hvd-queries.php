@@ -53,6 +53,23 @@ select (count(?dist) as ?count) where {
 		return str_replace('?MSCat?', $catalog, $sparql);
 	}
 
+	function getSPARQLcountEUaccessServicesByCatalog($catalog) {
+		$sparql = '
+prefix r5r: <http://data.europa.eu/r5r/>
+prefix dcat: <http://www.w3.org/ns/dcat#>
+
+select (count(distinct ?d) as ?countDatasets) (count(distinct ?dist) as ?countDist) (count(distinct ?api) as ?countAPI) where {
+  <?MSCat?> ?cp ?d.
+  ?d a dcat:Dataset.
+  ?d dcat:distribution ?dist.
+  ?dist dcat:accessService ?api.
+  ?api r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+}
+		';
+
+		return str_replace('?MSCat?', $catalog, $sparql);
+	}
+
 	function getSPARQLgetEUaccessURLsByCatalog($catalog) {
 		$sparql = '
 prefix dct: <http://purl.org/dc/terms/>
@@ -68,6 +85,23 @@ select ?identifier ?accessURL where {
   ?dist r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
 
   optional { ?dist dcat:accessURL ?accessURL. }
+}
+		';
+
+		return str_replace('?MSCat?', $catalog, $sparql);
+	}
+
+	function getSPARQLgetEUaccessServicesByCatalog($catalog) {
+		$sparql = '
+prefix r5r: <http://data.europa.eu/r5r/>
+prefix dcat: <http://www.w3.org/ns/dcat#>
+
+select distinct ?api where {
+  <?MSCat?> ?cp ?d.
+  ?d a dcat:Dataset.
+  ?d dcat:distribution ?dist.
+  ?dist dcat:accessService ?api.
+  ?api r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
 }
 		';
 
