@@ -1,7 +1,9 @@
 <?php
 	function getEUcatalogGovData() {
 		return 'http://data.europa.eu/88u/catalogue/govdata';
-	}
+
+    // denmark HVD catalog: http://data.europa.eu/88u/catalogue/datavejviser
+  }
 
 	function getSPARQLgetEUcatalogs() {
 		$sparql = '
@@ -24,7 +26,7 @@ where {
 prefix r5r: <http://data.europa.eu/r5r/>
 prefix dcat: <http://www.w3.org/ns/dcat#>
 
-select count(?d) as ?count where {
+select (count(?d) as ?count) where {
   <?MSCat?> ?cp ?d.
   ?d r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
   ?d a dcat:Dataset.
@@ -39,7 +41,7 @@ select count(?d) as ?count where {
 prefix r5r: <http://data.europa.eu/r5r/>
 prefix dcat: <http://www.w3.org/ns/dcat#>
 
-select count(?dist) as ?count where {
+select (count(?dist) as ?count) where {
   <?MSCat?> ?cp ?d.
   ?d r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
   ?d a dcat:Dataset.
@@ -119,6 +121,13 @@ union {
 // - not check distribution marked for HVD
 // - return: datasets
 // -----------------------------------------------------
+// same as: getSPARQLcountEUdatasetsByCatalog()
+// -----------------------------------------------------
+// query with    '?Category' count 874 entries
+// query without '?Category' count 868 entries
+// -> query only '?Category' results in 8 entries
+//    5x URIs, 3x empty values
+// -----------------------------------------------------
 $sparql1 = '
 prefix dct: <http://purl.org/dc/terms/>
 prefix r5r: <http://data.europa.eu/r5r/>
@@ -144,6 +153,8 @@ select distinct ?d ?title ?desc ?Category where {
 // - check HVD marked dataset and HVD marked distributions
 // - not check for HVD category (may be empty)
 // - return: distributions
+// ----------------------------------------------------------------------------------------
+// same as: getSPARQLcountEUdistributionsByCatalog()
 // ----------------------------------------------------------------------------------------
 $sparql2 = '
 prefix dct: <http://purl.org/dc/terms/>
