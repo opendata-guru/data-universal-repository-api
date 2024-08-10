@@ -53,7 +53,32 @@ select (count(?dist) as ?count) where {
 		return str_replace('?MSCat?', $catalog, $sparql);
 	}
 
-	function getSPARQLcountEUaccessServicesByCatalog($catalog) {
+	function getSPARQLcountEUdataServicesByCatalog($catalog) {
+    $sparql = '
+prefix r5r: <http://data.europa.eu/r5r/>
+prefix dcat: <http://www.w3.org/ns/dcat#>
+
+select (count(?api) as ?count) where {
+  <?MSCat?> ?cp ?d.
+  ?d r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+  {
+    ?d dcat:distribution ?dist.
+    ?dist r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+
+    ?dist dcat:accessService ?api.
+    ?api r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+  }
+  union {
+    ?api dcat:servesDataset ?d.
+    ?api r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+  }
+}
+    ';
+
+    return str_replace('?MSCat?', $catalog, $sparql);
+	}
+
+  function getSPARQLcountEUaccessServicesByCatalog($catalog) {
 		$sparql = '
 prefix r5r: <http://data.europa.eu/r5r/>
 prefix dcat: <http://www.w3.org/ns/dcat#>
@@ -212,6 +237,8 @@ select distinct ?d ?dist ?title ?accessURL where {
 // -----------------------------------------------------------------------------
 // 3) Reported APIs (Data Services) for High Value Datasets with key information
 // !!! Query is broken !!!
+// -----------------------------------------------------------------------------
+// same as: getSPARQLcountEUdataServicesByCatalog()
 // -----------------------------------------------------------------------------
 $sparql3 = '
 prefix dct: <http://purl.org/dc/terms/>

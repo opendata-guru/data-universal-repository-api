@@ -69,6 +69,8 @@
 				'countDatasetsTimestamp' => null,
 				'countDistributionsDuration' => null,
 				'countDistributionsTimestamp' => null,
+				'countDataServicesDuration' => null,
+				'countDataServicesTimestamp' => null,
 				'distributionsDuration' => null,
 				'distributionsTimestamp' => null,
 			);
@@ -93,6 +95,7 @@
 		$countsData[$catalog] = array(
 			'datasets' => $count,
 			'distributions' => null,
+			'dataservices' => null,
 		);
 
 		saveCronjobData($fileDate, $countsData);
@@ -112,6 +115,24 @@
 		$count = intval($result->count->value);
 
 		$countsData[$catalog]->distributions = $count;
+
+		saveCronjobData($fileDate, $countsData);
+	}
+
+	function getEUCountDataServicesData($catalog) {
+		global $basePath;
+		global $euPath;
+
+		$date = date('Y-m-d');
+		$fileDate = $basePath . 'hvd-date/' . date('Y-m') . '/hvd-' . $date . '.json';
+		$countsData = (array) loadCronjobData($fileDate);
+
+		$url = $euPath . '?query=' . rawurlencode(getSPARQLcountEUdataServicesByCatalog($catalog));
+		$data = get_contents_sparql($url);
+		$result = json_decode($data)->results->bindings[0];
+		$count = intval($result->count->value);
+
+		$countsData[$catalog]->dataservices = $count;
 
 		saveCronjobData($fileDate, $countsData);
 	}
@@ -164,6 +185,18 @@
 
 				$object->countDistributionsDuration = round(microtime(true) - $now, 3);
 				$object->countDistributionsTimestamp = date('Y-m-d H:i:s');
+
+				return $data;
+			}
+
+			$modified = $object->countDataServicesTimestamp;
+			if (is_null($modified)) {
+				$now = microtime(true);
+
+				getEUCountDataServicesData($catalog);
+
+				$object->countDataServicesDuration = round(microtime(true) - $now, 3);
+				$object->countDataServicesTimestamp = date('Y-m-d H:i:s');
 
 				return $data;
 			}
