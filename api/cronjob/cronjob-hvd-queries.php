@@ -95,7 +95,26 @@ select (count(distinct ?d) as ?countDatasets) (count(distinct ?dist) as ?countDi
 		return str_replace('?MSCat?', $catalog, $sparql);
 	}
 
-	function getSPARQLgetEUaccessURLsByCatalog($catalog) {
+  function getSPARQLcountEUlicensesByCatalog($catalog) {
+		$sparql = '
+prefix dct: <http://purl.org/dc/terms/>
+prefix r5r: <http://data.europa.eu/r5r/>
+prefix dcat: <http://www.w3.org/ns/dcat#>
+
+select ?license (count(?license) as ?count) where {
+  <?MSCat?> ?cp ?d.
+  ?d r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+  ?d a dcat:Dataset.
+  ?d dcat:distribution ?dist.
+  ?dist r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+  OPTIONAL { ?dist dct:license ?license }
+}
+		';
+
+		return str_replace('?MSCat?', $catalog, $sparql);
+	}
+
+  function getSPARQLgetEUaccessURLsByCatalog($catalog) {
 		$sparql = '
 prefix dct: <http://purl.org/dc/terms/>
 prefix r5r: <http://data.europa.eu/r5r/>
@@ -236,7 +255,7 @@ select distinct ?d ?dist ?title ?accessURL where {
 
 // -----------------------------------------------------------------------------
 // 3) Reported APIs (Data Services) for High Value Datasets with key information
-// !!! Query is broken !!!
+// - result in 0 entries
 // -----------------------------------------------------------------------------
 // same as: getSPARQLcountEUdataServicesByCatalog()
 // -----------------------------------------------------------------------------
@@ -274,7 +293,7 @@ select distinct ?d ?api ?title ?desc ?category ?endpointURL ?endpointDesc where 
 
 // -------------------------------------------------------
 // 4) Reported legal information on Distributions and APIs
-// !!! Query is broken !!!
+// - it's only for APIs!
 // -------------------------------------------------------
 $sparql4 = '
 prefix dct: <http://purl.org/dc/terms/>
@@ -306,6 +325,9 @@ select distinct ?d ?api ?title ?lic ?rights where {
 
 // --------------------------------------------------
 // 5) Reported legal information on provided licences
+// - licenses only from distributions
+// --------------------------------------------------
+// same as: getSPARQLcountEUlicensesByCatalog
 // --------------------------------------------------
 $sparql5 = '
 PREFIX dc: <http://purl.org/dc/elements/1.1/>

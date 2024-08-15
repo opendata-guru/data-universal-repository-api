@@ -71,6 +71,8 @@
 				'countDistributionsTimestamp' => null,
 				'countDataServicesDuration' => null,
 				'countDataServicesTimestamp' => null,
+				'countLicensesDuration' => null,
+				'countLicensesTimestamp' => null,
 				'distributionsDuration' => null,
 				'distributionsTimestamp' => null,
 			);
@@ -96,6 +98,7 @@
 			'datasets' => $count,
 			'distributions' => null,
 			'dataservices' => null,
+			'licenses' => null,
 		);
 
 		saveCronjobData($fileDate, $countsData);
@@ -133,6 +136,63 @@
 		$count = intval($result->count->value);
 
 		$countsData[$catalog]->dataservices = $count;
+
+		saveCronjobData($fileDate, $countsData);
+	}
+
+	function getEUCountLicensesData($catalog) {
+		global $basePath;
+		global $euPath;
+
+		$date = date('Y-m-d');
+		$fileDate = $basePath . 'hvd-date/' . date('Y-m') . '/hvd-' . $date . '.json';
+		$countsData = (array) loadCronjobData($fileDate);
+
+		$url = $euPath . '?query=' . rawurlencode(getSPARQLcountEUlicensesByCatalog($catalog));
+		$data = get_contents_sparql($url);
+		$result = json_decode($data)->results->bindings;
+
+		$valuesCCBYcomparable = array('http://dcat-ap.de/def/licenses/odbl', 'http://dcat-ap.de/def/licenses/dl-by-de/2.0', 'https://www.etalab.gouv.fr/licence-ouverte-open-licence', 'https://www.etalab.gouv.fr/wp-content/uploads/2014/05/Licence_Ouverte.pdf');
+		$valuesCC0comparable = array('http://dcat-ap.de/def/licenses/dl-zero-de/2.0');
+		$valuesRestrictive = array('http://dcat-ap.de/def/licenses/other-closed');
+		$valuesCCBY = array('http://publications.europa.eu/resource/authority/licence/CC_BY_4_0', 'http://dcat-ap.de/def/licenses/cc-by-de/3.0', 'http://dcat-ap.de/def/licenses/cc-by/4.0');
+		$valuesCC0 = array('http://creativecommons.org/publicdomain/zero/1.0/', 'http://dcat-ap.de/def/licenses/cc-zero');
+
+		$countCCBYcomparable = 0;
+		$countCC0comparable = 0;
+		$countRestrictive = 0;
+		$countUnknown = 0;
+		$countCCBY = 0;
+		$countCC0 = 0;
+
+		foreach($result as $line) {
+			if (!isset($line->license)) {
+				$countUnknown += intval($line->count->value);
+			} else if (in_array($line->license->value, $valuesCCBYcomparable)) {
+				$countCCBYcomparable += intval($line->count->value);
+			} else if (in_array($line->license->value, $valuesCC0comparable)) {
+				$countCC0comparable += intval($line->count->value);
+			} else if (in_array($line->license->value, $valuesRestrictive)) {
+				$countRestrictive += intval($line->count->value);
+			} else if (in_array($line->license->value, $valuesCCBY)) {
+				$countCCBY += intval($line->count->value);
+			} else if (in_array($line->license->value, $valuesCC0)) {
+				$countCC0 += intval($line->count->value);
+			} else {
+				$countUnknown += intval($line->count->value);
+			}
+		}
+
+		$count = array(
+			'cc_0' => $countCC0,
+			'cc_0_comparable' => $countCC0comparable,
+			'cc_by' => $countCCBY,
+			'cc_by_comparable' => $countCCBYcomparable,
+			'restrictive' => $countRestrictive,
+			'unknown' => $countUnknown,
+		);
+
+		$countsData[$catalog]->licenses = $count;
 
 		saveCronjobData($fileDate, $countsData);
 	}
@@ -197,6 +257,18 @@
 
 				$object->countDataServicesDuration = round(microtime(true) - $now, 3);
 				$object->countDataServicesTimestamp = date('Y-m-d H:i:s');
+
+				return $data;
+			}
+
+			$modified = $object->countLicensesTimestamp;
+			if (is_null($modified)) {
+				$now = microtime(true);
+
+				getEUCountLicensesData($catalog);
+
+				$object->countLicensesDuration = round(microtime(true) - $now, 3);
+				$object->countLicensesTimestamp = date('Y-m-d H:i:s');
 
 				return $data;
 			}
