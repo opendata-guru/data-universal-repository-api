@@ -51,6 +51,7 @@
 				'sObject' => findSObject($sid),
 				'datasets' => $value->datasets,
 				'distributions' => $value->distributions,
+				'licenses' => $value->licenses,
 			);
 		}
 	}
