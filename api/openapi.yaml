@@ -137,30 +137,13 @@ paths:
           $ref: "#/components/responses/400BadRequest"
       tags:
         - portal
-  /p/{pID}/system:
+  /p/systems/{date}:
     get:
-      summary: tbd.
+      summary: Get system status information from all portals
+      description: Get information about the system used, version number, extensions and a link.
+      operationId: getPObjectsSystemsDate
       parameters:
-        - $ref: "#/components/parameters/pidPathRandomParam"
-      responses:
-        '200':
-          description: Example of a successful answer
-          content:
-            application/json:
-              examples:
-                pSample:
-                  value:
-                    tbd.
-        '400':
-          $ref: "#/components/responses/400BadRequest"
-      tags:
-        - portal
-  /p/{pID}/{date}:
-    get:
-      summary: tbd.
-      parameters:
-        - $ref: "#/components/parameters/pidPathRandomParam"
-        - $ref: "#/components/parameters/dateNowPathParam"
+        - $ref: "#/components/parameters/datePathParam"
       responses:
         '200':
           description: Example of a successful answer
@@ -562,7 +545,7 @@ components:
     datePathParam:
       name: date
       in: path
-      description: tbd. + 'today' + 'yesterday' + '2024-02-24'
+      description: A date in the format ‘YYYY-MM-DD’ or one of the values ‘today’ and ‘yesterday’.
       required: true
       allowEmptyValue: false
       schema:
@@ -575,8 +558,8 @@ components:
           value: yesterday
           summary: Yesterday
         sampleDate:
-          value: '2024-02-24'
-          summary: sample tbd.
+          value: '2024-08-24'
+          summary: October 24, 2024
     dateNowPathParam:
       name: date
       in: path
