@@ -51,7 +51,12 @@
 			$value = (object) [];
 		}
 
-		$value->pobject = $pObject;
+		$value->pobject = (object) array(
+			'pid' => providerGetPID($pObject),
+			'sid' => providerGetSID($pObject),
+			'url' => providerGetURL($pObject),
+			'deepLink' => providerGetDeepLink($pObject),
+		);
 		$value->sobject = $sObject;
 
 		$statistics[] = $value;
