@@ -47,6 +47,10 @@
 		$sid = providerGetSID($pObject);
 		$sObject = findSObject($sid);
 
+		if (is_null($value)) {
+			$value = (object) [];
+		}
+
 		$value->pobject = $pObject;
 		$value->sobject = $sObject;
 
