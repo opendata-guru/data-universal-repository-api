@@ -61,6 +61,9 @@
 	} else if ('Opendatasoft' === $link->system) {
 		include 'system/system-opendatasoft.php';
 		systemOpendatasoft($link->url);
+	} else if ('SPARQL' === $link->system) {
+		include 'system/system-sparql.php';
+		systemSPARQL($link->url);
 	} else if ('unknown' !== $link->system) {
 		echo json_encode((object) array(
 			'cms' => getCMS($link->url),

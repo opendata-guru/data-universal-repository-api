@@ -288,12 +288,13 @@
 
 		if (!$error && ($system === 'unknown')) {
 			$SPARQL = '/sparql';
+			$found = null;
 
 			if ($SPARQL == substr($link['path'], -strlen($SPARQL))) {
 				$found = substr($link['path'], 0, -strlen($SPARQL));
 			}
 
-			if ($found !== null) {
+			if (!is_null($found)) {
 				$link['path'] = $found . $SPARQL;
 				unset($link['query']);
 				unset($link['fragment']);
