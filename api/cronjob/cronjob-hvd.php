@@ -152,11 +152,32 @@
 		$data = get_contents_sparql($url);
 		$result = json_decode($data)->results->bindings;
 
-		$valuesCCBYcomparable = array('http://dcat-ap.de/def/licenses/odbl', 'http://dcat-ap.de/def/licenses/dl-by-de/2.0', 'https://www.etalab.gouv.fr/licence-ouverte-open-licence', 'https://www.etalab.gouv.fr/wp-content/uploads/2014/05/Licence_Ouverte.pdf');
-		$valuesCC0comparable = array('http://dcat-ap.de/def/licenses/dl-zero-de/2.0');
-		$valuesRestrictive = array('http://dcat-ap.de/def/licenses/other-closed');
-		$valuesCCBY = array('http://publications.europa.eu/resource/authority/licence/CC_BY_4_0', 'http://dcat-ap.de/def/licenses/cc-by-de/3.0', 'http://dcat-ap.de/def/licenses/cc-by/4.0');
-		$valuesCC0 = array('http://creativecommons.org/publicdomain/zero/1.0/', 'http://dcat-ap.de/def/licenses/cc-zero');
+		$valuesCCBYcomparable = array(
+			'http://dcat-ap.de/def/licenses/odbl',
+			'http://dcat-ap.de/def/licenses/dl-by-de/2.0',
+			'http://dcat-ap.de/def/licenses/geonutz/20130319',
+			'https://www.etalab.gouv.fr/licence-ouverte-open-licence',
+			'https://www.etalab.gouv.fr/wp-content/uploads/2014/05/Licence_Ouverte.pdf'
+		);
+		$valuesCC0comparable = array(
+			'http://dcat-ap.de/def/licenses/dl-de-zero-2.0',
+			'http://dcat-ap.de/def/licenses/dl-zero-de/2.0'
+		);
+		$valuesRestrictive = array(
+			'http://dcat-ap.de/def/licenses/other-closed',
+			'http://dcat-ap.de/def/licenses/cc-by-nd/4.0'
+		);
+		$valuesCCBY = array(
+			'http://publications.europa.eu/resource/authority/licence/CC_BY_4_0',
+			'http://dcat-ap.de/def/licenses/cc-by-de/3.0',
+			'http://dcat-ap.de/def/licenses/cc-by/4.0',
+			'http://dcat-ap.de/def/licenses/CC%20BY%204.0'
+		);
+		$valuesCC0 = array(
+			'http://publications.europa.eu/resource/authority/licence/CC0',
+			'http://creativecommons.org/publicdomain/zero/1.0/',
+			'http://dcat-ap.de/def/licenses/cc-zero'
+		);
 
 		$countCCBYcomparable = 0;
 		$countCC0comparable = 0;
@@ -166,6 +187,10 @@
 		$countCC0 = 0;
 
 		foreach($result as $line) {
+			if (isset($line->mapped)) {
+				$line->license = $line->mapped;
+			}
+
 			if (!isset($line->license)) {
 				$countUnknown += intval($line->count->value);
 			} else if (in_array($line->license->value, $valuesCCBYcomparable)) {

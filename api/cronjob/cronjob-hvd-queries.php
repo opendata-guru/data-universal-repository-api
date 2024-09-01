@@ -101,13 +101,19 @@ prefix dct: <http://purl.org/dc/terms/>
 prefix r5r: <http://data.europa.eu/r5r/>
 prefix dcat: <http://www.w3.org/ns/dcat#>
 
-select ?license (count(?license) as ?count) where {
+select ?license (count(?license) as ?count) ?mapped where {
   <?MSCat?> ?cp ?d.
   ?d r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
   ?d a dcat:Dataset.
   ?d dcat:distribution ?dist.
   ?dist r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
-  OPTIONAL { ?dist dct:license ?license }
+  OPTIONAL { ?dist dct:license ?license.
+    OPTIONAL { ?license ?skos ?mapped.
+      FILTER ( ?skos IN ( <http://www.w3.org/2004/02/skos/core#exactMatch>,
+                          <http://www.w3.org/2004/02/skos/core#narrowMatch>,
+                          <http://www.w3.org/2004/02/skos/core#broadMatch> ))
+    }
+  }
 }
 		';
 
