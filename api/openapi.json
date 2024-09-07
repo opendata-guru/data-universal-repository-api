@@ -472,8 +472,8 @@
     },
     "/hvd/statistics/{date}": {
       "get": {
-        "summary": "Experimental",
-        "description": "Experimental",
+        "summary": "Get HVD statistics",
+        "description": "Experimental! Get the HVD statistics from the EU Open Data Portal. The underlying queries are not yet final!",
         "operationId": "getHVDStatisticsDate",
         "parameters": [
           {
@@ -486,8 +486,43 @@
             "content": {
               "application/json": {
                 "examples": {
-                  "pSample": {
-                    "value": "tbd."
+                  "sample": {
+                    "value": [
+                      {
+                        "catalogURI": "http://data.europa.eu/88u/catalogue/govdata",
+                        "sObject": {
+                          "sid": "smZ1A",
+                          "title": {
+                            "de": "Deutschland",
+                            "en": "Germany"
+                          },
+                          "type": "country",
+                          "sameAs": {
+                            "wikidata": "http://www.wikidata.org/entity/Q183"
+                          },
+                          "partOf": {
+                            "wikidata": ""
+                          },
+                          "image": {
+                            "source": "http://commons.wikimedia.org/wiki/Special:FilePath/Flag%20of%20Germany.svg",
+                            "url": "https://opendata.guru/api-data/assets/smZ1A.svg"
+                          },
+                          "geocoding": {
+                            "germanRegionalKey": ""
+                          }
+                        },
+                        "datasets": 867,
+                        "distributions": 2265,
+                        "licenses": {
+                          "cc_0": 1020,
+                          "cc_0_comparable": 69,
+                          "cc_by": 341,
+                          "cc_by_comparable": 755,
+                          "restrictive": 78,
+                          "unknown": 2
+                        }
+                      }
+                    ]
                   }
                 }
               }
@@ -504,8 +539,8 @@
     },
     "/hvd/accessurls/{date}": {
       "get": {
-        "summary": "Experimental",
-        "description": "Experimental",
+        "summary": "Get file URLs of HVD datasets",
+        "description": "Experimental! Retrieving file URLs of HVD datasets from Germany only. The underlying queries are not yet final!",
         "operationId": "getHVDAccessURLsDate",
         "parameters": [
           {
@@ -518,8 +553,13 @@
             "content": {
               "application/json": {
                 "examples": {
-                  "pSample": {
-                    "value": "tbd."
+                  "sample": {
+                    "value": [
+                      {
+                        "datasetIdentifier": "2733a6d9-775f-4aea-bf1a-5287aab06548",
+                        "distributionAccessURL": "http://www.laiv-mv.de/Geoinformation/Karten/Gebietskarten/"
+                      }
+                    ]
                   }
                 }
               }
@@ -1213,11 +1253,11 @@
   "tags": [
     {
       "name": "portal",
-      "description": "Portal functions of the API can query both historical data from the database and live data from the source systems."
+      "description": "Portal functions of the API can query both historical data from the database and live data (in the future) from the source systems."
     },
     {
       "name": "supplier",
-      "description": "Supplier functions of the API can query both historical data from the database and live data from the source systems."
+      "description": "Supplier functions of the API can query both historical data from the database and live data (in the future) from the source systems."
     },
     {
       "name": "hvd",

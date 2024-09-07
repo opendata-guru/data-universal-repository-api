@@ -38,6 +38,15 @@
 		}
 
 		$json = json_decode(file_get_contents($path));
+
+		foreach($json as &$object) {
+			$object->datasetIdentifier = $object->identifier;
+			unset($object->identifier);
+
+			$object->distributionAccessURL = $object->accessURL;
+			unset($object->accessURL);
+		}
+
 		$hvd = $json;
 	}
 
