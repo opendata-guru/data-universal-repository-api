@@ -358,6 +358,31 @@ paths:
           $ref: "#/components/responses/400BadRequest"
       tags:
         - hvd
+  /hvd/accessurls/{date}/change:
+    get:
+      summary: Change from previous day
+      description: List all changes compared to the previous day
+      operationId: getHVDAccessURLsDateChange
+      parameters:
+        - $ref: "#/components/parameters/datePathParam"
+      responses:
+        '200':
+          description: Example of a successful answer
+          content:
+            application/json:
+              examples:
+                sample:
+                  value:
+                    added:
+                      - datasetIdentifier: a91a05d1-1b4a-48df-ae33-725b6e14c1e0
+                        distributionAccessURL: https://gdi-services.bmel.de/cgi-bin/FGRDEU_Herkunftsgebiete_Baumarten?REQUEST=GetCapabilities&SERVICE=WMS
+                    removed:
+                      - datasetIdentifier: faee466f-27c1-44c9-bcb8-3c2bec8b1116
+                        distributionAccessURL: https://services.bgr.de/atomfeeds/service.xml
+        '400':
+          $ref: "#/components/responses/400BadRequest"
+      tags:
+        - hvd
   /datasets:
     get:
       summary: Coming soon
