@@ -352,6 +352,9 @@ paths:
               examples:
                 sample:
                   value:
+                    hosts:
+                    - services.bgr.de
+                    detailed:
                     - datasetIdentifier: 2733a6d9-775f-4aea-bf1a-5287aab06548
                       distributionAccessURL: http://www.laiv-mv.de/Geoinformation/Karten/Gebietskarten/
         '400':

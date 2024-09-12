@@ -4,6 +4,19 @@
     header('Access-Control-Allow-Headers: X-Requested-With');
 	header('Content-Type: application/json; charset=utf-8');
 
+	function sortURLs($a, $b) {
+		$a_ = explode('.', $a);
+		$a__ = $a_[count($a_) - 2];
+
+		$b_ = explode('.', $b);
+		$b__ = $b_[count($b_) - 2];
+
+		if ($a__ == $b__) {
+			return 0;
+		}
+		return ($a__ < $b__) ? -1 : 1;
+	}
+
 	if ('GET' !== $_SERVER['REQUEST_METHOD']) {
 		header('HTTP/1.0 405 Method Not Allowed');
 		echo json_encode((object) array(
@@ -38,6 +51,7 @@
 		}
 
 		$json = json_decode(file_get_contents($path));
+		$urls = [];
 
 		foreach($json as &$object) {
 			$object->datasetIdentifier = $object->identifier;
@@ -45,9 +59,22 @@
 
 			$object->distributionAccessURL = $object->accessURL;
 			unset($object->accessURL);
+
+			$url = parse_url($object->distributionAccessURL, PHP_URL_HOST);
+			$url = preg_replace('#^www\.(.+\.)#i', '$1', $url);
+
+			if ($url) {
+				$urls[] = $url;
+			}
 		}
 
-		$hvd = $json;
+		$urls = array_values(array_unique($urls));
+		usort($urls, 'sortURLs');
+
+		$hvd = (object) array(
+			'hosts' => $urls,
+			'detailed' => $json,
+		);
 	}
 
 	echo json_encode($hvd);
