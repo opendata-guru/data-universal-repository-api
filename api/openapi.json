@@ -597,6 +597,14 @@
                 "examples": {
                   "sample": {
                     "value": {
+                      "hostsNew": [],
+                      "hostsAdded": [
+                        "gdi-services.bmel.de"
+                      ],
+                      "hostsRemoved": [
+                        "services.bgr.de"
+                      ],
+                      "hostsDeleted": [],
                       "added": [
                         {
                           "datasetIdentifier": "a91a05d1-1b4a-48df-ae33-725b6e14c1e0",
@@ -977,7 +985,7 @@
           },
           "sampleDate": {
             "value": "2024-08-24",
-            "summary": "October 24, 2024"
+            "summary": "August 24, 2024"
           }
         }
       },

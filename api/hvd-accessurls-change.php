@@ -4,6 +4,19 @@
     header('Access-Control-Allow-Headers: X-Requested-With');
 	header('Content-Type: application/json; charset=utf-8');
 
+	function sortURLs($a, $b) {
+		$a_ = explode('.', $a);
+		$a__ = $a_[count($a_) - 2];
+
+		$b_ = explode('.', $b);
+		$b__ = $b_[count($b_) - 2];
+
+		if ($a__ == $b__) {
+			return 0;
+		}
+		return ($a__ < $b__) ? -1 : 1;
+	}
+
 	if ('GET' !== $_SERVER['REQUEST_METHOD']) {
 		header('HTTP/1.0 405 Method Not Allowed');
 		echo json_encode((object) array(
@@ -43,6 +56,24 @@
 		$jsonToday = json_decode(file_get_contents($path));
 		$jsonYesterday = json_decode(file_get_contents($pathYesterday));
 //		$jsonBoth = [];
+		$urlsBoth = [];
+
+		foreach($jsonToday as &$object) {
+			$url = parse_url($object->accessURL, PHP_URL_HOST);
+			$url = preg_replace('#^www\.(.+\.)#i', '$1', $url);
+
+			if ($url) {
+				$urlsBoth[] = $url;
+			}
+		}
+		foreach($jsonYesterday as &$object) {
+			$url = parse_url($object->accessURL, PHP_URL_HOST);
+			$url = preg_replace('#^www\.(.+\.)#i', '$1', $url);
+
+			if ($url) {
+				$urlsBoth[] = $url;
+			}
+		}
 
 		for ($t = count($jsonToday) - 1; $t >= 0; --$t) {
 			for ($y = count($jsonYesterday) - 1; $y >= 0; --$y) {
@@ -56,23 +87,54 @@
 			}
 		}
 
+		$urlsToday = [];
 		foreach($jsonToday as &$object) {
 			$object->datasetIdentifier = $object->identifier;
 			unset($object->identifier);
 
 			$object->distributionAccessURL = $object->accessURL;
 			unset($object->accessURL);
+
+			$url = parse_url($object->distributionAccessURL, PHP_URL_HOST);
+			$url = preg_replace('#^www\.(.+\.)#i', '$1', $url);
+
+			if ($url) {
+				$urlsToday[] = $url;
+			}
 		}
 
+		$urlsYesterday = [];
 		foreach($jsonYesterday as &$object) {
 			$object->datasetIdentifier = $object->identifier;
 			unset($object->identifier);
 
 			$object->distributionAccessURL = $object->accessURL;
 			unset($object->accessURL);
+
+			$url = parse_url($object->distributionAccessURL, PHP_URL_HOST);
+			$url = preg_replace('#^www\.(.+\.)#i', '$1', $url);
+
+			if ($url) {
+				$urlsYesterday[] = $url;
+			}
 		}
 
+		$urlsBoth = array_values(array_unique($urlsBoth));
+		$urlsToday = array_values(array_unique($urlsToday));
+		$urlsYesterday = array_values(array_unique($urlsYesterday));
+		$urlsNew = array_diff($urlsToday, $urlsBoth);
+		$urlsDeleted = array_diff($urlsYesterday, $urlsBoth);
+
+		usort($urlsNew, 'sortURLs');
+		usort($urlsToday, 'sortURLs');
+		usort($urlsDeleted, 'sortURLs');
+		usort($urlsYesterday, 'sortURLs');
+
 		$hvd = (object) array(
+			'hostsNew' => $urlsNew,
+			'hostsAdded' => $urlsToday,
+			'hostsRemoved' => $urlsYesterday,
+			'hostsDeleted' => $urlsDeleted,
 			'added' => $jsonToday,
 			'removed' => $jsonYesterday,
 		);
