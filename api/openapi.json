@@ -632,6 +632,51 @@
         ]
       }
     },
+    "/hvd/accessurl/insights": {
+      "get": {
+        "summary": "Get insights from a link",
+        "description": "Analyze a link to gain a deep understanding of the data and structure behind it",
+        "operationId": "getHVDAccessURLInsights",
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
+            "description": "tbd.",
+            "required": true,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "sample-wfs": {
+                "value": "https://geoinformation.eisenbahn-bundesamt.de/wfs/eba/services/wfs?service=WFS&version=2.0.0&request=GetCapabilities",
+                "summary": "Sample WFS link"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Example of a successful answer",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "sample": {
+                    "value": "tbd."
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          }
+        },
+        "tags": [
+          "hvd"
+        ]
+      }
+    },
     "/datasets": {
       "get": {
         "summary": "Coming soon",
