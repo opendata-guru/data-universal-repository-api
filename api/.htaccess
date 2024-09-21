@@ -28,10 +28,10 @@ RewriteRule ^2/(p|s)/([^/]+)$                         /api/$1object.php?$1id=$2&
 RewriteRule ^2/(p)/(systems)/([^/]+)$                 /api/$1-$2.php?date=$3&%{QUERY_STRING}    [L]
 RewriteRule ^2/hvd/(statistics|accessurls)/([^/]+)$   /api/hvd-$1.php?date=$2&%{QUERY_STRING}   [L]
 RewriteRule ^2/hvd/(accessurls)/([^/]+)/(change)$     /api/hvd-$1-$3.php?date=$2&%{QUERY_STRING}[L]
-RewriteRule ^2/hvd/(accessurl)/(insights)$            /api/hvd-$1-$2.php?%{QUERY_STRING}        [L]
 RewriteRule ^2/(datasets|suppliers|system)$           /api/$1.php               [L]
 RewriteRule ^2/(data-providers)$                      /api/$1.php               [L]
 RewriteRule ^2/datasets/(count|find)$                 /api/datasets-$1.php      [L]
+RewriteRule ^2/(live)/(insights)$                     /api/$1-$2.php            [L]
 RewriteRule ^2/system/changelog$                      /api/system-changelog.php [L]
 
 <IfModule mod_headers.c>

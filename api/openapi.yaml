@@ -392,36 +392,6 @@ paths:
           $ref: "#/components/responses/400BadRequest"
       tags:
         - hvd
-  /hvd/accessurl/insights:
-    get:
-      summary: Get insights from a link
-      description: Analyze a link to gain a deep understanding of the data and structure behind it
-      operationId: getHVDAccessURLInsights
-      parameters:
-        - name: url
-          in: query
-          description: tbd.
-          required: true
-          allowEmptyValue: false
-          schema:
-            type: string
-          examples:
-            sample-wfs:
-              value: https://geoinformation.eisenbahn-bundesamt.de/wfs/eba/services/wfs?service=WFS&version=2.0.0&request=GetCapabilities
-              summary: Sample WFS link
-      responses:
-        '200':
-          description: Example of a successful answer
-          content:
-            application/json:
-              examples:
-                sample:
-                  value:
-                    tbd.
-        '400':
-          $ref: "#/components/responses/400BadRequest"
-      tags:
-        - hvd
   /datasets:
     get:
       summary: Coming soon
@@ -486,6 +456,36 @@ paths:
                     - id: 3cf4e37c-3ae6-4c0c-a1e2-ff782ce47a03
                       name: inspire-sh-gebaude-2d-alkis4cca8
                       title: INSPIRE SH Gebäude – 2D ALKIS
+        '400':
+          $ref: "#/components/responses/400BadRequest"
+      tags:
+        - live
+  /live/insights:
+    get:
+      summary: Get insights from a link
+      description: Analyze a link to gain a deep understanding of the data and structure behind it
+      operationId: getLiveInsights
+      parameters:
+        - name: url
+          in: query
+          description: tbd.
+          required: true
+          allowEmptyValue: false
+          schema:
+            type: string
+          examples:
+            sample-wfs:
+              value: https://geoinformation.eisenbahn-bundesamt.de/wfs/eba/services/wfs?service=WFS&version=2.0.0&request=GetCapabilities
+              summary: Sample WFS link
+      responses:
+        '200':
+          description: Example of a successful answer
+          content:
+            application/json:
+              examples:
+                sample:
+                  value:
+                    tbd.
         '400':
           $ref: "#/components/responses/400BadRequest"
       tags:
