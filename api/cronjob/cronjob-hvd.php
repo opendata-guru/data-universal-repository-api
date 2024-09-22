@@ -165,6 +165,7 @@
 		);
 		$valuesRestrictive = array(
 			'http://dcat-ap.de/def/licenses/other-closed',
+			'http://dcat-ap.de/def/licenses/cc-by-sa/4.0',
 			'http://dcat-ap.de/def/licenses/cc-by-nd/4.0'
 		);
 		$valuesCCBY = array(
