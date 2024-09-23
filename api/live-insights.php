@@ -27,19 +27,35 @@
 		$info = curl_getinfo($curl);
 		curl_close($curl);
 
+		$charset = '';
+		$ct = explode(';', $info['content_type']);
+		$ct2 = [];
+		foreach($ct as $value) {
+			$pair = explode('=', $value);
+
+			if (trim(strtolower($pair[0])) === 'charset') {
+				$charset = trim(strtolower($pair[1]));
+			} else {
+				$ct2[] = $value;
+			}
+		}
+
 		$ret = (object) array(
-			'error' => $error,
-			'url' => $url,
-			'effectiveMethod' => $info['effective_method'],
-			'effectiveURL' => $info['url'],
-			'contentType' => $info['content_type'],
-			'httpCode' => $info['http_code'],
-			'requestSize' => $info['request_size'],
-			'fileTime' => $info['filetime'],
-			'totalTime' => $info['total_time'],
-			'sizeDownload' => $info['size_download'],
-			'speedDownload' => $info['speed_download'],
 			'content' => $content,
+			'error' => $error,
+			'metadata' => (object) array(
+				'charset' => $charset,
+				'contentType' => implode(';', $ct2),
+				'effectiveMethod' => $info['effective_method'],
+				'effectiveURL' => $info['url'],
+				'fileTime' => $info['filetime'],
+				'fileTimeISO' => $info['filetime'] === -1 ? null : date("Y-m-d H:i:s", $info['filetime']),
+				'httpCode' => $info['http_code'],
+				'sizeDownload' => $info['size_download'],
+				'speedDownload' => $info['speed_download'],
+				'totalTime' => $info['total_time'],
+			),
+			'url' => $url,
 		);
 
 		return $ret;
@@ -71,8 +87,8 @@
 
 	$ret = (object) array(
 		'comming' => 'soon',
-		'metadata' => $content,
-		'content' => $content->content,
+		'file' => $content,
+//		'content' => $content->content,
 	);
 
 	echo json_encode($ret);

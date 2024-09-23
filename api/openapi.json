@@ -765,8 +765,28 @@
             },
             "examples": {
               "sample-wfs": {
-                "value": "https://geoinformation.eisenbahn-bundesamt.de/wfs/eba/services/wfs?service=WFS&version=2.0.0&request=GetCapabilities",
+                "value": "https://geoportal.bafg.de/arcgis/rest/services/INSPIRE/Catchment/MapServer/exts/InspireFeatureDownload/service?VERSION=2.0.0&SERVICE=WFS&REQUEST=GetCapabilities",
                 "summary": "Sample WFS link"
+              },
+              "sample-wfs-missing": {
+                "value": "https://geoinformation.eisenbahn-bundesamt.de/wfs/eba/services/wfs?service=WFS&version=2.0.0&request=GetCapabilities",
+                "summary": "Sample WFS link with missing parameter"
+              },
+              "sample-wms": {
+                "value": "https://geoportal.bafg.de/arcgis/rest/services/INSPIRE/Catchment/MapServer/exts/InspireView/service?VERSION=1.3.0&SERVICE=WMS&REQUEST=Getcapabilities",
+                "summary": "Sample WMS link"
+              },
+              "sample-ows": {
+                "value": "https://geo.sv.rostock.de/inspire/plu-localplans/download",
+                "summary": "Sample OWS (download) link with missing parameter"
+              },
+              "sample-ogc": {
+                "value": "https://geo.sv.rostock.de/inspire/tn-publictransitstops/view",
+                "summary": "Sample OGS (view) link with missing parameter"
+              },
+              "sample-dcan-ressoure": {
+                "value": "https://offenedaten-koeln.de/dataset/strassen-k%C3%B6ln/resource/cf8ff4f5-5cf6-424f-b5f6-c9ac6c9c351c",
+                "summary": "Sample DCAN ressource portal link"
               }
             }
           }
