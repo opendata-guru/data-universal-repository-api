@@ -61,6 +61,41 @@
 		return $ret;
 	}
 
+	function parser($file) {
+		$MAGIC_XML = '<?xml ';
+		$contentType = '';
+		$content = '';
+
+		if ($MAGIC_XML === strtolower(substr($file->content, 0, strlen($MAGIC_XML)))) {
+			$contentType = 'xml';
+			$xml = simplexml_load_string($file->content);
+			$content = $xml->children();
+//			$content = $xml['ows:Exception'];
+
+/*			try {
+				$dom = new DOMDocument();
+				$dom->loadXML($file->content);
+				$content = $dom;
+			} catch(Exception $e) {
+				$content = $e;
+			}*/
+		}
+
+		$ret = (object) array(
+			'contentType' => $contentType,
+			'content' => $content,
+		);
+/*
+<?xml version='1.0' encoding='UTF-8'?>\n
+  <ows:ExceptionReport xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd\" version=\"2.0.0\">\n  
+    <ows:Exception exceptionCode=\"MissingParameterValue\">\n
+	  <ows:ExceptionText>The request did not contain any parameters.</ows:ExceptionText>\n
+	</ows:Exception>\n
+  </ows:ExceptionReport>",
+*/
+		return $ret;
+	}
+
 	if ('GET' !== $_SERVER['REQUEST_METHOD']) {
 		header('HTTP/1.0 405 Method Not Allowed');
 		echo json_encode((object) array(
@@ -82,13 +117,14 @@
 	}
 
 	$content = curl($parameterURL);
+	$parsed = parser($content);
 
 	$ret = array();
 
 	$ret = (object) array(
 		'comming' => 'soon',
 		'file' => $content,
-//		'content' => $content->content,
+		'content' => $parsed,
 	);
 
 	echo json_encode($ret);
