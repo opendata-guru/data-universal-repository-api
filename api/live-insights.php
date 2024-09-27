@@ -61,29 +61,82 @@
 		return $ret;
 	}
 
+	// wrong
+	// https://geo.sv.rostock.de/inspire/plu-localplans/download
+	// https://geo.sv.rostock.de/inspire/plu-localplans/view
+	// https://geo.sv.rostock.de/inspire/tn-publictransitstops/download
+	// https://geo.sv.rostock.de/inspire/tn-publictransitstops/view
+	// right
+	// https://geo.sv.rostock.de/inspire/plu-localplans/download?service=WFS&version=2.0.0&request=GetCapabilities
+	// https://geo.sv.rostock.de/inspire/plu-localplans/view?service=WMS&version=1.3.0&request=GetCapabilities
+	// https://geo.sv.rostock.de/inspire/tn-publictransitstops/download?service=WFS&version=2.0.0&request=GetCapabilities
+	// https://geo.sv.rostock.de/inspire/tn-publictransitstops/view?service=WMS&version=1.3.0&request=GetCapabilities
+
+	// opengis OWS
+	function parseOWS($xml, &$body, &$error) {
+		$rootName = $xml->getName();
+
+		if ('ExceptionReport' === $rootName) {
+			$xml->rewind();
+
+			$key = $xml->key();
+			$attributes = ((array) $xml->current())['@attributes'];
+			$values = [];
+
+			foreach($xml->getChildren() as $name => $data) {
+				$values[] = '' . $data;
+			}
+
+			$error = (object) array(
+				'type' => $rootName,
+				'name' => $key,
+				'code' => $attributes['exceptionCode'],
+				'descriptions' => $values,
+			);
+			return;
+		}
+$body = $rootName;
+	}
+
 	function parser($file) {
 		$MAGIC_XML = '<?xml ';
 		$contentType = '';
-		$content = '';
+		$body = null;
+		$error = null;
 
 		if ($MAGIC_XML === strtolower(substr($file->content, 0, strlen($MAGIC_XML)))) {
 			$contentType = 'xml';
 			$xml = simplexml_load_string($file->content);
-			$content = $xml->children();
-//			$content = $xml['ows:Exception'];
+			$ns = $xml->getDocNamespaces();
+			if (in_array('http://www.opengis.net/ows/1.1', $ns)) {
+				parseOWS($xml, $body, $error);
+			} else {
+	//			$body = $xml->getName();
+	//			$body = $xml->getNamespaces();
+	//			$body = $xml->getChildren();
+	//			$body = $xml['ows:Exception'];
 
-/*			try {
-				$dom = new DOMDocument();
-				$dom->loadXML($file->content);
-				$content = $dom;
-			} catch(Exception $e) {
-				$content = $e;
-			}*/
+	/*			$xml = new SimpleXMLElement($file->content);
+				for ($xml->rewind(); $xml->valid(); $xml->next()) {
+					foreach($xml->getChildren() as $name => $data) {
+					echo "The $name is '$data' from the class " . get_class($data) . "\n";
+					}
+				}*/
+
+	/*			try {
+					$dom = new DOMDocument();
+					$dom->loadXML($file->content);
+					$body = $dom;
+				} catch(Exception $e) {
+					$body = $e;
+				}*/
+			}
 		}
 
 		$ret = (object) array(
 			'contentType' => $contentType,
-			'content' => $content,
+			'error' => $error,
+			'body' => $body,
 		);
 /*
 <?xml version='1.0' encoding='UTF-8'?>\n
@@ -92,6 +145,15 @@
 	  <ows:ExceptionText>The request did not contain any parameters.</ows:ExceptionText>\n
 	</ows:Exception>\n
   </ows:ExceptionReport>",
+*/
+/*
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE ServiceExceptionReport SYSTEM "http://schemas.opengis.net/wms/1.1.1/exception_1_1_1.dtd">
+<ServiceExceptionReport version="1.1.1">
+  <ServiceException code="RequestNotAllowed">
+    The request not allowed.
+  </ServiceException>
+</ServiceExceptionReport>
 */
 		return $ret;
 	}
@@ -105,7 +167,7 @@
 		return;
 	}
 
-	$parameterURL = trim(htmlspecialchars($_GET['url']));
+	$parameterURL = html_entity_decode(trim(htmlspecialchars($_GET['url'])));
 
 	if ($parameterURL == '') {
 		header('HTTP/1.0 400 Bad Request');
