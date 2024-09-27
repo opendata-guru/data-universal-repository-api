@@ -73,7 +73,7 @@
 	// https://geo.sv.rostock.de/inspire/tn-publictransitstops/view?service=WMS&version=1.3.0&request=GetCapabilities
 
 	// opengis OWS
-	function parseOWS($xml, &$body, &$error) {
+	function parseOWS($xml, &$body, &$error, &$contentType) {
 		$rootName = $xml->getName();
 
 		if ('ExceptionReport' === $rootName) {
@@ -95,7 +95,24 @@
 			);
 			return;
 		}
-$body = $rootName;
+
+		$attributes = ((array) $xml)['@attributes'];
+		$version = $attributes['version'];
+
+		$ret = [];
+
+		if ('WFS_Capabilities' === $rootName) {
+			$contentType = 'ogc:wfs';
+			$ret['version'] = $version;
+		}
+
+		for ($xml->rewind(); $xml->valid(); $xml->next()) {
+			$key = $xml->key();
+			$ret[] = $key;
+//			$ret[] = $xml->current();
+		}
+
+		$body = (object) $ret;
 	}
 
 	function parser($file) {
@@ -109,7 +126,7 @@ $body = $rootName;
 			$xml = simplexml_load_string($file->content);
 			$ns = $xml->getDocNamespaces();
 			if (in_array('http://www.opengis.net/ows/1.1', $ns)) {
-				parseOWS($xml, $body, $error);
+				parseOWS($xml, $body, $error, $contentType);
 			} else {
 	//			$body = $xml->getName();
 	//			$body = $xml->getNamespaces();
@@ -138,23 +155,7 @@ $body = $rootName;
 			'error' => $error,
 			'body' => $body,
 		);
-/*
-<?xml version='1.0' encoding='UTF-8'?>\n
-  <ows:ExceptionReport xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd\" version=\"2.0.0\">\n  
-    <ows:Exception exceptionCode=\"MissingParameterValue\">\n
-	  <ows:ExceptionText>The request did not contain any parameters.</ows:ExceptionText>\n
-	</ows:Exception>\n
-  </ows:ExceptionReport>",
-*/
-/*
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<!DOCTYPE ServiceExceptionReport SYSTEM "http://schemas.opengis.net/wms/1.1.1/exception_1_1_1.dtd">
-<ServiceExceptionReport version="1.1.1">
-  <ServiceException code="RequestNotAllowed">
-    The request not allowed.
-  </ServiceException>
-</ServiceExceptionReport>
-*/
+
 		return $ret;
 	}
 
@@ -182,9 +183,9 @@ $body = $rootName;
 	$parsed = parser($content);
 
 	$ret = array();
+	unset($content->content);
 
 	$ret = (object) array(
-		'comming' => 'soon',
 		'file' => $content,
 		'content' => $parsed,
 	);
