@@ -195,8 +195,21 @@
 
 		for ($xml->rewind(); $xml->valid(); $xml->next()) {
 			$key = $xml->key();
-			$ret[] = $key;
-//			$ret[] = $xml->current();
+			$child = $xml->current();
+
+			if ('FeatureTypeList' === $key) {
+				if ($child->FeatureType) {
+					foreach($child->FeatureType as $feature) {
+						unset($feature->DefaultCRS);
+						unset($feature->OtherCRS);
+						unset($feature->OutputFormats);
+
+						$ret[] = $feature;
+					}
+				}
+			}
+
+			$ret[$key] = $child;
 		}
 
 		$body = (object) $ret;
