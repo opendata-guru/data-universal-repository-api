@@ -72,6 +72,91 @@
 	// https://geo.sv.rostock.de/inspire/tn-publictransitstops/download?service=WFS&version=2.0.0&request=GetCapabilities
 	// https://geo.sv.rostock.de/inspire/tn-publictransitstops/view?service=WMS&version=1.3.0&request=GetCapabilities
 
+	function parseXML_FES_20($xml, $prefix, &$body) {
+		unset($xml->Filter_Capabilities);
+
+		$body['_'.$prefix] = $xml;
+	}
+
+	function parseXML_GML($xml, $prefix, &$body) {
+		$body['_'.$prefix] = $xml;
+	}
+
+	function parseXML_OGC($xml, $prefix, &$body) {
+		$body['_'.$prefix] = $xml;
+	}
+
+	function parseXML_OWS_11($xml, $prefix, &$body) {
+		if ($xml->ServiceIdentification) {
+			if ($xml->ServiceIdentification->Title) {
+				$body['title'] = '' . $xml->ServiceIdentification->Title;
+				unset($xml->ServiceIdentification->Title);
+			}
+			if ($xml->ServiceIdentification->Abstract) {
+				$body['description'] = '' . $xml->ServiceIdentification->Abstract;
+				unset($xml->ServiceIdentification->Abstract);
+			}
+
+			unset($xml->ServiceIdentification->ServiceType);
+			unset($xml->ServiceIdentification->ServiceTypeVersion);
+		}
+
+		if ($xml->ServiceProvider) {
+			if ($xml->ServiceProvider->ProviderName) {
+				$body['provider_name'] = '' . $xml->ServiceProvider->ProviderName;
+				unset($xml->ServiceProvider->ProviderName);
+			}
+
+			unset($xml->ServiceProvider->ServiceContact);
+		}
+
+		unset($xml->OperationsMetadata);
+
+		$body['_'.$prefix] = $xml;
+	}
+
+	function parseXML_WFS_20($xml, $prefix, &$body) {
+		$body['_'.$prefix] = $xml;
+	}
+
+	function parseXML_XLINK($xml, $prefix, &$body) {
+		$body['_'.$prefix] = $xml;
+	}
+
+	function parseXML_XSI($xml, $prefix, &$body) {
+		$body['_'.$prefix] = $xml;
+	}
+
+	function parseXMLNamespaces($xml, &$body) {
+		$ns = $xml->getDocNamespaces();
+
+		foreach($ns as $prefix => $uri) {
+			if ('' !== $prefix) {
+				$children = $xml->children($prefix, true);
+
+				if ('http://www.opengis.net/fes/2.0' === $uri) {
+					parseXML_FES_20($children, $prefix, $body);
+				} else if ('http://www.opengis.net/gml' === $uri) {
+					parseXML_GML($children, $prefix, $body);
+				} else if ('http://www.opengis.net/ogc' === $uri) {
+					parseXML_OGC($children, $prefix, $body);
+				} else if ('http://www.opengis.net/ows/1.1' === $uri) {
+					parseXML_OWS_11($children, $prefix, $body);
+				} else if ('http://www.opengis.net/wfs/2.0' === $uri) {
+					parseXML_WFS_20($children, $prefix, $body);
+				} else if ('http://www.w3.org/1999/xlink' === $uri) {
+					parseXML_XLINK($children, $prefix, $body);
+				} else if ('http://www.w3.org/2001/XMLSchema-instance' === $uri) {
+					parseXML_XSI($children, $prefix, $body);
+				} else {
+					$body[] = $prefix;
+					$body[] = $uri;
+//					$body[] = $children;
+				}
+			}
+		}
+	}
+
 	// opengis OWS
 	function parseOWS($xml, &$body, &$error, &$contentType) {
 		$rootName = $xml->getName();
@@ -106,6 +191,8 @@
 			$ret['version'] = $version;
 		}
 
+		parseXMLNamespaces($xml, $ret);
+
 		for ($xml->rewind(); $xml->valid(); $xml->next()) {
 			$key = $xml->key();
 			$ret[] = $key;
@@ -125,6 +212,7 @@
 			$contentType = 'xml';
 			$xml = simplexml_load_string($file->content);
 			$ns = $xml->getDocNamespaces();
+
 			if (in_array('http://www.opengis.net/ows/1.1', $ns)) {
 				parseOWS($xml, $body, $error, $contentType);
 			} else {
