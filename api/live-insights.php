@@ -72,6 +72,14 @@
 	// https://geo.sv.rostock.de/inspire/tn-publictransitstops/download?service=WFS&version=2.0.0&request=GetCapabilities
 	// https://geo.sv.rostock.de/inspire/tn-publictransitstops/view?service=WMS&version=1.3.0&request=GetCapabilities
 
+	function parseXML_EsriWMS($xml, $prefix, &$body) {
+		unset($xml->Filter_Capabilities);
+
+		if ((array)$xml) {
+			$body['_'.$prefix] = $xml;
+		}
+	}
+
 	function parseXML_FES_20($xml, $prefix, &$body) {
 		unset($xml->Filter_Capabilities);
 
@@ -98,10 +106,78 @@
 		}
 	}
 
+	function parseXML_InspireVS($xml, $prefix, &$body) {
+		if ((array)$xml) {
+			$body['_'.$prefix] = $xml;
+		}
+	}
+
 	function parseXML_OGC($xml, $prefix, &$body) {
 		if ((array)$xml) {
 			$body['_'.$prefix] = $xml;
 		}
+	}
+
+	function parseWMS_Service(&$body, &$service) {
+		if ($service->Title) {
+			$body['title'] = '' . $service->Title;
+			unset($service->Title);
+		}
+		if ($service->Abstract) {
+			$body['description'] = '' . $service->Abstract;
+			unset($service->Abstract);
+		}
+
+//		unset($service->KeywordList);
+
+		unset($service->AccessConstraints);
+		unset($service->ContactInformation);
+		unset($service->Fees);
+		unset($service->MaxHeight);
+		unset($service->MaxWidth);
+		unset($service->Name);
+
+		if (!(array)$service->OnlineResource) unset($service->OnlineResource);
+	}
+
+	function parseWMS_Capability_Layer(&$body, &$capability) {
+		foreach($capability->Layer as $layer) {
+			$visible = false;
+			if (((array)$layer)['@attributes']) {
+				$visible = '1' === ((array)$layer)['@attributes']['queryable'];
+//				unset($layer->@attributes);
+			}
+
+			unset($layer->BoundingBox);
+			unset($layer->CRS);
+			unset($layer->DataURL);
+			unset($layer->EX_GeographicBoundingBox);
+			unset($layer->MetadataURL);
+			unset($layer->Style);
+
+			$body['features'][] = (object) array(
+				'name' => '' . $layer->Name,
+				'title' => '' . $layer->Title,
+				'descriptions' => '' . $layer->Abstract,
+				'visible' => $visible,
+			);
+
+			unset($layer->Abstract);
+			unset($layer->Name);
+			unset($layer->Title);
+
+			parseWMS_Capability_Layer($body, $layer);
+		}
+	}
+
+	function parseWMS_Capability(&$body, &$capability) {
+		unset($capability->Exception);
+		unset($capability->ExtendedCapabilities);
+		unset($capability->Request);
+
+		$body['features'] = array();
+
+		parseWMS_Capability_Layer($body, $capability);
 	}
 
 	function parseXML_OWS_11($xml, $prefix, &$body) {
@@ -181,7 +257,9 @@
 			if ('' !== $prefix) {
 				$children = $xml->children($prefix, true);
 
-				if ('http://www.opengis.net/fes/2.0' === $uri) {
+				if ('http://www.esri.com/wms' === $uri) {
+					parseXML_EsriWMS($children, $prefix, $body);
+				} else if ('http://www.opengis.net/fes/2.0' === $uri) {
 					parseXML_FES_20($children, $prefix, $body);
 				} else if (('http://www.opengis.net/gml' === $uri) || ('http://www.opengis.net/gml/3.2' === $uri)) {
 					parseXML_GML($children, $prefix, $body);
@@ -189,6 +267,8 @@
 					parseXML_InspireCommon($children, $prefix, $body);
 				} else if ('http://inspire.ec.europa.eu/schemas/inspire_dls/1.0' === $uri) {
 					parseXML_InspireDLS($children, $prefix, $body);
+				} else if ('http://inspire.ec.europa.eu/schemas/inspire_vs/1.0' === $uri) {
+					parseXML_InspireVS($children, $prefix, $body);
 				} else if ('http://www.opengis.net/ogc' === $uri) {
 					parseXML_OGC($children, $prefix, $body);
 				} else if ('http://www.opengis.net/ows/1.1' === $uri) {
@@ -238,8 +318,8 @@
 		}
 	}
 
-	// opengis OWS
-	function parseOWS($xml, &$body, &$error, &$contentType) {
+	// opengis OWS and opengis WMS
+	function parseOWS_WMS($xml, &$body, &$error, &$contentType) {
 		$rootName = $xml->getName();
 
 		if ('ExceptionReport' === $rootName) {
@@ -286,6 +366,9 @@
 		if ('WFS_Capabilities' === $rootName) {
 			$contentType = 'ogc:wfs';
 			$ret['version'] = $version;
+		} else if ('WMS_Capabilities' === $rootName) {
+			$contentType = 'ogc:wms';
+			$ret['version'] = $version;
 		}
 
 		parseXMLNamespaces($xml, $ret);
@@ -296,6 +379,12 @@
 
 			if ('FeatureTypeList' === $key) {
 				parseFeatureTypeList($ret, $child);
+			}
+			if ('Service' === $key) {
+				parseWMS_Service($ret, $child);
+			}
+			if ('Capability' === $key) {
+				parseWMS_Capability($ret, $child);
 			}
 
 			if ((array)$child) {
@@ -318,8 +407,11 @@
 			$ns = $xml->getDocNamespaces();
 
 			if (in_array('http://www.opengis.net/ows/1.1', $ns)) {
-				parseOWS($xml, $body, $error, $contentType);
+				parseOWS_WMS($xml, $body, $error, $contentType);
+			} else if (in_array('http://www.opengis.net/wms', $ns)) {
+				parseOWS_WMS($xml, $body, $error, $contentType);
 			} else {
+				$body = $ns;
 	//			$body = $xml->getName();
 	//			$body = $xml->getNamespaces();
 	//			$body = $xml->getChildren();
