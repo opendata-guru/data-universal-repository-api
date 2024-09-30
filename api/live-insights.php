@@ -86,6 +86,18 @@
 		}
 	}
 
+	function parseXML_InspireCommon($xml, $prefix, &$body) {
+		if ((array)$xml) {
+			$body['_'.$prefix] = $xml;
+		}
+	}
+
+	function parseXML_InspireDLS($xml, $prefix, &$body) {
+		if ((array)$xml) {
+			$body['_'.$prefix] = $xml;
+		}
+	}
+
 	function parseXML_OGC($xml, $prefix, &$body) {
 		if ((array)$xml) {
 			$body['_'.$prefix] = $xml;
@@ -103,6 +115,10 @@
 				unset($xml->ServiceIdentification->Abstract);
 			}
 
+//			unset($xml->ServiceIdentification->Keywords);
+
+			unset($xml->ServiceIdentification->AccessConstraints);
+			unset($xml->ServiceIdentification->Fees);
 			unset($xml->ServiceIdentification->ServiceType);
 			unset($xml->ServiceIdentification->ServiceTypeVersion);
 		}
@@ -127,12 +143,26 @@
 	}
 
 	function parseXML_WFS_20($xml, $prefix, &$body) {
+		if ($xml->FeatureTypeList) {
+			parseFeatureTypeList($body, $xml->FeatureTypeList);
+
+			if (!(array)$xml->FeatureTypeList) {
+				unset($xml->FeatureTypeList);
+			}
+		}
+
 		if ((array)$xml) {
 			$body['_'.$prefix] = $xml;
 		}
 	}
 
 	function parseXML_XLINK($xml, $prefix, &$body) {
+		if ((array)$xml) {
+			$body['_'.$prefix] = $xml;
+		}
+	}
+
+	function parseXML_XSD($xml, $prefix, &$body) {
 		if ((array)$xml) {
 			$body['_'.$prefix] = $xml;
 		}
@@ -153,8 +183,12 @@
 
 				if ('http://www.opengis.net/fes/2.0' === $uri) {
 					parseXML_FES_20($children, $prefix, $body);
-				} else if ('http://www.opengis.net/gml' === $uri) {
+				} else if (('http://www.opengis.net/gml' === $uri) || ('http://www.opengis.net/gml/3.2' === $uri)) {
 					parseXML_GML($children, $prefix, $body);
+				} else if ('http://inspire.ec.europa.eu/schemas/common/1.0' === $uri) {
+					parseXML_InspireCommon($children, $prefix, $body);
+				} else if ('http://inspire.ec.europa.eu/schemas/inspire_dls/1.0' === $uri) {
+					parseXML_InspireDLS($children, $prefix, $body);
 				} else if ('http://www.opengis.net/ogc' === $uri) {
 					parseXML_OGC($children, $prefix, $body);
 				} else if ('http://www.opengis.net/ows/1.1' === $uri) {
@@ -163,6 +197,8 @@
 					parseXML_WFS_20($children, $prefix, $body);
 				} else if ('http://www.w3.org/1999/xlink' === $uri) {
 					parseXML_XLINK($children, $prefix, $body);
+				} else if ('http://www.w3.org/2001/XMLSchema' === $uri) {
+					parseXML_XSD($children, $prefix, $body);
 				} else if ('http://www.w3.org/2001/XMLSchema-instance' === $uri) {
 					parseXML_XSI($children, $prefix, $body);
 				} else {
@@ -174,6 +210,34 @@
 		}
 	}
 
+	function parseFeatureTypeList(&$body, &$child) {
+		if ($child->FeatureType) {
+			$body['features'] = array();
+
+			foreach($child->FeatureType as $feature) {
+				unset($feature->DefaultCRS);
+				unset($feature->OtherCRS);
+				unset($feature->OutputFormats);
+
+				if (!(array)$feature->MetadataURL) unset($feature->MetadataURL);
+
+				$body['features'][] = (object) array(
+					'name' => '' . $feature->Name,
+					'title' => '' . $feature->Title,
+					'descriptions' => '' . $feature->Abstract,
+				);
+
+				unset($feature->Abstract);
+				unset($feature->Name);
+				unset($feature->Title);
+			}
+		}
+
+		if (count(array_filter((array) $child->FeatureType)) === 0) {
+			unset($child->FeatureType);
+		}
+	}
+
 	// opengis OWS
 	function parseOWS($xml, &$body, &$error, &$contentType) {
 		$rootName = $xml->getName();
@@ -181,12 +245,28 @@
 		if ('ExceptionReport' === $rootName) {
 			$xml->rewind();
 
-			$key = $xml->key();
-			$attributes = ((array) $xml->current())['@attributes'];
+			$key = '';
 			$values = [];
+			$attributes = [];
 
-			foreach($xml->getChildren() as $name => $data) {
-				$values[] = '' . $data;
+			if ($xml->valid()) {
+				// without namespace
+				$key = $xml->key();
+				$attributes = ((array) $xml->current())['@attributes'];
+
+				foreach($xml->getChildren() as $name => $data) {
+					$values[] = '' . $data;
+				}
+			} else {
+				$ns = $xml->getDocNamespaces();
+				$key = 'Exception';
+
+				foreach($ns as $prefix => $uri) {
+					if ('http://www.opengis.net/ows/1.1' === $uri) {
+						$children = $xml->children($prefix, true);
+						$values[] = '' . $children->Exception->ExceptionText;
+					}
+				}
 			}
 
 			$error = (object) array(
@@ -215,32 +295,9 @@
 			$child = $xml->current();
 
 			if ('FeatureTypeList' === $key) {
-				if ($child->FeatureType) {
-					$ret['features'] = array();
-
-					foreach($child->FeatureType as $feature) {
-						unset($feature->DefaultCRS);
-						unset($feature->OtherCRS);
-						unset($feature->OutputFormats);
-
-						if (!(array)$feature->MetadataURL) unset($feature->MetadataURL);
-
-						$ret['features'][] = (object) array(
-							'name' => '' . $feature->Name,
-							'title' => '' . $feature->Title,
-							'descriptions' => '' . $feature->Abstract,
-						);
-
-						unset($feature->Abstract);
-						unset($feature->Name);
-						unset($feature->Title);
-					}
-				}
+				parseFeatureTypeList($ret, $child);
 			}
 
-			if (count(array_filter((array) $child->FeatureType)) === 0) {
-				unset($child->FeatureType);
-			}
 			if ((array)$child) {
 				$ret[$key] = $child;
 			}
@@ -267,21 +324,6 @@
 	//			$body = $xml->getNamespaces();
 	//			$body = $xml->getChildren();
 	//			$body = $xml['ows:Exception'];
-
-	/*			$xml = new SimpleXMLElement($file->content);
-				for ($xml->rewind(); $xml->valid(); $xml->next()) {
-					foreach($xml->getChildren() as $name => $data) {
-					echo "The $name is '$data' from the class " . get_class($data) . "\n";
-					}
-				}*/
-
-	/*			try {
-					$dom = new DOMDocument();
-					$dom->loadXML($file->content);
-					$body = $dom;
-				} catch(Exception $e) {
-					$body = $e;
-				}*/
 			}
 		}
 
