@@ -75,15 +75,21 @@
 	function parseXML_FES_20($xml, $prefix, &$body) {
 		unset($xml->Filter_Capabilities);
 
-		$body['_'.$prefix] = $xml;
+		if ((array)$xml) {
+			$body['_'.$prefix] = $xml;
+		}
 	}
 
 	function parseXML_GML($xml, $prefix, &$body) {
-		$body['_'.$prefix] = $xml;
+		if ((array)$xml) {
+			$body['_'.$prefix] = $xml;
+		}
 	}
 
 	function parseXML_OGC($xml, $prefix, &$body) {
-		$body['_'.$prefix] = $xml;
+		if ((array)$xml) {
+			$body['_'.$prefix] = $xml;
+		}
 	}
 
 	function parseXML_OWS_11($xml, $prefix, &$body) {
@@ -100,6 +106,7 @@
 			unset($xml->ServiceIdentification->ServiceType);
 			unset($xml->ServiceIdentification->ServiceTypeVersion);
 		}
+		if (!(array)$xml->ServiceIdentification) unset($xml->ServiceIdentification);
 
 		if ($xml->ServiceProvider) {
 			if ($xml->ServiceProvider->ProviderName) {
@@ -108,23 +115,33 @@
 			}
 
 			unset($xml->ServiceProvider->ServiceContact);
+			if (!(array)$xml->ServiceProvider->ProviderSite) unset($xml->ServiceProvider->ProviderSite);
 		}
+		if (!(array)$xml->ServiceProvider) unset($xml->ServiceProvider);
 
 		unset($xml->OperationsMetadata);
 
-		$body['_'.$prefix] = $xml;
+		if ((array)$xml) {
+			$body['_'.$prefix] = $xml;
+		}
 	}
 
 	function parseXML_WFS_20($xml, $prefix, &$body) {
-		$body['_'.$prefix] = $xml;
+		if ((array)$xml) {
+			$body['_'.$prefix] = $xml;
+		}
 	}
 
 	function parseXML_XLINK($xml, $prefix, &$body) {
-		$body['_'.$prefix] = $xml;
+		if ((array)$xml) {
+			$body['_'.$prefix] = $xml;
+		}
 	}
 
 	function parseXML_XSI($xml, $prefix, &$body) {
-		$body['_'.$prefix] = $xml;
+		if ((array)$xml) {
+			$body['_'.$prefix] = $xml;
+		}
 	}
 
 	function parseXMLNamespaces($xml, &$body) {
@@ -199,17 +216,34 @@
 
 			if ('FeatureTypeList' === $key) {
 				if ($child->FeatureType) {
+					$ret['features'] = array();
+
 					foreach($child->FeatureType as $feature) {
 						unset($feature->DefaultCRS);
 						unset($feature->OtherCRS);
 						unset($feature->OutputFormats);
 
-						$ret[] = $feature;
+						if (!(array)$feature->MetadataURL) unset($feature->MetadataURL);
+
+						$ret['features'][] = (object) array(
+							'name' => '' . $feature->Name,
+							'title' => '' . $feature->Title,
+							'descriptions' => '' . $feature->Abstract,
+						);
+
+						unset($feature->Abstract);
+						unset($feature->Name);
+						unset($feature->Title);
 					}
 				}
 			}
 
-			$ret[$key] = $child;
+			if (count(array_filter((array) $child->FeatureType)) === 0) {
+				unset($child->FeatureType);
+			}
+			if ((array)$child) {
+				$ret[$key] = $child;
+			}
 		}
 
 		$body = (object) $ret;
