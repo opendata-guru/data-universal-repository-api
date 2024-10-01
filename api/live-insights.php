@@ -163,11 +163,18 @@
 //				unset($layer->@attributes);
 			}
 
+			// AuthorityURL/OnlineResource <- the attribute contain a URI!!!!
+
 			unset($layer->BoundingBox);
 			unset($layer->CRS);
 			unset($layer->DataURL);
 			unset($layer->EX_GeographicBoundingBox);
+			unset($layer->LatLonBoundingBox);
+			unset($layer->MaxScaleDenominator);
+			unset($layer->MinScaleDenominator);
 			unset($layer->MetadataURL);
+			unset($layer->ScaleHint);
+			unset($layer->SRS);
 			unset($layer->Style);
 
 			$keywords = getKeywordsWithID($layer->KeywordList->Keyword);
@@ -200,6 +207,7 @@
 		unset($capability->Exception);
 		unset($capability->ExtendedCapabilities);
 		unset($capability->Request);
+		unset($capability->VendorSpecificCapabilities);
 
 		$body['assets'] = array();
 
@@ -217,7 +225,9 @@
 				unset($xml->ServiceIdentification->Abstract);
 			}
 
-//			unset($xml->ServiceIdentification->Keywords);
+			$body['keywords'] = getKeywordsWithID($xml->ServiceIdentification->Keywords);
+			unset($xml->ServiceIdentification->Keywords);
+			if (!(array)$xml->ServiceIdentification) unset($xml->ServiceIdentification);
 
 			unset($xml->ServiceIdentification->AccessConstraints);
 			unset($xml->ServiceIdentification->Fees);
@@ -276,6 +286,12 @@
 		}
 	}
 
+	function parseXML_FooNamespace($xml, $prefix, &$body) {
+		if ((array)$xml) {
+			$body['_'.$prefix] = $xml;
+		}
+	}
+
 	function parseXMLNamespaces($xml, &$body) {
 		$ns = $xml->getDocNamespaces();
 
@@ -307,6 +323,8 @@
 					parseXML_XSD($children, $prefix, $body);
 				} else if ('http://www.w3.org/2001/XMLSchema-instance' === $uri) {
 					parseXML_XSI($children, $prefix, $body);
+				} else if ('https://geoportal.saarland.de/arcgis/services/Internet/Boden_WFS/MapServer/WFSServer' === $uri) {
+					parseXML_FooNamespace($children, $prefix, $body);
 				} else {
 					$body[] = $prefix;
 					$body[] = $uri;
@@ -344,11 +362,11 @@
 		}
 	}
 
-	// opengis OWS and opengis WMS
-	function parseOWS_WMS($xml, &$body, &$error, &$contentType) {
+	// opengis OGC, opengis OWS and opengis WMS
+	function parseOGC_OWS_WMS($xml, &$body, &$error, &$contentType) {
 		$rootName = $xml->getName();
 
-		if ('ExceptionReport' === $rootName) {
+		if (('ExceptionReport' === $rootName) || ('ServiceExceptionReport' === $rootName)) {
 			$xml->rewind();
 
 			$key = '';
@@ -362,6 +380,9 @@
 
 				foreach($xml->getChildren() as $name => $data) {
 					$values[] = '' . $data;
+				}
+				if (!$values) {
+					$values = ((array)$xml)[$key];
 				}
 			} else {
 				$ns = $xml->getDocNamespaces();
@@ -378,7 +399,7 @@
 			$error = (object) array(
 				'type' => $rootName,
 				'name' => $key,
-				'code' => $attributes['exceptionCode'],
+				'code' => $attributes['exceptionCode'] . $attributes['code'],
 				'descriptions' => $values,
 			);
 			return;
@@ -393,6 +414,9 @@
 			$contentType = 'ogc:wfs';
 			$ret['version'] = $version;
 		} else if ('WMS_Capabilities' === $rootName) {
+			$contentType = 'ogc:wms';
+			$ret['version'] = $version;
+		} else if ('WMT_MS_Capabilities' === $rootName) {
 			$contentType = 'ogc:wms';
 			$ret['version'] = $version;
 		}
@@ -423,6 +447,7 @@
 
 	function parser($file) {
 		$MAGIC_XML = '<?xml ';
+		$MAGIC_HTML = '<!doctype html';
 		$contentType = '';
 		$body = null;
 		$error = null;
@@ -432,10 +457,14 @@
 			$xml = simplexml_load_string($file->content);
 			$ns = $xml->getDocNamespaces();
 
-			if (in_array('http://www.opengis.net/ows/1.1', $ns)) {
-				parseOWS_WMS($xml, $body, $error, $contentType);
+			if (in_array('http://www.opengis.net/ogc', $ns)) {
+				parseOGC_OWS_WMS($xml, $body, $error, $contentType);
+			} else if (in_array('http://www.opengis.net/ows/1.1', $ns)) {
+				parseOGC_OWS_WMS($xml, $body, $error, $contentType);
 			} else if (in_array('http://www.opengis.net/wms', $ns)) {
-				parseOWS_WMS($xml, $body, $error, $contentType);
+				parseOGC_OWS_WMS($xml, $body, $error, $contentType);
+			} else if (in_array('http://inspire.ec.europa.eu/schemas/common/1.0', $ns)) {
+				parseOGC_OWS_WMS($xml, $body, $error, $contentType);
 			} else {
 				$body = $ns;
 	//			$body = $xml->getName();
@@ -443,6 +472,10 @@
 	//			$body = $xml->getChildren();
 	//			$body = $xml['ows:Exception'];
 			}
+		} else if ($MAGIC_HTML === strtolower(substr($file->content, 0, strlen($MAGIC_HTML)))) {
+			$contentType = 'html';
+
+			// to do
 		}
 
 		$ret = (object) array(
