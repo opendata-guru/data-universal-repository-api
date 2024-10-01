@@ -118,6 +118,19 @@
 		}
 	}
 
+	function getKeywordsWithID($keywords) {
+		$ret = [];
+
+		foreach($keywords as $keyword) {
+			$keyword = '' . $keyword;
+			if (strpbrk($keyword, '-._')) {
+				$ret[] = $keyword;
+			}
+		}
+
+		return $ret;
+	}
+
 	function parseWMS_Service(&$body, &$service) {
 		if ($service->Title) {
 			$body['title'] = '' . $service->Title;
@@ -128,7 +141,9 @@
 			unset($service->Abstract);
 		}
 
-//		unset($service->KeywordList);
+		$body['keywords'] = getKeywordsWithID($service->KeywordList->Keyword);
+		unset($service->KeywordList->Keyword);
+		if (!(array)$service->KeywordList) unset($service->KeywordList);
 
 		unset($service->AccessConstraints);
 		unset($service->ContactInformation);
@@ -155,18 +170,29 @@
 			unset($layer->MetadataURL);
 			unset($layer->Style);
 
-			$body['features'][] = (object) array(
+			$keywords = getKeywordsWithID($layer->KeywordList->Keyword);
+			unset($layer->KeywordList->Keyword);
+			if (!(array)$layer->KeywordList) unset($layer->KeywordList);
+
+			$body['assets'][] = (object) array(
 				'name' => '' . $layer->Name,
 				'title' => '' . $layer->Title,
 				'descriptions' => '' . $layer->Abstract,
+				'keywords' => $keywords,
+				'identifier' => '' . $layer->Identifier,
 				'visible' => $visible,
 			);
 
 			unset($layer->Abstract);
+			unset($layer->Identifier);
 			unset($layer->Name);
 			unset($layer->Title);
 
 			parseWMS_Capability_Layer($body, $layer);
+		}
+
+		if (['@attributes'] === array_keys((array)$capability->Layer)) {
+			unset($capability->Layer);
 		}
 	}
 
@@ -175,7 +201,7 @@
 		unset($capability->ExtendedCapabilities);
 		unset($capability->Request);
 
-		$body['features'] = array();
+		$body['assets'] = array();
 
 		parseWMS_Capability_Layer($body, $capability);
 	}
@@ -292,7 +318,7 @@
 
 	function parseFeatureTypeList(&$body, &$child) {
 		if ($child->FeatureType) {
-			$body['features'] = array();
+			$body['assets'] = array();
 
 			foreach($child->FeatureType as $feature) {
 				unset($feature->DefaultCRS);
@@ -301,7 +327,7 @@
 
 				if (!(array)$feature->MetadataURL) unset($feature->MetadataURL);
 
-				$body['features'][] = (object) array(
+				$body['assets'][] = (object) array(
 					'name' => '' . $feature->Name,
 					'title' => '' . $feature->Title,
 					'descriptions' => '' . $feature->Abstract,
