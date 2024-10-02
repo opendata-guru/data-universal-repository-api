@@ -174,7 +174,20 @@
 		}
 		if (!(array)$xml->ServiceProvider) unset($xml->ServiceProvider);
 
-		unset($xml->OperationsMetadata);
+		if ($xml->OperationsMetadata) {
+			unset($xml->OperationsMetadata->Constraint);
+			unset($xml->OperationsMetadata->Operation);
+			unset($xml->OperationsMetadata->Parameter);
+
+			// <ows:ExtendedCapabilities>
+			//   <ExtendedCapabilities>
+			//     <SpatialDataSetIdentifier>
+			if ($xml->OperationsMetadata->ExtendedCapabilities) {
+				if ($xml->OperationsMetadata->ExtendedCapabilities->ExtendedCapabilities) {
+				}
+			}
+		}
+//		unset($xml->OperationsMetadata);
 
 		if ((array)$xml) {
 			$body['_'.$prefix] = $xml;
@@ -372,6 +385,75 @@
 		$body = (object) $ret;
 	}
 
+	function parseAtom_links(&$entry) {
+		$links = [];
+
+		foreach($entry->link as $link) {
+			$attributes = ((array) $link)['@attributes'];
+
+			if ('self' === $attributes['rel']) {
+				$links[] = $attributes;
+			} else if ('alternate' === $attributes['rel']) {
+				// ignore others
+			} else {
+				$links[] = $attributes;
+			}
+		}
+
+		unset($entry->link);
+
+		return $links;
+	}
+
+	function parseAtom_entry($xml, &$body) {
+		$entry = $xml->entry;
+
+		if ($entry) {
+			unset($entry->author);
+			unset($entry->category);
+			unset($entry->rights);
+			unset($entry->updated);
+
+			$body['assets'][] = (object) array(
+				'title' => '' . $entry->title,
+				'descriptions' => '' . $entry->summary,
+				'identifier' => '' . $entry->id,
+				'links' => parseAtom_links($entry),
+			);
+
+			unset($entry->id);
+			unset($entry->summary);
+			unset($entry->title);
+
+			parseAtom_entry($entry, $body);
+		}
+
+		if (!(array)$xml->entry) unset($xml->entry);
+	}
+
+	function parseAtom($xml, &$body, &$error, &$contentType) {
+		$contentType = 'atom';
+
+		$body['title'] = '' . $xml->title;
+		$body['descriptions'] = '' . $xml->subtitle;	
+		$body['identifier'] = '' . $xml->id;
+		$body['links'] = parseAtom_links($xml);
+		$body['assets'] = array();
+
+		unset($xml->author);
+		unset($xml->id);
+		unset($xml->rights);
+		unset($xml->subtitle);
+		unset($xml->title);
+		unset($xml->updated);
+
+		parseAtom_entry($xml, $body);
+
+		if ((array)$xml) {
+			$body[] = $xml;
+		}
+	}
+
 	function parser($file) {
 		$MAGIC_XML = '<?xml ';
 		$MAGIC_HTML = '<!doctype html';
@@ -392,8 +474,10 @@
 				parseOGC_OWS_WMS($xml, $body, $error, $contentType);
 			} else if (in_array('http://inspire.ec.europa.eu/schemas/common/1.0', $ns)) {
 				parseOGC_OWS_WMS($xml, $body, $error, $contentType);
+			} else if (in_array('http://www.w3.org/2005/Atom', $ns)) {
+				parseAtom($xml, $body, $error, $contentType);
 			} else {
-				$body = $ns;
+				$body = 'namespaces: ' . implode(' | ', $ns);
 	//			$body = $xml->getName();
 	//			$body = $xml->getNamespaces();
 	//			$body = $xml->getChildren();
