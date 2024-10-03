@@ -85,14 +85,28 @@
 	function parseWMS_Capability_Layer(&$body, &$capability) {
 		foreach($capability->Layer as $layer) {
 			$visible = false;
-			if (((array)$layer)['@attributes']) {
-				$visible = '1' === ((array)$layer)['@attributes']['queryable'];
-//				unset($layer->@attributes);
+			if ($layer->attributes()->queryable) {
+				$visible = '1' === ('' . $layer->attributes()->queryable);
+				unset($layer->attributes()->queryable);
 			}
 
-			// AuthorityURL/OnlineResource <- the attribute contain a URI!!!!
+			if ($layer->AuthorityURL) {
+				$body['authorityName'] = '' . $layer->AuthorityURL->attributes()->name;
+				unset($layer->AuthorityURL->attributes()->name);
 
+				$path = $layer->AuthorityURL->OnlineResource;
+				foreach($path->getNamespaces() as $prefix => $uri) {
+					if ('' !== $prefix) {
+						$body['authorityURI'] = '' . $path->attributes($prefix, true)->href;
+					}
+				}
+				unset($layer->AuthorityURL);
+			}
+
+			unset($layer->attributes()->opaque);
+			unset($layer->attributes()->cascaded);
 			unset($layer->BoundingBox);
+			unset($layer->comment);
 			unset($layer->CRS);
 			unset($layer->DataURL);
 			unset($layer->EX_GeographicBoundingBox);
@@ -125,9 +139,7 @@
 			parseWMS_Capability_Layer($body, $layer);
 		}
 
-		if (['@attributes'] === array_keys((array)$capability->Layer)) {
-			unset($capability->Layer);
-		}
+		if (!(array)$capability->Layer) unset($capability->Layer);
 	}
 
 	function parseWMS_Capability(&$body, &$capability) {
@@ -194,6 +206,12 @@
 		}
 	}
 
+	function parseXML_SLD($xml, $prefix, &$body) {
+		if ((array)$xml) {
+			$body['_'.$prefix] = $xml;
+		}
+	}
+
 	function parseXML_WFS_20($xml, $prefix, &$body) {
 		if ($xml->FeatureTypeList) {
 			parseFeatureTypeList($body, $xml->FeatureTypeList);
@@ -203,6 +221,12 @@
 			}
 		}
 
+		if ((array)$xml) {
+			$body['_'.$prefix] = $xml;
+		}
+	}
+
+	function parseXML_MapServer($xml, $prefix, &$body) {
 		if ((array)$xml) {
 			$body['_'.$prefix] = $xml;
 		}
@@ -255,8 +279,12 @@
 					parseXML_OGC($children, $prefix, $body);
 				} else if ('http://www.opengis.net/ows/1.1' === $uri) {
 					parseXML_OWS_11($children, $prefix, $body);
+				} else if ('http://www.opengis.net/sld' === $uri) {
+					parseXML_SLD($children, $prefix, $body);
 				} else if ('http://www.opengis.net/wfs/2.0' === $uri) {
 					parseXML_WFS_20($children, $prefix, $body);
+				} else if ('http://mapserver.gis.umn.edu/mapserver' === $uri) {
+					parseXML_MapServer($children, $prefix, $body);
 				} else if ('http://www.w3.org/1999/xlink' === $uri) {
 					parseXML_XLINK($children, $prefix, $body);
 				} else if ('http://www.w3.org/2001/XMLSchema' === $uri) {
@@ -266,8 +294,8 @@
 				} else if ('https://geoportal.saarland.de/arcgis/services/Internet/Boden_WFS/MapServer/WFSServer' === $uri) {
 					parseXML_FooNamespace($children, $prefix, $body);
 				} else {
-					$body[] = $prefix;
-					$body[] = $uri;
+					$body[] = 'prefix: ' . $prefix;
+					$body[] = 'uri:    ' . $uri;
 //					$body[] = $children;
 				}
 			}
