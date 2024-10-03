@@ -91,13 +91,13 @@
 			}
 
 			if ($layer->AuthorityURL) {
-				$body['authorityName'] = '' . $layer->AuthorityURL->attributes()->name;
+				$body['providerName'] = '' . $layer->AuthorityURL->attributes()->name;
 				unset($layer->AuthorityURL->attributes()->name);
 
 				$path = $layer->AuthorityURL->OnlineResource;
 				foreach($path->getNamespaces() as $prefix => $uri) {
 					if ('' !== $prefix) {
-						$body['authorityURI'] = '' . $path->attributes($prefix, true)->href;
+						$body['providerURI'] = '' . $path->attributes($prefix, true)->href;
 					}
 				}
 				unset($layer->AuthorityURL);
@@ -177,7 +177,7 @@
 
 		if ($xml->ServiceProvider) {
 			if ($xml->ServiceProvider->ProviderName) {
-				$body['provider_name'] = '' . $xml->ServiceProvider->ProviderName;
+				$body['providerName'] = '' . $xml->ServiceProvider->ProviderName;
 				unset($xml->ServiceProvider->ProviderName);
 			}
 
@@ -187,19 +187,19 @@
 		if (!(array)$xml->ServiceProvider) unset($xml->ServiceProvider);
 
 		if ($xml->OperationsMetadata) {
+			if ($xml->OperationsMetadata->ExtendedCapabilities) {
+				$path = $xml->OperationsMetadata->ExtendedCapabilities;
+				$path = ((array)$path->children())['ExtendedCapabilities']->SpatialDataSetIdentifier->Namespace;
+				$body['providerURI'] = '' . $path;
+			}
+
 			unset($xml->OperationsMetadata->Constraint);
+			unset($xml->OperationsMetadata->ExtendedCapabilities);
 			unset($xml->OperationsMetadata->Operation);
 			unset($xml->OperationsMetadata->Parameter);
 
-			// <ows:ExtendedCapabilities>
-			//   <ExtendedCapabilities>
-			//     <SpatialDataSetIdentifier>
-			if ($xml->OperationsMetadata->ExtendedCapabilities) {
-				if ($xml->OperationsMetadata->ExtendedCapabilities->ExtendedCapabilities) {
-				}
-			}
+			if (!(array)$xml->OperationsMetadata) unset($xml->OperationsMetadata);
 		}
-//		unset($xml->OperationsMetadata);
 
 		if ((array)$xml) {
 			$body['_'.$prefix] = $xml;
