@@ -75,26 +75,37 @@
 			}
 		}
 
-		for ($t = count($jsonToday) - 1; $t >= 0; --$t) {
-			for ($y = count($jsonYesterday) - 1; $y >= 0; --$y) {
-				if (($jsonToday[$t]->identifier === $jsonYesterday[$y]->identifier) &&
-					($jsonToday[$t]->accessURL === $jsonYesterday[$y]->accessURL)) {
-//					$jsonBoth[] = $jsonToday[$t];
+		$toda = [];
+		$yest = [];
+		for ($j = count($jsonToday) - 1; $j >= 0; --$j) {
+			$toda[] = $jsonToday[$j]->identifier . '§' . $jsonToday[$j]->accessURL;
+		}
+		for ($j = count($jsonYesterday) - 1; $j >= 0; --$j) {
+			$yest[] = $jsonYesterday[$j]->identifier . '§' . $jsonYesterday[$j]->accessURL;
+		}
 
-					array_splice($jsonToday, $t, 1);
-					array_splice($jsonYesterday, $y, 1);
-				}
-			}
+		$newToday = array_diff($toda, $yest);
+		$newTodayObj = [];
+		foreach($newToday as $value) {
+			$parts = explode('§', $value);
+			$newTodayObj[] = (object) array(
+				'datasetIdentifier' => $parts[0],
+				'distributionAccessURL' => $parts[1],
+			);
+		}
+
+		$removedToday = array_diff($yest, $toda);
+		$removedTodayObj = [];
+		foreach($removedToday as $value) {
+			$parts = explode('§', $value);
+			$removedTodayObj[] = (object) array(
+				'datasetIdentifier' => $parts[0],
+				'distributionAccessURL' => $parts[1],
+			);
 		}
 
 		$urlsToday = [];
-		foreach($jsonToday as &$object) {
-			$object->datasetIdentifier = $object->identifier;
-			unset($object->identifier);
-
-			$object->distributionAccessURL = $object->accessURL;
-			unset($object->accessURL);
-
+		foreach($newTodayObj as $object) {
 			$url = parse_url($object->distributionAccessURL, PHP_URL_HOST);
 			$url = preg_replace('#^www\.(.+\.)#i', '$1', $url);
 
@@ -104,13 +115,7 @@
 		}
 
 		$urlsYesterday = [];
-		foreach($jsonYesterday as &$object) {
-			$object->datasetIdentifier = $object->identifier;
-			unset($object->identifier);
-
-			$object->distributionAccessURL = $object->accessURL;
-			unset($object->accessURL);
-
+		foreach($removedTodayObj as $object) {
 			$url = parse_url($object->distributionAccessURL, PHP_URL_HOST);
 			$url = preg_replace('#^www\.(.+\.)#i', '$1', $url);
 
@@ -135,8 +140,8 @@
 			'hostsAdded' => $urlsToday,
 			'hostsRemoved' => $urlsYesterday,
 			'hostsDeleted' => $urlsDeleted,
-			'added' => $jsonToday,
-			'removed' => $jsonYesterday,
+			'added' => $newTodayObj,
+			'removed' => $removedTodayObj,
 		);
 	}
 
