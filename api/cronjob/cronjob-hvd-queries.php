@@ -55,8 +55,8 @@ select (count(?dist) as ?count) where {
 
 	function getSPARQLcountEUdataServicesByCatalog($catalog) {
     $sparql = '
-prefix r5r: <http://data.europa.eu/r5r/>
 prefix dcat: <http://www.w3.org/ns/dcat#>
+prefix r5r: <http://data.europa.eu/r5r/>
 
 select (count(?api) as ?count) where {
   <?MSCat?> ?cp ?d.
@@ -363,43 +363,71 @@ select distinct ?api where {
     }
   ';
 
-// -----------------------------------------------------------------------------
-// 3) Reported APIs (Data Services) for High Value Datasets with key information
-// - result in 0 entries
-// -----------------------------------------------------------------------------
-// same as: getSPARQLcountEUdataServicesByCatalog()
-// -----------------------------------------------------------------------------
-$sparql3 = '
-prefix dct: <http://purl.org/dc/terms/>
-prefix r5r: <http://data.europa.eu/r5r/>
-prefix dcat: <http://www.w3.org/ns/dcat#>
+  // -----------------------------------------------------
+  // APIs are one of the main obligations imposed on the
+  // HVDs by the Implementing Regulation. APIs are denoted
+  // in DCAT-AP HVD with Data Services. DCAT-AP Data
+  // Services can be associated in two distinct ways with
+  // a Dataset. This query explores both.
+  // -----------------------------------------------------
+  // same as: getSPARQLcountEUdataServicesByCatalog()
+  // -----------------------------------------------------
 
-select distinct ?d ?api ?title ?desc ?category ?endpointURL ?endpointDesc where {
-#  <?MSCat?> ?cp ?d.
-  <http://data.europa.eu/88u/catalogue/govdata> ?cp ?d.
-  ?d r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
-  {
-    ?d dcat:distribution ?dist.
-    ?dist r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+  $sparqlQueryDataServices = '
+    prefix dcat:  <http://www.w3.org/ns/dcat#>
+    prefix r5r: <http://data.europa.eu/r5r/>
 
-    ?dist dcat:accessService ?api.
-    ?api r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
-  }
-  union {
-    ?api dcat:servesDataset ?d.
-    ?api r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
-  }
-  optional { ?api dct:title ?title.
-    FILTER ( lang(?title) = "en" )
-  }
-  optional { ?api dct:description ?desc.
-    FILTER ( lang(?desc) = "en" )
-  }
-  optional { ?api r5r:hvdCategory ?category. }
-  optional { ?api dcat:endpointDescription ?endpointDesc. }
-  optional { ?api dcat:endpointURL ?endpointURL. }
-}
-';
+    select distinct ?d ?api where {
+      <?MSCat?> ?cp ?d.
+      ?d r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      {
+        ?d dcat:distribution ?dist.
+        ?dist r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+
+        ?dist dcat:accessService ?api.
+        ?api r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      }
+      union {
+        ?api dcat:servesDataset ?d.
+        ?api r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      }
+    }
+  ';
+
+  // -----------------------------------------------------
+  // APIs must be provided with sufficient information.
+  // -----------------------------------------------------
+
+  $sparqlQueryDataServicesInformation = '
+    prefix dcat:  <http://www.w3.org/ns/dcat#>
+    prefix dct: <http://purl.org/dc/terms/>
+    prefix r5r: <http://data.europa.eu/r5r/>
+
+    select distinct ?d ?api ?title ?desc ?category ?endpointURL ?endpointDesc where {
+      <?MSCat?> ?cp ?d.
+      ?d r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      {
+        ?d dcat:distribution ?dist.
+        ?dist r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+
+        ?dist dcat:accessService ?api.
+        ?api r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      }
+      union {
+        ?api dcat:servesDataset ?d.
+        ?api r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      }
+      optional { ?api dct:title ?title.
+        FILTER ( langMatches( lang(?title), "en" ))
+      }
+      optional { ?api dct:description ?desc.
+        FILTER ( langMatches( lang(?desc), "en" ))
+      }
+      optional { ?api r5r:hvdCategory ?category. }
+      optional { ?api dcat:endpointDescription ?endpointDesc. }
+      optional { ?api dcat:endpointURL ?endpointURL. }
+    }
+  ';
 
 // -------------------------------------------------------
 // 4) Reported legal information on Distributions and APIs
