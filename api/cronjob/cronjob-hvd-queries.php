@@ -97,9 +97,9 @@ select (count(distinct ?d) as ?countDatasets) (count(distinct ?dist) as ?countDi
 
   function getSPARQLcountEUlicensesByCatalog($catalog) {
 		$sparql = '
+prefix dcat: <http://www.w3.org/ns/dcat#>
 prefix dct: <http://purl.org/dc/terms/>
 prefix r5r: <http://data.europa.eu/r5r/>
-prefix dcat: <http://www.w3.org/ns/dcat#>
 
 select ?license (count(?license) as ?count) ?mapped where {
   <?MSCat?> ?cp ?d.
@@ -107,12 +107,12 @@ select ?license (count(?license) as ?count) ?mapped where {
   ?d a dcat:Dataset.
   ?d dcat:distribution ?dist.
   ?dist r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
-  OPTIONAL { ?dist dct:license ?license.
-    OPTIONAL { ?license ?skos ?mapped.
-      FILTER ( ?skos IN ( <http://www.w3.org/2004/02/skos/core#exactMatch>,
-                          <http://www.w3.org/2004/02/skos/core#narrowMatch>,
-                          <http://www.w3.org/2004/02/skos/core#broadMatch> ))
-    }
+  ?dist dct:license ?license.
+  optional {
+    ?license ?skos ?mapped.
+    FILTER ( ?skos IN ( <http://www.w3.org/2004/02/skos/core#exactMatch>,
+                        <http://www.w3.org/2004/02/skos/core#narrowMatch>,
+                        <http://www.w3.org/2004/02/skos/core#broadMatch> ))
   }
 }
 		';
@@ -429,71 +429,133 @@ select distinct ?api where {
     }
   ';
 
-// -------------------------------------------------------
-// 4) Reported legal information on Distributions and APIs
-// - it's only for APIs!
-// -------------------------------------------------------
-$sparql4 = '
-prefix dct: <http://purl.org/dc/terms/>
-prefix r5r: <http://data.europa.eu/r5r/>
-prefix dcat: <http://www.w3.org/ns/dcat#>
+  // -----------------------------------------------------
+  // High-value datasets must be made available under a
+  // permissive licence, such as Creative Commons BY 4.0.
+  // In DCAT-AP the legal information is associated with
+  // the ‘Distributions’ and Data Services associated with
+  // the Datasets. Because legal information is an
+  // important aspect of the HVD IR, a specific reporting
+  // query is provided.
+  // Note: Legal information in DCAT-AP is a combination
+  //   of three properties: the access rights, the
+  //   licences and the rights. 'Access rights’ provides a
+  //   condensed view on the limitations that restrict
+  //   access to data. ‘Licences’ and ‘rights’ are the
+  //   legal conditions on the use or reuse of the data.
+  // -----------------------------------------------------
+  // Findings:
+  // - it's only for APIs!
+  // -----------------------------------------------------
 
-select distinct ?d ?api ?title ?lic ?rights where {
-#  <?MSCat?> ?cp ?d.
-  <http://data.europa.eu/88u/catalogue/govdata> ?cp ?d.
-  ?d r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
-  {
-    ?d dcat:distribution ?dist.
-    ?dist r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+  $sparqlQueryLicencesDataService = '
+    prefix dcat: <http://www.w3.org/ns/dcat#>
+    prefix dct: <http://purl.org/dc/terms/>
+    prefix r5r: <http://data.europa.eu/r5r/>
 
-    ?dist dcat:accessService ?api.
-    ?api r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
-  }
-  union {
-    ?api dcat:servesDataset ?d.
-    ?api r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
-  }
-  optional { ?api dct:title ?title.
-    FILTER ( lang(?title) = "en" )
-  }
-  optional { ?api dcat:license ?lic. }
-  optional { ?api dcat:rights ?rights. }
-}
-';
+    select distinct ?d ?api ?title ?lic ?rights where {
+      <?MSCat?> ?cp ?d.
+      ?d r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      {
+        ?d dcat:distribution ?dist.
+        ?dist r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
 
-// --------------------------------------------------
-// 5) Reported legal information on provided licences
-// - licenses only from distributions
-// --------------------------------------------------
-// same as: getSPARQLcountEUlicensesByCatalog
-// --------------------------------------------------
-$sparql5 = '
-PREFIX dc: <http://purl.org/dc/elements/1.1/>
-prefix dct: <http://purl.org/dc/terms/>
-prefix r5r: <http://data.europa.eu/r5r/>
-prefix dcat: <http://www.w3.org/ns/dcat#>
-
-select distinct ?lic ?skos ?mapped where {
-#  <?MSCat?> ?cp ?d.
-  <http://data.europa.eu/88u/catalogue/govdata> ?cp ?d.
-  ?d r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
-  ?d a dcat:Dataset.
-  ?d dcat:distribution ?dist.
-  ?dist r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
-  optional { ?dist dct:title ?title.
-    FILTER ( lang(?title) = "en" )
-  }
-
-  OPTIONAL { ?dist dct:license ?lic.
-    Optional {
-      ?lic ?skos ?mapped.
-      FILTER ( ?skos IN ( <http://www.w3.org/2004/02/skos/core#exactMatch>,
-                          <http://www.w3.org/2004/02/skos/core#narrowMatch>,
-                          <http://www.w3.org/2004/02/skos/core#broadMatch> ))
+        ?dist dcat:accessService ?api.
+        ?api r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      }
+      union {
+        ?api dcat:servesDataset ?d.
+        ?api r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      }
+      optional { ?api dct:title ?title.
+        FILTER ( langMatches( lang(?title), "en" ))
+      }
+      OPTIONAL { ?api dct:license ?lic. }
+      OPTIONAL { ?api dct:rights ?rights. }
     }
-  }
-}
-';
+  ';
+
+  // -----------------------------------------------------
+  // The licences that are provided must according to the
+  // HVD IR satisfy a number of quality requirements:
+  // - A licence must be provided in human and
+  //   machine-readable format.
+  // - A licence must be provided with a persistent URI.
+  // - A licence must be at least as permissive as
+  //   CC-BY 4.0.
+  // -----------------------------------------------------
+  // Findings:
+  // - it's only for distributions
+  // -----------------------------------------------------
+
+  $sparqlQueryLicencesDistribution = '
+    prefix dcat: <http://www.w3.org/ns/dcat#>
+    prefix dct: <http://purl.org/dc/terms/>
+    prefix r5r: <http://data.europa.eu/r5r/>
+
+    select distinct ?d ?dist ?title ?lic ?rights where {
+      #<?MSCat?> ?cp ?d.
+      <http://data.europa.eu/88u/catalogue/govdata> ?cp ?d.
+      ?d r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      ?d a dcat:Dataset.
+      ?d dcat:distribution ?dist.
+      ?dist r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      optional { ?dist dct:title ?title.
+        FILTER ( langMatches( lang(?title), "en" ))
+      }
+      OPTIONAL { ?dist dct:license ?lic. }
+      OPTIONAL { ?dist dct:rights ?rights. }
+    }
+  ';
+
+  // -----------------------------------------------------
+  // This reporting query will assist the assessment
+  // whether the provided licences are in line with the
+  // last aspect. In DCAT-AP HVD it is recommended that
+  // for the reporting the MS HVD contact provides a
+  // mapping from all reported licences to the EU
+  // Vocabularies NAL (Name Authority List) licences. This
+  // query takes that knowledge into account. This
+  // recommendation allows for a quick assessment of
+  // permissiveness as compared to CC-BY 4.0. If no
+  // licence is provided, the provided rights will be
+  // investigated for those quality requirements. Since
+  // rights express usually a single aspect of reuse, this
+  // investigation is more complicated. In particular,
+  // there is no consolidated controlled vocabulary of
+  // rights available, to which one could match the
+  // specific rights provided in a MS. For that reason, no
+  // specific query for rights has been provided in this
+  // version of the document. The previous query 6 will
+  // check the presence (licence and/or rights) of legal
+  // information.
+  // -----------------------------------------------------
+  // Findings:
+  // - licenses only from distributions
+  // -----------------------------------------------------
+  // same as: getSPARQLcountEUlicensesByCatalog
+  // -----------------------------------------------------
+
+  $sparqlQueryLicencesOnly = '
+    prefix dcat: <http://www.w3.org/ns/dcat#>
+    prefix dct: <http://purl.org/dc/terms/>
+    prefix r5r: <http://data.europa.eu/r5r/>
+
+    select distinct ?lic ?skos ?mapped where {
+      <?MSCat?> ?cp ?d.
+      ?d r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      ?d a dcat:Dataset.
+      ?d dcat:distribution ?dist.
+      ?dist r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      ?dist dct:license ?lic.
+      optional {
+        ?lic ?skos ?mapped.
+        FILTER ( ?skos IN ( <http://www.w3.org/2004/02/skos/core#exactMatch>,
+                            <http://www.w3.org/2004/02/skos/core#narrowMatch>,
+                            <http://www.w3.org/2004/02/skos/core#broadMatch> ) )
+      }
+    }
+  ';
 
 // ------------------------------------------
 // 6) Report queries for completeness (SHACL)
