@@ -557,11 +557,71 @@ select distinct ?api where {
     }
   ';
 
-// ------------------------------------------
-// 6) Report queries for completeness (SHACL)
-// ------------------------------------------
-$sparql6 = '
-';
+  // -----------------------------------------------------
+  // Findings:
+  // - licenses only from data services
+  // -----------------------------------------------------
+
+  $sparqlQueryLicencesOnly2 = '
+    prefix dcat: <http://www.w3.org/ns/dcat#>
+    prefix dct: <http://purl.org/dc/terms/>
+    prefix r5r: <http://data.europa.eu/r5r/>
+
+    select distinct ?lic ?skos ?mapped where {
+      #<?MSCat?> ?cp ?d.
+      <http://data.europa.eu/88u/catalogue/govdata> ?cp ?d.
+      ?d r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      ?d a dcat:Dataset.
+      ?api a dcat:DataService.
+      {
+        ?d dcat:distribution ?dist.
+        ?dist r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+
+        ?dist dcat:accessService ?api.
+        ?api r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      }
+      union {
+        ?api dcat:servesDataset ?d.
+        ?api r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      }
+      ?api dct:license ?lic.
+      optional {
+        ?lic ?skos ?mapped.
+        FILTER ( ?skos IN ( <http://www.w3.org/2004/02/skos/core#exactMatch>,
+                            <http://www.w3.org/2004/02/skos/core#narrowMatch>,
+                            <http://www.w3.org/2004/02/skos/core#broadMatch> ) )
+      }
+    }
+  ';
+
+  // -----------------------------------------------------
+  // It cannot be excluded that the collected HVD metadata
+  // is only partially complete. This can have several
+  // reasons:
+  // - The MS HVD contact did not ensure that all metadata
+  //   is available in the DEU.
+  // - The MS has not fulfilled its obligations according
+  //   to the HVD IR and therefore information is missing.
+  // - The HVD IR has distinct requirements per kind of
+  //   High Value Dataset that might result in collected
+  //   metadata appearing to be incomplete, while still
+  //   being in compliance with the HVD IR.
+  //
+  // To detect these cases the collected HVD metadata must
+  // be assessed for completeness.
+  //
+  // As it is challenging to detect metadata
+  // incompleteness via SPARQL queries, an alternative
+  // method is used: a SHACL validation. The following
+  // SHACL template is an extract of the SHACL, which will
+  // find Datasets that have no Data Service associated
+  // with them. Given the fact that in general high-value
+  // datasets should have a Data Service associated with
+  // them, the absence of a Data Service might indicate an
+  // issue.
+  // -----------------------------------------------------
+
+  $shacl = '';
 
 // ------------------------------------------
 // Test: Count HVD categories
