@@ -38,8 +38,8 @@ select (count(?d) as ?count) where {
 
 	function getSPARQLcountEUdistributionsByCatalog($catalog) {
 		$sparql = '
-prefix r5r: <http://data.europa.eu/r5r/>
 prefix dcat: <http://www.w3.org/ns/dcat#>
+prefix r5r: <http://data.europa.eu/r5r/>
 
 select (count(?dist) as ?count) where {
   <?MSCat?> ?cp ?d.
@@ -290,8 +290,8 @@ select distinct ?api where {
   // title, description and HVD category. These are the
   // mandatory DCAT-AP HVD key metadata.
   // Note: The query returns only the English texts. These
-  // can be the result of machine translation service
-  // embedded in the DEU harvesting
+  //   can be the result of machine translation service
+  //   embedded in the DEU harvesting
   // -----------------------------------------------------
   // Findings:
   // - check only HVD marked dataset
@@ -324,32 +324,44 @@ select distinct ?api where {
     }
   ';
 
-// ----------------------------------------------------------------------------------------
-// 2) Reporting Bulk Downloads (Distributions) for High Value Datasets with key information
-// - check HVD marked dataset and HVD marked distributions
-// - not check for HVD category (may be empty)
-// - return: distributions
-// ----------------------------------------------------------------------------------------
-// same as: getSPARQLcountEUdistributionsByCatalog()
-// ----------------------------------------------------------------------------------------
-$sparql2 = '
-prefix dct: <http://purl.org/dc/terms/>
-prefix r5r: <http://data.europa.eu/r5r/>
-prefix dcat: <http://www.w3.org/ns/dcat#>
+  // -----------------------------------------------------
+  // High-value datasets are usually subject to the
+  // obligation to be provided as bulk download. This
+  // assessment query will allow to detect these aspects.
+  // Note: There could be multiple Distributions for one
+  //   Dataset. This multiplicity is the reason that this
+  //   is a separate query, and that it cannot be part of
+  //   a simple table with Datasets.
+  // There could be Distributions for a High Value Dataset
+  // that are not considered to be reported in the context
+  // of the HVD IR. It may be assumed that the collection
+  // phase has removed those. But to guarantee that
+  // incorrect values are not returned, the identification
+  // condition is included.
+  // -----------------------------------------------------
+  // Findings:
+  // - not check for HVD category (may be empty)
+  // -----------------------------------------------------
+  // same as: getSPARQLcountEUdistributionsByCatalog()
+  // -----------------------------------------------------
 
-select distinct ?d ?dist ?title ?accessURL where {
-#  <?MSCat?> ?cp ?d.
-  <http://data.europa.eu/88u/catalogue/govdata> ?cp ?d.
-  ?d r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
-  ?d a dcat:Dataset.
-  ?d dcat:distribution ?dist.
-  ?dist r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
-  optional { ?dist dct:title ?title.
-    FILTER ( lang(?title) = "en" )
-  }
-  optional { ?dist dcat:accessURL ?accessURL. }
-}
-';
+  $sparqlQueryDistributions = '
+    prefix dcat: <http://www.w3.org/ns/dcat#>
+    prefix dct: <http://purl.org/dc/terms/>
+    prefix r5r: <http://data.europa.eu/r5r/>
+
+    select distinct ?d ?dist ?title ?accessURL where {
+      <?MSCat?> ?cp ?d.
+      ?d r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      ?d a dcat:Dataset.
+      ?d dcat:distribution ?dist.
+      ?dist r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      optional { ?dist dct:title ?title.
+        FILTER ( langMatches( lang(?title), "en" ))
+      }
+      optional { ?dist dcat:accessURL ?accessURL. }
+    }
+  ';
 
 // -----------------------------------------------------------------------------
 // 3) Reported APIs (Data Services) for High Value Datasets with key information
