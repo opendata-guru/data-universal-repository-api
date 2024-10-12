@@ -23,8 +23,8 @@ where {
 
 	function getSPARQLcountEUdatasetsByCatalog($catalog) {
 		$sparql = '
-prefix r5r: <http://data.europa.eu/r5r/>
 prefix dcat: <http://www.w3.org/ns/dcat#>
+prefix r5r: <http://data.europa.eu/r5r/>
 
 select (count(?d) as ?count) where {
   <?MSCat?> ?cp ?d.
@@ -233,41 +233,96 @@ select distinct ?api where {
         ?API r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
       }
     } limit 10
-';
+  ';
 
-// -----------------------------------------------------
-// 1) Reporting High Value Datasets with key information
-// - check only HVD marked dataset
-// - not check for HVD category (may be empty)
-// - not check distribution marked for HVD
-// - return: datasets
-// -----------------------------------------------------
-// same as: getSPARQLcountEUdatasetsByCatalog()
-// -----------------------------------------------------
-// query with    '?Category' count 874 entries
-// query without '?Category' count 868 entries
-// -> query only '?Category' results in 8 entries
-//    5x URIs, 3x empty values
-// -----------------------------------------------------
-$sparql1 = '
-prefix dct: <http://purl.org/dc/terms/>
-prefix r5r: <http://data.europa.eu/r5r/>
-prefix dcat: <http://www.w3.org/ns/dcat#>
+  // -----------------------------------------------------
+  // This query returns all the high-value datasets
+  // harvested from a given MS. This is done by replacing
+  // the parameter <?MSCat? > with the URI of the MS
+  // catalogue in the DEU.
+  // -----------------------------------------------------
+  // same as: getSPARQLcountEUdatasetsByCatalog()
+  // -----------------------------------------------------
 
-select distinct ?d ?title ?desc ?Category where {
-#  <?MSCat?> ?cp ?d.
-  <http://data.europa.eu/88u/catalogue/govdata> ?cp ?d.
-  ?d r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
-  ?d a dcat:Dataset.
-  optional { ?d dct:title ?title.
-    FILTER ( lang(?title) = "en" )
-  }
-  optional { ?d dct:description ?desc.
-    FILTER ( lang(?desc) = "en" )
-  }
-  optional { ?d r5r:hvdCategory ?Category. }
-} limit 10
-';
+  $sparqlQueryAllDatasets = '
+    prefix dcat: <http://www.w3.org/ns/dcat#>
+    prefix r5r: <http://data.europa.eu/r5r/>
+
+    select distinct ?d  where {
+      <?MSCat?> ?cp ?d.
+      ?d r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      ?d a dcat:Dataset.
+    }
+  ';
+
+  // -----------------------------------------------------
+  // The harvesting by the DEU performs for its own
+  // purposes a harmonisation step in which the source
+  // identifiers of datasets are replaced with DEU
+  // specific identifiers. The original identifiers
+  // provided by the harvested catalogues are maintained
+  // in the catalogue records of the DEU (as a result of
+  // the harvesting process). The following query
+  // retrieves the original identifiers for each HVD
+  // dataset so that MS can perform an internal
+  // cross-check.
+  // -----------------------------------------------------
+
+  $sparqlQuerySourceIdentifiers = '
+    prefix dcat: <http://www.w3.org/ns/dcat#>
+    prefix dct: <http://purl.org/dc/terms/> 
+    prefix foaf: <http://xmlns.com/foaf/0.1/> 
+    prefix r5r: <http://data.europa.eu/r5r/>
+
+    select distinct ?d ?originalId where {
+      <?MSCat?> ?cp ?d.
+      ?d r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      ?d a dcat:Dataset.
+
+      ?record foaf:primaryTopic ?d.
+      ?record a dcat:CatalogRecord.
+      ?record dct:identifier ?originalId.
+    }
+  ';
+
+  // -----------------------------------------------------
+  // For any high-value dataset this query provides the
+  // title, description and HVD category. These are the
+  // mandatory DCAT-AP HVD key metadata.
+  // Note: The query returns only the English texts. These
+  // can be the result of machine translation service
+  // embedded in the DEU harvesting
+  // -----------------------------------------------------
+  // Findings:
+  // - check only HVD marked dataset
+  // - not check for HVD category (may be empty)
+  // - not check distribution marked for HVD
+  // - return: datasets
+  // -----------------------------------------------------
+  // query with    '?category' count 874 entries
+  // query without '?category' count 868 entries
+  // -> query only '?category' results in 8 entries
+  //    5x URIs, 3x empty values
+  // -----------------------------------------------------
+
+  $sparqlQueryAllDatasetsMandatory = '
+    prefix dcat: <http://www.w3.org/ns/dcat#>
+    prefix dct: <http://purl.org/dc/terms/> 
+    prefix r5r: <http://data.europa.eu/r5r/>
+
+    select distinct ?d ?title ?desc ?category where {
+      <?MSCat?> ?cp ?d.
+      ?d r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      ?d a dcat:Dataset.
+      optional { ?d dct:title ?title.
+        FILTER ( langMatches( lang(?title), "en" ))
+      }
+      optional { ?d dct:description ?desc.
+        FILTER ( langMatches( lang(?desc), "en" ))
+      }
+      optional { ?d r5r:hvdCategory ?category. }
+    }
+  ';
 
 // ----------------------------------------------------------------------------------------
 // 2) Reporting Bulk Downloads (Distributions) for High Value Datasets with key information
