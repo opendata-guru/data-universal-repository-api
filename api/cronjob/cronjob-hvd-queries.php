@@ -158,44 +158,81 @@ select distinct ?api where {
 		return str_replace('?MSCat?', $catalog, $sparql);
 	}
 
-	// -----------------------------------------------------
-	// currently known SPARQL queries: none
-	// future publication site: https://dataeuropa.gitlab.io/data-provider-manual/hvd/sparql/
-	// meanwhile: use some queries show on event "Reporting High Value Datasets using DCAT-AP HVD and DEU" from SEMIC at 2024-06-04
-	// -----------------------------------------------------
+  // -----------------------------------------------------
+  // currently known SPARQL queries:
+  // https://dataeuropa.gitlab.io/data-provider-manual/hvd/Reporting_guidelines_for_HVDs/
+  //
+  // Test SPARQL search at
+  //  https://data.europa.eu/data/sparql?locale=en
+  // -----------------------------------------------------
 
-	// -----------------------------------------------------
-	// Test SPARQL search at https://data.europa.eu/data/sparql?locale=en
-	// -----------------------------------------------------
+  // -----------------------------------------------------
+  // In case one has to lookup the MS catalogue URI, to
+  // fill in the parameter <?MSCat? >, the following query
+  // can be applied. It results in all catalogues having a
+  // resource that is indicated to be published according
+  // to the HVD IR.
+  // -----------------------------------------------------
 
-// -----------------------------------------------------
-// 0. Determining the MS reporting scope
-$sparql0 = '
-construct {?s ?p ?o.
-           ?dist ?distp ?disto.
-           ?distapi ?distapip ?distapio.
-           ?API ?APIp ?APIo.
-} where {
-# <?MSCat?> ?cp ?s.
-  <http://data.europa.eu/88u/catalogue/govdata> ?cp ?s.
-?s <http://data.europa.eu/r5r/applicableLegislation> <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
-{ ?s ?p ?o. }
-union {
-  ?s <http://www.w3.org/ns/dcat#distribution> ?dist.
-  ?dist ?distp ?disto.
-  ?dist <http://data.europa.eu/r5r/applicableLegistlation> <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
-}
-union {
-  ?dist <http://www.w3.org/ns/dcat#accessService> ?distapi.
-  ?distapi ?distapip ?distapio.
-  ?distapi <http://data.europa.eu/r5r/applicableLegistlation> <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
-}
-union {
-  ?API <http://www.w3.org/ns/dcat#servesDataset> ?s.
-  ?API ?APIp ?APIo.
-  ?API <http://data.europa.eu/r5r/applicableLegistlation> <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
-}
-} limit 10
+  $sparqlQueryMSCat = '
+    prefix dcat: <http://www.w3.org/ns/dcat#>
+    prefix r5r: <http://data.europa.eu/r5r/>
+
+    select distinct (?c as ?MSCat)  where {
+      ?s r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      ?c a dcat:Catalog.
+      ?c ?p ?s.
+    } group by ?c
+  ';
+
+  // -----------------------------------------------------
+  // The construction query below creates a snapshot of a
+  // MS HVD catalogue. To execute the query, the user must
+  // replace the parameter <?MScat? > with the MS HVD
+  // catalogue URI in the DEU. As the amount of data
+  // returned may be over the allowed number of results by
+  // the sparql endpoint, pagination must be applied to
+  // download the whole snapshot. Pagination is done by
+  // the query elements:
+  // - Limit: the size of a pagination. Max 50000, but to
+  //          avoid other
+  // - Offset: the startpoint of the page.
+  //
+  // Users must incrementally increase the offset value
+  // until the result is empty. The concatenation of all
+  // the downloaded files is the snapshot.
+  // -----------------------------------------------------
+
+  $sparqlQuerySnapshot = '
+    prefix dcat: <http://www.w3.org/ns/dcat#>
+    prefix r5r: <http://data.europa.eu/r5r/>
+
+    construct {?s ?p ?o.
+              ?dist ?distp ?disto.
+              ?distapi ?distapip ?distapio.
+              ?API ?APIp ?APIo.
+    } where {
+      <?MSCat?> ?cp ?s.
+      ?s r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      { ?s ?p ?o. }
+      union {
+        ?s dcat:distribution ?dist.
+        ?dist ?distp ?disto.
+        ?dist r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      }
+      union {
+        ?s dcat:distribution ?dist.
+        ?dist r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+        ?dist dcat:accessService ?distapi.
+        ?distapi ?distapip ?distapio.
+        ?distapi r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      }
+      union {
+        ?API dcat:servesDataset ?s.
+        ?API ?APIp ?APIo.
+        ?API r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
+      }
+    } limit 10
 ';
 
 // -----------------------------------------------------
@@ -387,7 +424,8 @@ select ?hvdCategory (count(?hvdCategory) as ?count) where {
 ';
 
 // ------------------------------------------
-// Test
+// Test, please have look also at
+// $sparqlQueryMSCat
 // ------------------------------------------
 $sparqlTest2 = '
 prefix dct: <http://purl.org/dc/terms/>
@@ -404,5 +442,4 @@ select distinct ?MSCat (count(?MSCat) as ?count) where {
 
 } limit 25
 ';
-
 ?>
