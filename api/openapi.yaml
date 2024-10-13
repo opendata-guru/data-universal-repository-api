@@ -468,7 +468,7 @@ paths:
       parameters:
         - name: url
           in: query
-          description: tbd.
+          description: Examines the link to find out more information. Links are followed in multiple passes and semantic information is enriched.
           required: true
           allowEmptyValue: false
           schema:
@@ -500,7 +500,39 @@ paths:
               examples:
                 sample:
                   value:
-                    tbd.
+                    passes:
+                      - file:
+                          error: ''
+                          metadata:
+                            charset: ''
+                            contentType: text/xml
+                            effectiveMethod: GET
+                            effectiveURL: https://geoportal.bafg.de/arcgis/rest/services/INSPIRE/Catchment/MapServer/exts/InspireFeatureDownload/service?VERSION=2.0.0&SERVICE=WFS&REQUEST=GetCapabilities
+                            fileTime: 1728823897
+                            fileTimeISO: 2024-10-13 14:51:37
+                            httpCode: 200
+                            sizeDownload: 25919
+                            speedDownload: 204086
+                            totalTime: 0.127177
+                          url: https://geoportal.bafg.de/arcgis/rest/services/INSPIRE/Catchment/MapServer/exts/InspireFeatureDownload/service?VERSION=2.0.0&SERVICE=WFS&REQUEST=GetCapabilities
+                        content:
+                          contentType: ogc:wfs
+                          error: null
+                          body:
+                            version: 2.0.0
+                            title: BfG INSPIRE Download Service Hydrology - Catchment
+                            description: This service provides INSPIRE Data for Catchment of the data theme hydrology
+                            keywords: []
+                            providerName: Bundesanstalt für Gewässerkunde
+                            providerURI: https://registry.gdi-de.org/id/de.bund.bfg.csw/
+                            assets:
+                              - name: hy-p:DrainageBasin
+                                title: hy-p:DrainageBasin
+                                descriptions: ''
+                              - name: hy-p:RiverBasin
+                                title: hy-p:RiverBasin
+                                descriptions: ''
+                    
         '400':
           $ref: "#/components/responses/400BadRequest"
       tags:

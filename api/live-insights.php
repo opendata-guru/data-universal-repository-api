@@ -38,16 +38,18 @@
 	// https://geo.sv.rostock.de/inspire/tn-publictransitstops/download?service=WFS&version=2.0.0&request=GetCapabilities
 	// https://geo.sv.rostock.de/inspire/tn-publictransitstops/view?service=WMS&version=1.3.0&request=GetCapabilities
 
+	$ret = (object) array(
+		'passes' => [],
+	);
+
 	$content = curl($parameterURL);
 	$parsed = parser($content);
-
-	$ret = array();
 	unset($content->content);
-
-	$ret = (object) array(
+	$pass = (object) array(
 		'file' => $content,
 		'content' => $parsed,
 	);
+	$ret->passes[] = $pass;
 
 	echo json_encode($ret);
 ?>
