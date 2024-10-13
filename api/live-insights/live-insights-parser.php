@@ -175,10 +175,19 @@
 		}
 		if (!(array)$xml->ServiceIdentification) unset($xml->ServiceIdentification);
 
+		$providerURI = '';
 		if ($xml->ServiceProvider) {
 			if ($xml->ServiceProvider->ProviderName) {
 				$body['providerName'] = '' . $xml->ServiceProvider->ProviderName;
 				unset($xml->ServiceProvider->ProviderName);
+			}
+			if ($xml->ServiceProvider->ProviderSite) {
+				$path = $xml->ServiceProvider->ProviderSite;
+				foreach($path->getNamespaces() as $prefix => $uri) {
+					if ('' !== $prefix) {
+						$providerURI = '' . $path->attributes($prefix, true)->href;
+					}
+				}
 			}
 
 			unset($xml->ServiceProvider->ServiceContact);
@@ -190,7 +199,7 @@
 			if ($xml->OperationsMetadata->ExtendedCapabilities) {
 				$path = $xml->OperationsMetadata->ExtendedCapabilities;
 				$path = ((array)$path->children())['ExtendedCapabilities']->SpatialDataSetIdentifier->Namespace;
-				$body['providerURI'] = '' . $path;
+				$providerURI = ('' . $path) ? ('' . $path) : $providerURI;
 			}
 
 			unset($xml->OperationsMetadata->Constraint);
@@ -200,6 +209,7 @@
 
 			if (!(array)$xml->OperationsMetadata) unset($xml->OperationsMetadata);
 		}
+		$body['providerURI'] = $providerURI;
 
 		if ((array)$xml) {
 			$body['_'.$prefix] = $xml;
