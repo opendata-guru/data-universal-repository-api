@@ -5,6 +5,7 @@
 	header('Content-Type: application/json; charset=utf-8');
 
 	include('live-insights/live-insights-curl.php');
+	include('live-insights/live-insights-interpreter.php');
 	include('live-insights/live-insights-parser.php');
 
 	if ('GET' !== $_SERVER['REQUEST_METHOD']) {
@@ -45,9 +46,12 @@
 	$content = curl($parameterURL);
 	$parsed = parser($content);
 	unset($content->content);
+	$interpreted = interpret($content, $parsed);
+
 	$pass = (object) array(
 		'file' => $content,
 		'content' => $parsed,
+		'interpreter' => $interpreted,
 	);
 	$ret->passes[] = $pass;
 
