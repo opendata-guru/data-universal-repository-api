@@ -303,6 +303,12 @@
 					parseXML_XSI($children, $prefix, $body);
 				} else if ('https://geoportal.saarland.de/arcgis/services/Internet/Boden_WFS/MapServer/WFSServer' === $uri) {
 					parseXML_FooNamespace($children, $prefix, $body);
+				} else if ('https://geoportal.saarland.de/arcgis/services/Internet/LAPRO_Arten_Biotope_WFS/MapServer/WFSServer' === $uri) {
+					parseXML_FooNamespace($children, $prefix, $body);
+				} else if ('https://geoportal.saarland.de/arcgis/services/Internet/Landesplanung/MapServer/WFSServer' === $uri) {
+					parseXML_FooNamespace($children, $prefix, $body);
+				} else if ('https://geoportal.saarland.de/arcgis/services/Internet/Naturschutz/MapServer/WFSServer' === $uri) {
+					parseXML_FooNamespace($children, $prefix, $body);
 				} else {
 					$body[] = 'prefix: ' . $prefix;
 					$body[] = 'uri:    ' . $uri;
