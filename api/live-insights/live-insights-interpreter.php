@@ -25,6 +25,43 @@
 			'title_de' => 'Wassereinzugsgebiet',
 			'definition' => 'Area having a common outlet for its surface runoff.',
 		),
+		(object) array(
+			'ids' => ['HY.PhysicalWaters.Catchments'],
+			'uri' => 'https://inspire.ec.europa.eu/layer/HY.PhysicalWaters.Catchments',
+			'title' => 'Catchments',
+			'title_de' => 'Einzugsgebiete',
+			'definition' => '',
+			'spatialobjecttype' => 'DrainageBasin',
+		),
+		(object) array(
+			'ids' => ['hy-p:Watercourse'],
+			'uri' => 'https://inspire.ec.europa.eu/featureconcept/Watercourse',
+			'title' => 'Watercourse',
+			'title_de' => 'Wasserlauf',
+			'definition' => 'A natural or man-made flowing watercourse or stream.',
+		),
+		(object) array(
+			'ids' => ['hy-p:StandingWater'],
+			'uri' => 'https://inspire.ec.europa.eu/featureconcept/StandingWater',
+			'title' => 'Standing Water',
+			'title_de' => 'Stehendes Gewässer',
+			'definition' => 'A body of water that is entirely surrounded by land.',
+		),
+		(object) array(
+			'ids' => ['hy-p:Embankment'],
+			'uri' => 'https://inspire.ec.europa.eu/featureconcept/Embankment',
+			'title' => 'Embankment',
+			'title_de' => 'Böschung',
+			'definition' => 'A man-made raised long mound of earth or other material.',
+		),
+		(object) array(
+			'ids' => ['GN.GeographicalNames'],
+			'uri' => 'https://inspire.ec.europa.eu/layer/GN.GeographicalNames',
+			'title' => 'Geographical names',
+			'title_de' => 'Geografische Bezeichnungen',
+			'definition' => '',
+			'spatialobjecttype' => 'NamedPlace',
+		),
 	);
 
 	function interpret($file, $content) {
@@ -39,18 +76,24 @@
 				foreach($bodyAssets as $asset) {
 					foreach($semRegistry as $entry) {
 						if ($asset->name && in_array($asset->name, $entry->ids)) {
-							$assets[] = (object) array(
-								'id' => $entry->uri,
-								'title' => (object) ['de' => $entry->title_de, 'en' => $entry->title],
-							);
-						}
-
-						foreach($entry->ids as $id) {
-							if (str_contains($asset->title, $id)) {
+							$exists = array_column($assets, null, 'id')[$entry->uri] ?? false;
+							if (false === $exists) {
 								$assets[] = (object) array(
 									'id' => $entry->uri,
 									'title' => (object) ['de' => $entry->title_de, 'en' => $entry->title],
 								);
+							}
+						}
+
+						foreach($entry->ids as $id) {
+							if (str_contains($asset->title, $id)) {
+								$exists = array_column($assets, null, 'id')[$entry->uri] ?? false;
+								if (false === $exists) {
+									$assets[] = (object) array(
+										'id' => $entry->uri,
+										'title' => (object) ['de' => $entry->title_de, 'en' => $entry->title],
+									);
+								}
 							}
 						}
 					}
