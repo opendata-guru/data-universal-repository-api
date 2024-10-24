@@ -340,8 +340,7 @@
 		}
 	}
 
-	// opengis OGC, opengis OWS and opengis WMS
-	function parseOGC_OWS_WMS($xml, &$body, &$error, &$contentType) {
+	function parseError($xml, &$error) {
 		$rootName = $xml->getName();
 
 		if (('ExceptionReport' === $rootName) || ('ServiceExceptionReport' === $rootName)) {
@@ -380,6 +379,17 @@
 				'code' => $attributes['exceptionCode'] . $attributes['code'],
 				'descriptions' => $values,
 			);
+			return true;
+		}
+
+		return false;
+	}
+
+	// opengis OGC, opengis OWS and opengis WMS
+	function parseOGC_OWS_WMS($xml, &$body, &$error, &$contentType) {
+		$rootName = $xml->getName();
+
+		if (parseError($xml, $error)) {
 			return;
 		}
 
@@ -504,7 +514,9 @@
 			$xml = simplexml_load_string($file->content);
 			$ns = $xml->getDocNamespaces();
 
-			if (in_array('http://www.opengis.net/ogc', $ns)) {
+			if (parseError($xml, $error)) {
+				// done
+			} else if (in_array('http://www.opengis.net/ogc', $ns)) {
 				parseOGC_OWS_WMS($xml, $body, $error, $contentType);
 			} else if (in_array('http://www.opengis.net/ows/1.1', $ns)) {
 				parseOGC_OWS_WMS($xml, $body, $error, $contentType);
