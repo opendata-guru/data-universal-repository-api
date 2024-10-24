@@ -3,6 +3,20 @@
 	// https://www.inspire.niedersachsen.de/doorman/noauth/alkis-dls-elu?REQUEST=GetCapabilities&SERVICE=WFS
 
 	$semRegistry = array(
+		(object) array(
+			'ids' => ['au:AdministrativeBoundary'],
+			'uri' => 'https://inspire.ec.europa.eu/featureconcept/AdministrativeBoundary',
+			'title' => 'Administrative Boundary',
+			'title_de' => 'Verwaltungsgrenze',
+			'definition' => 'A line of demarcation between administrative units.',
+		),
+		(object) array(
+			'ids' => ['au:AdministrativeUnit'],
+			'uri' => 'https://inspire.ec.europa.eu/featureconcept/AdministrativeUnit',
+			'title' => 'Administrative Unit',
+			'title_de' => 'Verwaltungseinheit',
+			'definition' => 'Unit of administration where a Member State has and/or exercises jurisdictional rights, for local, regional and national governance.',
+		),
 //		'uri' => 'https://inspire.ec.europa.eu/featureconcept/ExistingLandUseDataSet',
 		(object) array(
 			'ids' => ['elu:ExistingLandUseObject'],
