@@ -17,6 +17,13 @@
 			'title_de' => 'Verwaltungseinheit',
 			'definition' => 'Unit of administration where a Member State has and/or exercises jurisdictional rights, for local, regional and national governance.',
 		),
+		(object) array(
+			'ids' => ['tn-ro:RoadLink'],
+			'uri' => 'https://inspire.ec.europa.eu/schemas/tn-ro/4.0/RoadTransportNetwork.xsd',
+			'title' => 'Road link',
+			'title_de' => 'Straßenverbindung',
+			'definition' => 'A linear spatial object that describes the geometry and connectivity of a road network between two points in the network. Road links can represent paths, bicycle roads, single carriageways, multiple carriageway roads and even fictitious trajectories across traffic squares.',
+		),
 //		'uri' => 'https://inspire.ec.europa.eu/featureconcept/ExistingLandUseDataSet',
 		(object) array(
 			'ids' => ['elu:ExistingLandUseObject'],
