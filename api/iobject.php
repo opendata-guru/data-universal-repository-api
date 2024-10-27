@@ -10,7 +10,7 @@
 		include('helper/_post.php');
 
 		if (validPost()) {
-			include('helper/_sobject.php');
+			include('helper/_iobject.php');
 
 			$supplier = postSID();
 
@@ -22,7 +22,7 @@
 				));
 				exit;
 			} else {
-				$sObject = $supplier->sObject;
+				$iObject = $supplier->iObject;
 			}
 		} else {
 			header('HTTP/1.0 401 Unauthorized');
@@ -33,34 +33,30 @@
 				'repository' => 'https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data',
 			));
 			exit;
-		}*/
-//	} else if ('GET' !== $_SERVER['REQUEST_METHOD']) {
+		}
+	} else */ if ('GET' !== $_SERVER['REQUEST_METHOD']) {
 		header('HTTP/1.0 405 Method Not Allowed');
 		echo json_encode((object) array(
 			'error' => 405,
 			'message' => 'Method Not Allowed. HTTP verb used to access this page is not allowed',
 		));
 		return;
-/*	} else {
-		include('helper/_sobject.php');
+	} else {
+		include('helper/_iobject.php');
 
-		$supplier = getSObject();
-		$sid = $supplier->parameter;
+		$insights = getIObject();
 
-		if ($sid === 'random') {
-			$index = rand(0, count($loadedSObjects) - 1);
-			$sObject = $loadedSObjects[$index];
-		} else if ($supplier->error) {
-			header($supplier->error->header);
+		if ($insights->error) {
+			header($insights->error->header);
 			echo json_encode((object) array(
-				'error' => $supplier->error->error,
-				'message' => $supplier->error->message,
+				'error' => $insights->error->error,
+				'message' => $insights->error->message,
 			));
 			exit;
 		} else {
-			$sObject = $supplier->sObject;
+			$iObject = $insights->iObject;
 		}
-	}*/
+	}
 
-//	echo json_encode($sObject);
+	echo json_encode($iObject);
 ?>
