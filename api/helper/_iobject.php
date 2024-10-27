@@ -48,14 +48,13 @@
 	function loadMappingFileIObjects(&$mapping) {
 		global $fileIObjects;
 
-		$idSameAsWikidata = null;
-		$idSameAsInspire = null;
 		$idModified = null;
-		$idTitleDE = null;
-		$idTitleEN = null;
-		$idType = null;
 		$idURL = null;
 		$idIID = null;
+
+		if (!file_exists($fileIObjects)) {
+			return;
+		}
 
 		$lines = explode("\n", file_get_contents($fileIObjects));
 		$mappingHeader = str_getcsv($lines[0], ',');
@@ -63,18 +62,8 @@
 		for ($m = 0; $m < count($mappingHeader); ++$m) {
 			if ($mappingHeader[$m] === 'iid') {
 				$idIID = $m;
-			} else if ($mappingHeader[$m] === 'title@EN') {
-				$idTitleEN = $m;
-			} else if ($mappingHeader[$m] === 'title@DE') {
-				$idTitleDE = $m;
 			} else if ($mappingHeader[$m] === 'url') {
 				$idURL = $m;
-			} else if ($mappingHeader[$m] === 'type') {
-				$idType = $m;
-			} else if ($mappingHeader[$m] === 'sameAsInspire') {
-				$idSameAsInspire = $m;
-			} else if ($mappingHeader[$m] === 'sameAsWikidata') {
-				$idSameAsWikidata = $m;
 			} else if ($mappingHeader[$m] === 'modified') {
 				$idModified = $m;
 			}
@@ -87,16 +76,7 @@
 
 				$mapping[] = (object) array(
 					'iid' => $arr[$idIID] ?: '',
-					'title' => array (
-						'de' => $arr[$idTitleDE] ?: '',
-						'en' => $arr[$idTitleEN] ?: '',
-					),
 					'url' => $arr[$idURL] ?: '',
-					'type' => $arr[$idType] ?: '',
-					'sameAs' => array (
-						'inspire' => $arr[$idSameAsInspire] ?: '',
-						'wikidata' => $arr[$idSameAsWikidata] ?: '',
-					),
 					'modified' => $arr[$idModified] ?: '',
 				);
 			}
@@ -113,12 +93,7 @@
 		if ($hashIObjects !== $newHash) {
 			$header = [
 				'iid',
-				'title@EN',
-				'title@DE',
 				'url',
-				'type',
-				'sameAsInspire'
-				'sameAsWikidata',
 				'modified',
 			];
 
@@ -127,12 +102,7 @@
 			foreach ($loadedIObjects as $iObject) {
 				fputcsv($fp, [
 					$iObject->iid,
-					$iObject->title['en'],
-					$iObject->title['de'],
 					$iObject->url,
-					$iObject->type,
-					$iObject->sameAs['inspire'],
-					$iObject->sameAs['wikidata'],
 					$iObject->modified,
 				], ',');
 			}
@@ -142,43 +112,25 @@
 		}
 	}
 
-	function pushIObject($iid, $labelDE, $labelEN, $url, $type, $sameAsInspire, $sameAsWikidata) {
+	function pushIObject($iid, $url) {
 		global $loadedIObjects;
 
 		$loadedIObjects[] = (object) array(
 			'iid' => $iid,
-			'title' => array (
-				'de' => $labelDE,
-				'en' => $labelEN,
-			),
 			'url' => $url,
-			'type' => $type,
-			'sameAs' => array (
-				'inspire' => $sameAsInspire,
-				'wikidata' => $sameAsWikidata,
-			),
-			'modified' => date('Y-m-d H:i:s'),
+			'modified' => date('Y-m-d'),
 		);
 
 		return end($loadedIObjects);
 	}
 
-	function updateIObject($iid, $labelDE, $labelEN, $url, $type, $sameAsInspire, $sameAsWikidata) {
+	function updateIObject($iid, $url) {
 		global $loadedIObjects;
 
 		foreach($loadedIObjects as &$iObject) {
 			if ($iid === $iObject->iid) {
-				$iObject->title = array (
-					'de' => $labelDE,
-					'en' => $labelEN,
-				);
 				$sObject->url = $url;
-				$sObject->type = $type;
-				$iObject->sameAs = array (
-					'inspire' => $sameAsInspire,
-					'wikidata' => $sameAsWikidata,
-				);
-				$sObject->modified = date('Y-m-d H:i:s');
+				$sObject->modified = date('Y-m-d');
 				return $iObject;
 			}
 		}
@@ -199,8 +151,10 @@
 		$length = 5;
 
 		$usedIIDs = [];
-		foreach($loadedIObjects as $iObject) {
-			$usedIIDs[] = $iObject->iid;
+		if ($loadedIObjects) {
+			foreach($loadedIObjects as $iObject) {
+				$usedIIDs[] = $iObject->iid;
+			}
 		}
 		$usedIIDs = array_filter($usedIIDs);
 
@@ -234,9 +188,11 @@
 			return null;
 		}
 
-		foreach($loadedIObjects as $iObject) {
-			if ($iid == $iObject->url) {
-				return $iObject;
+		if ($loadedIObjects) {
+			foreach($loadedIObjects as $iObject) {
+				if ($url == $iObject->url) {
+					return $iObject;
+				}
 			}
 		}
 

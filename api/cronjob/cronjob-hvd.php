@@ -9,6 +9,8 @@
 	ini_set('display_startup_errors', 1);
 	error_reporting(E_ALL);
 
+	include('../helper/_iobject.php');
+
 	$basePath = '../../api-data/';
 	$filePath = $basePath . 'temp-' . date('Y') . '/' . date('Y-m-d') . '-hvd.json';
 	$euPath = 'https://data.europa.eu/sparql';
@@ -75,6 +77,8 @@
 				'countLicensesTimestamp' => null,
 				'distributionsDuration' => null,
 				'distributionsTimestamp' => null,
+				'distributionsInsightsDuration' => null,
+				'distributionsInsightsTimestamp' => null,
 			);
 		}
 
@@ -247,6 +251,36 @@
 		saveCronjobData($fileDate, $accessData);
 	}
 
+	function getEUaccessURLInsights($catalog) {
+		global $basePath;
+		global $loadedIObjects;
+
+		$date = date('Y-m-d');
+		$datetime = new DateTime($date);
+		$fileDate = $basePath . 'hvd-access-url-date/' . date('Y-m') . '/hvd-access-date-' . $date . '.json';
+		$accessData = (array) loadCronjobData($fileDate);
+
+		foreach($accessData as $data) {
+			$iObject = findIObjectByURL($data->accessURL);
+
+			if (is_null($iObject)) {
+				pushIObject(createIID(), $data->accessURL);
+				saveMappingFileIObjects();
+
+				return false;
+			}
+
+			$modified = new DateTime($iObject->modified);
+			if ($modified->diff($datetime)->format('%a') >= 5) {
+				// update every 5 days
+
+//				return false;
+			}
+		}
+
+		return true;
+	}
+
 	function getNextData($data) {
 		include('cronjob-hvd-queries.php');
 
@@ -311,6 +345,23 @@
 
 				$object->distributionsDuration = round(microtime(true) - $now, 3);
 				$object->distributionsTimestamp = date('Y-m-d H:i:s');
+
+				return $data;
+			}
+
+			$modified = $object->distributionsInsightsTimestamp;
+			if (is_null($modified)) {
+				$now = microtime(true);
+				$stamp = true;
+
+				if (getEUcatalogGovData() === $catalog) {
+					$stamp = getEUaccessURLInsights($catalog);
+				}
+
+				if ($stamp) {
+					$object->distributionsInsightsDuration = round(microtime(true) - $now, 3);
+					$object->distributionsInsightsTimestamp = date('Y-m-d H:i:s');
+				}
 
 				return $data;
 			}
