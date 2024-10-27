@@ -78,6 +78,7 @@
 				'distributionsDuration' => null,
 				'distributionsTimestamp' => null,
 				'distributionsInsightsDuration' => null,
+				'distributionsInsightsBuster' => 0,
 				'distributionsInsightsTimestamp' => null,
 			);
 		}
@@ -358,6 +359,7 @@
 
 				if (getEUcatalogGovData() === $catalog) {
 					$stamp = getEUaccessURLInsights($catalog);
+					++$object->distributionsInsightsBuster;
 				}
 
 				if ($stamp) {
