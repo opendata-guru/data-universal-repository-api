@@ -293,6 +293,49 @@ paths:
           $ref: '#/components/responses/401Unauthorized'
       tags:
         - supplier
+  /i:
+    post:
+      summary: Add a URL
+      description: Unfortunately, it is not possible to change the URLs examined here. Please create an issue on GitHub at https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data
+      operationId: postIObjects
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/urlInsightParam"
+      responses:
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+      tags:
+        - insights
+  /i/{iID}:
+    get:
+      summary: Get semantic insights
+      description: Obtain semantic insights into a data object.
+      operationId: getIObject
+      parameters:
+        - $ref: "#/components/parameters/iidPathParam"
+      responses:
+        '200':
+          description: Example of a successful answer
+          content:
+            application/json:
+              examples:
+                sample:
+                  value:
+                    To do
+      tags:
+        - insights
+    post:
+      summary: Update semantic insights
+      description: Update the semantic insights about a data object.
+      operationId: postIObject
+      parameters:
+        - $ref: "#/components/parameters/iidPathParam"
+      responses:
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+      tags:
+        - insights
   /hvd/statistics/{date}:
     get:
       summary: Get HVD statistics
@@ -466,32 +509,7 @@ paths:
       description: Analyze a link to gain a deep understanding of the data and structure behind it
       operationId: getLiveInsights
       parameters:
-        - name: url
-          in: query
-          description: Examines the link to find out more information. Links are followed in multiple passes and semantic information is enriched.
-          required: true
-          allowEmptyValue: false
-          schema:
-            type: string
-          examples:
-            sample-wfs:
-              value: https://geoportal.bafg.de/arcgis/rest/services/INSPIRE/Catchment/MapServer/exts/InspireFeatureDownload/service?VERSION=2.0.0&SERVICE=WFS&REQUEST=GetCapabilities
-              summary: Sample WFS link
-            sample-wfs-missing:
-              value: https://geoinformation.eisenbahn-bundesamt.de/wfs/eba/services/wfs?service=WFS&version=2.0.0&request=GetCapabilities
-              summary: Sample WFS link with missing parameter
-            sample-wms:
-              value: https://geoportal.bafg.de/arcgis/rest/services/INSPIRE/Catchment/MapServer/exts/InspireView/service?VERSION=1.3.0&SERVICE=WMS&REQUEST=Getcapabilities
-              summary: Sample WMS link
-            sample-ows:
-              value: https://geo.sv.rostock.de/inspire/plu-localplans/download
-              summary: Sample OWS (download) link with missing parameter
-            sample-ogc:
-              value: https://geo.sv.rostock.de/inspire/tn-publictransitstops/view
-              summary: Sample OGS (view) link with missing parameter
-            sample-dcan-ressoure:
-              value: https://offenedaten-koeln.de/dataset/strassen-k%C3%B6ln/resource/cf8ff4f5-5cf6-424f-b5f6-c9ac6c9c351c
-              summary: Sample DCAN ressource portal link
+        - $ref: "#/components/parameters/urlInsightParam"
       responses:
         '200':
           description: Example of a successful answer
@@ -717,6 +735,18 @@ components:
         now:
           value: now
           summary: now tbd.
+    iidPathParam:
+      name: iID
+      in: path
+      description: The unique iID of the insight data object must be specified.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      examples:
+        root:
+          value: ixHTMn
+          summary: Elevation Bathymetry WCS
     linkParam:
       name: link
       in: query
@@ -889,6 +919,33 @@ components:
         root:
           value: sYyj9
           summary: Europa
+    urlInsightParam:
+      name: url
+      in: query
+      description: Examines the link to find out more information. Links are followed in multiple passes and semantic information is enriched.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      examples:
+        sample-wfs:
+          value: https://geoportal.bafg.de/arcgis/rest/services/INSPIRE/Catchment/MapServer/exts/InspireFeatureDownload/service?VERSION=2.0.0&SERVICE=WFS&REQUEST=GetCapabilities
+          summary: Sample WFS link
+        sample-wfs-missing:
+          value: https://geoinformation.eisenbahn-bundesamt.de/wfs/eba/services/wfs?service=WFS&version=2.0.0&request=GetCapabilities
+          summary: Sample WFS link with missing parameter
+        sample-wms:
+          value: https://geoportal.bafg.de/arcgis/rest/services/INSPIRE/Catchment/MapServer/exts/InspireView/service?VERSION=1.3.0&SERVICE=WMS&REQUEST=Getcapabilities
+          summary: Sample WMS link
+        sample-ows:
+          value: https://geo.sv.rostock.de/inspire/plu-localplans/download
+          summary: Sample OWS (download) link with missing parameter
+        sample-ogc:
+          value: https://geo.sv.rostock.de/inspire/tn-publictransitstops/view
+          summary: Sample OGS (view) link with missing parameter
+        sample-dcan-ressoure:
+          value: https://offenedaten-koeln.de/dataset/strassen-k%C3%B6ln/resource/cf8ff4f5-5cf6-424f-b5f6-c9ac6c9c351c
+          summary: Sample DCAN ressource portal link
   responses:
     400BadRequest:
       description: Bad Request Error
@@ -928,6 +985,8 @@ tags:
     description: Portal functions of the API can query both historical data from the database and live data (in the future) from the source systems.
   - name: supplier
     description: Supplier functions of the API can query both historical data from the database and live data (in the future) from the source systems.
+  - name: insights
+    description: Experimental! The data (not the metadata) is evaluated and semantic information is generated.
   - name: hvd
     description: Experimental! This group contains endpoints that work with High Value Datasets. Everything here is still very experimental.
   - name: live
