@@ -92,7 +92,11 @@
 		$assets = [];
 
 		if ($content && $content->body) {
-			$bodyAssets = $content->body->assets ? $content->body->assets : (property_exists($content->body,'assets') ? $content->body['assets'] : null);
+			$bodyAssets = $content->body->assets ?
+				$content->body->assets :
+				(property_exists((object) $content->body, 'assets') ?
+					(object) $content->body['assets'] :
+					null);
 			if ($bodyAssets) {
 				foreach($bodyAssets as $asset) {
 					foreach($semRegistry as $entry) {
