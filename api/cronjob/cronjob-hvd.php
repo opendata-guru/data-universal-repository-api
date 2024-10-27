@@ -261,20 +261,22 @@
 		$accessData = (array) loadCronjobData($fileDate);
 
 		foreach($accessData as $data) {
-			$iObject = findIObjectByURL($data->accessURL);
+			if (!is_null($data->accessURL) && ('' !== $data->accessURL)) {
+				$iObject = findIObjectByURL($data->accessURL);
 
-			if (is_null($iObject)) {
-				pushIObject(createIID(), $data->accessURL);
-				saveMappingFileIObjects();
+				if (is_null($iObject) && !is_null($data->accessURL) && ('' !== $data->accessURL)) {
+					pushIObject(createIID(), $data->accessURL);
+					saveMappingFileIObjects();
 
-				return false;
-			}
+					return false;
+				}
 
-			$modified = new DateTime($iObject->modified);
-			if ($modified->diff($datetime)->format('%a') >= 5) {
-				// update every 5 days
+				$modified = new DateTime($iObject->modified);
+				if ($modified->diff($datetime)->format('%a') >= 5) {
+					// update every 5 days
 
-//				return false;
+//					return false;
+				}
 			}
 		}
 
