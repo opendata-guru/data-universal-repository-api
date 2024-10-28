@@ -4,25 +4,23 @@
     header('Access-Control-Allow-Headers: X-Requested-With');
 	header('Content-Type: application/json; charset=utf-8');
 
-//	include('helper/_link.php');
-
-/*	if ('POST' === $_SERVER['REQUEST_METHOD']) {
+	if ('POST' === $_SERVER['REQUEST_METHOD']) {
 		include('helper/_post.php');
 
 		if (validPost()) {
 			include('helper/_iobject.php');
 
-			$supplier = postSID();
+			$insights = postIID();
 
-			if ($supplier->error) {
-				header($supplier->error->header);
+			if ($insights->error) {
+				header($insights->error->header);
 				echo json_encode((object) array(
-					'error' => $supplier->error->error,
-					'message' => $supplier->error->message,
+					'error' => $insights->error->error,
+					'message' => $insights->error->message,
 				));
 				exit;
 			} else {
-				$iObject = $supplier->iObject;
+				$iObject = $insights->iObject;
 			}
 		} else {
 			header('HTTP/1.0 401 Unauthorized');
@@ -34,7 +32,7 @@
 			));
 			exit;
 		}
-	} else */ if ('GET' !== $_SERVER['REQUEST_METHOD']) {
+	} else if ('GET' !== $_SERVER['REQUEST_METHOD']) {
 		header('HTTP/1.0 405 Method Not Allowed');
 		echo json_encode((object) array(
 			'error' => 405,

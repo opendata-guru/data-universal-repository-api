@@ -45,6 +45,70 @@
 		);
 	}
 
+	function postIID() {
+		include('live-insights/live-insights-get.php');
+
+		$parameterIID = htmlspecialchars($_GET['iid']);
+		$error = null;
+		$url = '';
+
+		if ($parameterIID == '') {
+			$error = (object) array(
+				'error' => 400,
+				'header' => 'HTTP/1.0 400 Bad Request',
+				'message' => 'Bad Request. Path parameter \'iID\' is not set',
+				'parameter' => $parameterIID,
+			);
+		}
+
+		if (!$error) {
+			$iObject = findIObject($parameterIID);
+
+			if (is_null($iObject)) {
+				$error = (object) array(
+					'error' => 400,
+					'header' => 'HTTP/1.0 400 Bad Request',
+					'message' => 'Bad Request. Unknown ID in the \'iID\' path parameter.',
+					'parameter' => $parameterIID,
+				);
+			}
+		}
+
+		if (!$error) {
+			$insights = null;
+
+			if ('' != $iObject->url) {
+				$insights = getInsights($iObject->url);
+			}
+
+			if (!is_null($insights)) {
+				$contentType = '';
+
+				$pass = end($insights->passes);
+
+				if ($pass->file && $pass->file->metadata) {
+					$contentType = $pass->file->metadata->contentType;
+				}
+				if ($pass->content) {
+					$contentType = $pass->content->contentType;
+				}
+
+				$iObject->contentType = $contentType;
+				$iObject->insights = $pass;
+
+				$iObject = updateIObject($iObject->iid, $iObject->url);
+
+//				saveMappingFileIObjects();
+			}
+		}
+
+		return (object) array(
+			'error' => $error,
+			'parameter' => $parameterIID,
+			'iObject' => $iObject,
+		);
+	}
+
 	function loadMappingFileIObjects(&$mapping) {
 		global $fileIObjects;
 
@@ -129,8 +193,8 @@
 
 		foreach($loadedIObjects as &$iObject) {
 			if ($iid === $iObject->iid) {
-				$sObject->url = $url;
-				$sObject->modified = date('Y-m-d');
+				$iObject->url = $url;
+				$iObject->modified = date('Y-m-d');
 				return $iObject;
 			}
 		}
