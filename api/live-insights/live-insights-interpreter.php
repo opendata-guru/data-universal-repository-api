@@ -55,6 +55,13 @@
 			'definition' => 'An existing land use object describes the land use of an area having a homogeneous combination of land use types.',
 		),
 		(object) array(
+			'ids' => ['er-v:RenewableAndWasteResource'],
+			'uri' => 'https://inspire.ec.europa.eu/schemas/2024.1/er-v/3.0/EnergyResourcesVector.xsd#RenewableAndWasteResource',
+			'title' => 'Renewable and waste resource',
+			'title_de' => 'Erneuerbare Energien und Abfallressourcen',
+			'definition' => 'A spatial object defining an inferred or observable spatial extent of a resource that can be, or has been used as a source of renewable energy or waste.',
+		),
+		(object) array(
 			'ids' => ['GE.GeologicFault'],
 			'uri' => 'https://inspire.ec.europa.eu/layer/GE.GeologicFault',
 			'title' => 'Geologic faults',

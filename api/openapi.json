@@ -1176,9 +1176,13 @@
           "type": "string"
         },
         "examples": {
-          "root": {
+          "wcs": {
             "value": "ixHTMn",
-            "summary": "Elevation Bathymetry WCS"
+            "summary": "Elevation Bathymetry (WCS)"
+          },
+          "wfs": {
+            "value": "iYETj5",
+            "summary": "Renewable and waste resource (WFS)"
           }
         }
       },
