@@ -4,6 +4,8 @@
     header('Access-Control-Allow-Headers: X-Requested-With');
 	header('Content-Type: application/json; charset=utf-8');
 
+	include('helper/_iobject.php');
+
 	function sortURLs($a, $b) {
 		$a_ = explode('.', $a);
 		$a__ = $a_[count($a_) - 2];
@@ -86,11 +88,19 @@
 
 		$newToday = array_diff($toda, $yest);
 		$newTodayObj = [];
+		$now = microtime(true);
 		foreach($newToday as $value) {
 			$parts = explode('§', $value);
+			$iObject = findIObjectByURL($parts[1]);
+
+			$duration = round(microtime(true) - $now, 3);
+			if ($duration < 5) {
+				$iObject = updateIObjectFile($iObject);
+			}
+
 			$newTodayObj[] = (object) array(
 				'datasetIdentifier' => $parts[0],
-				'distributionAccessURL' => $parts[1],
+				'distribution' => $iObject,
 			);
 		}
 

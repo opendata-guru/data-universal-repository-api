@@ -48,7 +48,7 @@
 	}
 
 	function postIID() {
-		include('live-insights/live-insights-get.php');
+		include_once('live-insights/live-insights-get.php');
 
 		$parameterIID = htmlspecialchars($_GET['iid']);
 		$error = null;
@@ -80,6 +80,7 @@
 			$iObject = updateIObject($iObject->iid, $iObject->url);
 			$iObject = updateIObjectFile($iObject);
 
+			saveIObject($iObject);
 			saveMappingFileIObjects();
 		}
 
@@ -91,6 +92,8 @@
 	}
 
 	function updateIObjectFile($iObject) {
+		include_once('live-insights/live-insights-get.php');
+
 		$insights = null;
 		$contentType = '';
 		$assets = [];
@@ -119,8 +122,6 @@
 			'contentType' => $contentType,
 			'assets' => $assets,
 		);
-
-		saveIObject($iObject);
 
 		return $iObject;
 	}
@@ -226,6 +227,8 @@
 
 		$iObject = end($loadedIObjects);
 		$iObject = updateIObjectFile($iObject);
+
+		saveIObject($iObject);
 
 		return $iObject;
 	}
