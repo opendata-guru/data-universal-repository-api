@@ -35,6 +35,8 @@
 					'message' => 'Bad Request. Unknown ID in the \'iID\' path parameter.',
 					'parameter' => $parameterIID,
 				);
+			} else {
+				$iObject = loadIObject($iObject);
 			}
 		}
 
@@ -75,38 +77,10 @@
 		}
 
 		if (!$error) {
-			$insights = null;
+			$iObject = updateIObject($iObject->iid, $iObject->url);
+			$iObject = updateIObjectFile($iObject);
 
-			if ('' != $iObject->url) {
-				$insights = getInsights($iObject->url);
-			}
-
-			if (!is_null($insights)) {
-				$contentType = '';
-				$interpreter = [];
-
-				$pass = end($insights->passes);
-
-				if ($pass) {
-					if ($pass->file && $pass->file->metadata) {
-						$contentType = $pass->file->metadata->contentType;
-					}
-					if ($pass->content) {
-						$contentType = $pass->content->contentType;
-					}
-					if ($pass->interpreter && $pass->interpreter->assets) {
-						$interpreter = $pass->interpreter->assets;
-					}
-				}
-
-				$iObject->contentType = $contentType;
-				$iObject->insights = $interpreter;
-				$iObject->pass = $pass;
-
-				$iObject = updateIObject($iObject->iid, $iObject->url);
-
-//				saveMappingFileIObjects();
-			}
+			saveMappingFileIObjects();
 		}
 
 		return (object) array(
@@ -114,6 +88,41 @@
 			'parameter' => $parameterIID,
 			'iObject' => $iObject,
 		);
+	}
+
+	function updateIObjectFile($iObject) {
+		$insights = null;
+		$contentType = '';
+		$assets = [];
+
+		if ('' != $iObject->url) {
+			$insights = getInsights($iObject->url);
+		}
+
+		if (!is_null($insights)) {
+			$pass = end($insights->passes);
+
+			if ($pass) {
+				if ($pass->file && $pass->file->metadata) {
+					$contentType = $pass->file->metadata->contentType;
+				}
+				if ($pass->content) {
+					$contentType = $pass->content->contentType;
+				}
+				if ($pass->interpreter && $pass->interpreter->assets) {
+					$assets = $pass->interpreter->assets;
+				}
+			}
+		}
+
+		$iObject->insights = (object) array(
+			'contentType' => $contentType,
+			'assets' => $assets,
+		);
+
+		saveIObject($iObject);
+
+		return $iObject;
 	}
 
 	function loadMappingFileIObjects(&$mapping) {
@@ -154,6 +163,29 @@
 		}
 	}
 
+	function loadIObject($iObject) {
+		$filePath = '../api-data/assets-iid/' . $iObject->iid . '.json';
+
+		$dir = dirname($filePath);
+		mkdir($dir, 0777, true);
+
+		$data = file_get_contents($filePath);
+		if (false === $data) {
+			return $iObject;
+		}
+
+		return json_decode($data);
+	}
+
+	function saveIObject($iObject) {
+		$filePath = '../api-data/assets-iid/' . $iObject->iid . '.json';
+
+		$dir = dirname($filePath);
+		mkdir($dir, 0777, true);
+
+		file_put_contents($filePath, json_encode($iObject));
+	}
+
 	function saveMappingFileIObjects() {
 		global $loadedIObjects;
 		global $hashIObjects;
@@ -192,7 +224,10 @@
 			'modified' => date('Y-m-d'),
 		);
 
-		return end($loadedIObjects);
+		$iObject = end($loadedIObjects);
+		$iObject = updateIObjectFile($iObject);
+
+		return $iObject;
 	}
 
 	function updateIObject($iid, $url) {
