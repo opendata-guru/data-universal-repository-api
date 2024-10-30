@@ -83,18 +83,25 @@
 
 			if (!is_null($insights)) {
 				$contentType = '';
+				$interpreter = [];
 
 				$pass = end($insights->passes);
 
-				if ($pass->file && $pass->file->metadata) {
-					$contentType = $pass->file->metadata->contentType;
-				}
-				if ($pass->content) {
-					$contentType = $pass->content->contentType;
+				if ($pass) {
+					if ($pass->file && $pass->file->metadata) {
+						$contentType = $pass->file->metadata->contentType;
+					}
+					if ($pass->content) {
+						$contentType = $pass->content->contentType;
+					}
+					if ($pass->interpreter && $pass->interpreter->assets) {
+						$interpreter = $pass->interpreter->assets;
+					}
 				}
 
 				$iObject->contentType = $contentType;
-				$iObject->insights = $pass;
+				$iObject->insights = $interpreter;
+				$iObject->pass = $pass;
 
 				$iObject = updateIObject($iObject->iid, $iObject->url);
 
