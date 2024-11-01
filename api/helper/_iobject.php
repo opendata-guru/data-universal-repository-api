@@ -1,6 +1,6 @@
 <?php
 	$loadedIObjects = [];
-	$fileIObjects = __DIR__ . '/../../api-data/insights.csv';
+	$fileIObjects = __DIR__ . '/' . (file_exists('live-insights/live-insights-get.php') ? '' : '../') . '../api-data/insights.csv';
 
 	loadMappingFileIObjects($loadedIObjects);
 	$hashIObjects = md5(serialize($loadedIObjects));
@@ -48,7 +48,7 @@
 	}
 
 	function postIID() {
-		include_once('live-insights/live-insights-get.php');
+		include_once((file_exists('live-insights/live-insights-get.php') ? '' : '../') . 'live-insights/live-insights-get.php');
 
 		$parameterIID = htmlspecialchars($_GET['iid']);
 		$error = null;
@@ -92,7 +92,7 @@
 	}
 
 	function updateIObjectFile($iObject) {
-		include_once('live-insights/live-insights-get.php');
+		include_once((file_exists('live-insights/live-insights-get.php') ? '' : '../') . 'live-insights/live-insights-get.php');
 
 		$insights = null;
 		$contentType = '';
@@ -165,7 +165,7 @@
 	}
 
 	function loadIObject($iObject) {
-		$filePath = '../api-data/assets-iid/' . $iObject->iid . '.json';
+		$filePath = (file_exists('live-insights/live-insights-get.php') ? '' : '../') . '../api-data/assets-iid/' . $iObject->iid . '.json';
 
 		$dir = dirname($filePath);
 		mkdir($dir, 0777, true);
@@ -179,10 +179,12 @@
 	}
 
 	function saveIObject($iObject) {
-		$filePath = '../api-data/assets-iid/' . $iObject->iid . '.json';
+		$filePath = (file_exists('live-insights/live-insights-get.php') ? '' : '../') . '../api-data/assets-iid/' . $iObject->iid . '.json';
 
 		$dir = dirname($filePath);
-		mkdir($dir, 0777, true);
+		if (!file_exists($dir)) {
+			mkdir($dir, 0777, true);
+		}
 
 		file_put_contents($filePath, json_encode($iObject));
 	}

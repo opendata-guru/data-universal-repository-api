@@ -1,7 +1,13 @@
 <?php
-	include('live-insights/live-insights-curl.php');
-	include('live-insights/live-insights-interpreter.php');
-	include('live-insights/live-insights-parser.php');
+	if (file_exists('live-insights/live-insights-curl.php')) {
+		include('live-insights/live-insights-curl.php');
+		include('live-insights/live-insights-interpreter.php');
+		include('live-insights/live-insights-parser.php');
+	} else {
+		include('../live-insights/live-insights-curl.php');
+		include('../live-insights/live-insights-interpreter.php');
+		include('../live-insights/live-insights-parser.php');
+	}
 
 	// wrong
 	// https://geo.sv.rostock.de/inspire/plu-localplans/download
