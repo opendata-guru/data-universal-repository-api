@@ -518,26 +518,30 @@
 		if ($MAGIC_XML === strtolower(substr($file->content, 0, strlen($MAGIC_XML)))) {
 			$contentType = 'xml';
 			$xml = simplexml_load_string($file->content);
-			$ns = $xml->getDocNamespaces();
+			if ($xml) {
+				$ns = $xml->getDocNamespaces();
 
-			if (parseError($xml, $error)) {
-				// done
-			} else if (in_array('http://www.opengis.net/ogc', $ns)) {
-				parseOGC_OWS_WMS($xml, $body, $error, $contentType);
-			} else if (in_array('http://www.opengis.net/ows/1.1', $ns)) {
-				parseOGC_OWS_WMS($xml, $body, $error, $contentType);
-			} else if (in_array('http://www.opengis.net/wms', $ns)) {
-				parseOGC_OWS_WMS($xml, $body, $error, $contentType);
-			} else if (in_array('http://inspire.ec.europa.eu/schemas/common/1.0', $ns)) {
-				parseOGC_OWS_WMS($xml, $body, $error, $contentType);
-			} else if (in_array('http://www.w3.org/2005/Atom', $ns)) {
-				parseAtom($xml, $body, $error, $contentType);
+				if (parseError($xml, $error)) {
+					// done
+				} else if (in_array('http://www.opengis.net/ogc', $ns)) {
+					parseOGC_OWS_WMS($xml, $body, $error, $contentType);
+				} else if (in_array('http://www.opengis.net/ows/1.1', $ns)) {
+					parseOGC_OWS_WMS($xml, $body, $error, $contentType);
+				} else if (in_array('http://www.opengis.net/wms', $ns)) {
+					parseOGC_OWS_WMS($xml, $body, $error, $contentType);
+				} else if (in_array('http://inspire.ec.europa.eu/schemas/common/1.0', $ns)) {
+					parseOGC_OWS_WMS($xml, $body, $error, $contentType);
+				} else if (in_array('http://www.w3.org/2005/Atom', $ns)) {
+					parseAtom($xml, $body, $error, $contentType);
+				} else {
+					$body = 'namespaces: ' . implode(' | ', $ns);
+		//			$body = $xml->getName();
+		//			$body = $xml->getNamespaces();
+		//			$body = $xml->getChildren();
+		//			$body = $xml['ows:Exception'];
+				}
 			} else {
-				$body = 'namespaces: ' . implode(' | ', $ns);
-	//			$body = $xml->getName();
-	//			$body = $xml->getNamespaces();
-	//			$body = $xml->getChildren();
-	//			$body = $xml['ows:Exception'];
+				$contentType = 'no-xml';
 			}
 		} else if ($MAGIC_HTML === strtolower(substr($file->content, 0, strlen($MAGIC_HTML)))) {
 			$contentType = 'html';
