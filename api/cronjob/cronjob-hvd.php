@@ -355,9 +355,16 @@
 			$modified = $object->distributionsInsightsTimestamp;
 			if (is_null($modified)) {
 				$now = microtime(true);
+
+				$upTime = new DateTime($object->distributionsTimestamp);
+				$upTimeDiff = $upTime->diff(new DateTime());
+				$upTimeMinutes = $upTimeDiff->h * 60 + $upTimeDiff->i;
 				$stamp = true;
 
-				if (getEUcatalogGovData() === $catalog) {
+				if ($upTimeMinutes > (60 * 4)) {
+					// process insights of files maximum of 4 hours
+					$stamp = true;
+				} else if (getEUcatalogGovData() === $catalog) {
 					$stamp = getEUaccessURLInsights($catalog);
 					++$object->distributionsInsightsBuster;
 				}
