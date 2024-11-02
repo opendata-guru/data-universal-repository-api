@@ -1,4 +1,9 @@
 <?php
+	// COMMENT THIS LINES
+//	ini_set('display_errors', 1);
+//	ini_set('display_startup_errors', 1);
+//	error_reporting(E_ALL);
+
 	$loadedIObjects = [];
 	$fileIObjects = __DIR__ . '/' . (file_exists('live-insights/live-insights-get.php') ? '' : '../') . '../api-data/insights.csv';
 
@@ -92,6 +97,10 @@
 	}
 
 	function updateIObjectFile($iObject) {
+		if (!$iObject) {
+			return $iObject;
+		}
+
 		include_once((file_exists('live-insights/live-insights-get.php') ? '' : '../') . 'live-insights/live-insights-get.php');
 
 		$insights = null;
