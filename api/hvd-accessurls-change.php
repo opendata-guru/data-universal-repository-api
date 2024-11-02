@@ -4,6 +4,11 @@
     header('Access-Control-Allow-Headers: X-Requested-With');
 	header('Content-Type: application/json; charset=utf-8');
 
+	// COMMENT THIS LINES
+//	ini_set('display_errors', 1);
+//	ini_set('display_startup_errors', 1);
+//	error_reporting(E_ALL);
+
 	include('helper/_iobject.php');
 
 	function sortURLs($a, $b) {
@@ -61,16 +66,22 @@
 		$urlsBoth = [];
 
 		foreach($jsonToday as &$object) {
-			$url = parse_url($object->accessURL, PHP_URL_HOST);
-			$url = preg_replace('#^www\.(.+\.)#i', '$1', $url);
+			$url = null;
+			if ($object->accessURL) {
+				$url = parse_url($object->accessURL, PHP_URL_HOST);
+				$url = preg_replace('#^www\.(.+\.)#i', '$1', $url);
+			}
 
 			if ($url) {
 				$urlsBoth[] = $url;
 			}
 		}
 		foreach($jsonYesterday as &$object) {
-			$url = parse_url($object->accessURL, PHP_URL_HOST);
-			$url = preg_replace('#^www\.(.+\.)#i', '$1', $url);
+			$url = null;
+			if ($object->accessURL) {
+				$url = parse_url($object->accessURL, PHP_URL_HOST);
+				$url = preg_replace('#^www\.(.+\.)#i', '$1', $url);
+			}
 
 			if ($url) {
 				$urlsBoth[] = $url;
@@ -93,13 +104,16 @@
 			$parts = explode('§', $value);
 			$iObject = findIObjectByURL($parts[1]);
 
-			$duration = round(microtime(true) - $now, 3);
-			if ($duration < 5) {
-				$iObject = updateIObjectFile($iObject);
+			if ($iObject) {
+				$duration = round(microtime(true) - $now, 3);
+				if ($duration < 5) {
+					$iObject = updateIObjectFile($iObject);
+				}
 			}
 
 			$newTodayObj[] = (object) array(
 				'datasetIdentifier' => $parts[0],
+				'distributionAccessURL' => $parts[1],
 				'distribution' => $iObject,
 			);
 		}
