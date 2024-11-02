@@ -5,7 +5,7 @@
 //	error_reporting(E_ALL);
 
 	$loadedIObjects = [];
-	$fileIObjects = __DIR__ . '/' . (file_exists('live-insights/live-insights-get.php') ? '' : '../') . '../api-data/insights.csv';
+	$fileIObjects = __DIR__ . '/' . (file_exists(__DIR__ . '/' . 'live-insights/live-insights-get.php') ? '' : '../') . '../api-data/insights.csv';
 
 	loadMappingFileIObjects($loadedIObjects);
 	$hashIObjects = md5(serialize($loadedIObjects));
