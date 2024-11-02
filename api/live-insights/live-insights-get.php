@@ -25,16 +25,22 @@
 			'passes' => [],
 		);
 
-		$content = curl($url);
-		$parsed = parser($content);
-		unset($content->content);
-		$interpreted = interpret($content, $parsed);
+		try {
+			$content = curl($url);
+			$parsed = parser($content);
+			unset($content->content);
+			$interpreted = interpret($content, $parsed);
 
-		$pass = (object) array(
-			'file' => $content,
-			'content' => $parsed,
-			'interpreter' => $interpreted,
-		);
+			$pass = (object) array(
+				'file' => $content,
+				'content' => $parsed,
+				'interpreter' => $interpreted,
+			);
+		} catch(Exception $e) {
+			$pass = (object) array(
+				'error' => $e->getMessage(),
+			);
+		}
 		$ret->passes[] = $pass;
 
 		return $ret;
