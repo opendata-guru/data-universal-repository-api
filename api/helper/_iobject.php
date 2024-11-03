@@ -106,6 +106,7 @@
 		$insights = null;
 		$contentType = '';
 		$assets = [];
+		$error = null;
 
 		if ('' != $iObject->url) {
 			$insights = getInsights($iObject->url);
@@ -117,9 +118,15 @@
 			if ($pass) {
 				if ($pass->file && $pass->file->metadata) {
 					$contentType = $pass->file->metadata->contentType;
+					if ($pass->file->metadata->httpCode >= 400) {
+						$error = 'HTTP response status code: ' . $pass->file->metadata->httpCode;
+					}
 				}
 				if ($pass->content) {
 					$contentType = $pass->content->contentType;
+					if ($pass->content->error) {
+						$error = $pass->content->error;
+					}
 				}
 				if ($pass->interpreter && $pass->interpreter->assets) {
 					$assets = $pass->interpreter->assets;
@@ -129,6 +136,7 @@
 
 		$iObject->insights = (object) array(
 			'contentType' => $contentType,
+			'error' => $error,
 			'assets' => $assets,
 		);
 
