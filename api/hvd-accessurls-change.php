@@ -107,7 +107,8 @@
 			if ($iObject) {
 				$duration = round(microtime(true) - $now, 3);
 				if ($duration < 5) {
-					$iObject = updateIObjectFile($iObject);
+//					$iObject = updateIObjectFile($iObject);
+					$iObject = loadIObject($iObject);
 				}
 			}
 
@@ -122,9 +123,20 @@
 		$removedTodayObj = [];
 		foreach($removedToday as $value) {
 			$parts = explode('§', $value);
+			$iObject = findIObjectByURL($parts[1]);
+
+			if ($iObject) {
+				$duration = round(microtime(true) - $now, 3);
+				if ($duration < 5) {
+//					$iObject = updateIObjectFile($iObject);
+					$iObject = loadIObject($iObject);
+				}
+			}
+
 			$removedTodayObj[] = (object) array(
 				'datasetIdentifier' => $parts[0],
 				'distributionAccessURL' => $parts[1],
+				'distribution' => $iObject,
 			);
 		}
 

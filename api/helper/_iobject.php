@@ -125,7 +125,7 @@
 				if ($pass->content) {
 					$contentType = $pass->content->contentType;
 					if ($pass->content->error) {
-						$error = $pass->content->error;
+						$error = $pass->content->error->descriptions;
 					}
 				}
 				if ($pass->interpreter && $pass->interpreter->assets) {
