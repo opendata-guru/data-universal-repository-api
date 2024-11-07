@@ -176,6 +176,7 @@
 		);
 		$valuesCCBY = array(
 			'http://publications.europa.eu/resource/authority/licence/CC_BY_4_0',
+			'https://creativecommons.org/licenses/by/4.0/',
 			'http://creativecommons.org/licenses/by/4.0/',
 			'http://dcat-ap.de/def/licenses/cc-by',
 			'http://dcat-ap.de/def/licenses/cc-by-de/3.0',
