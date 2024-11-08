@@ -6,14 +6,13 @@
     header('Access-Control-Allow-Authorization: true');
     header('Content-Type: application/json; charset=utf-8');
 
-//	include('helper/_link.php');
-//	include('helper/_sobject.php');
+	include('helper/_iobject.php');
 
-/*	if ('POST' === $_SERVER['REQUEST_METHOD']) {
+	if ('POST' === $_SERVER['REQUEST_METHOD']) {
 		include('helper/_post.php');
 
 		if (validPost()) {
-			echo json_encode(postSObject());
+			echo json_encode(postIObject());
 		} else {
 			header('HTTP/1.0 401 Unauthorized');
 			echo json_encode((object) array(
@@ -25,7 +24,7 @@
 		}
 
 		return;
-	}*/
+	}
 //	if ('GET' !== $_SERVER['REQUEST_METHOD']) {
 		header('HTTP/1.0 405 Method Not Allowed');
 		echo json_encode((object) array(

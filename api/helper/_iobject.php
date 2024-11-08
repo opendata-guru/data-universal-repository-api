@@ -96,6 +96,31 @@
 		);
 	}
 
+	function postIObject() {
+		$parameterURL = trim($_GET['url']);
+
+		if ($parameterURL == '') {
+			header('HTTP/1.0 400 Bad Request');
+			echo json_encode((object) array(
+				'error' => 400,
+				'message' => 'Bad Request. Parameter \'url\' is not set',
+			));
+			exit;
+		}
+		$url = $parameterURL;
+
+		$iObject = findIObjectByURL($url);
+		if ($iObject) {
+			$iObject = loadIObject($iObject);
+			return $iObject;
+		}
+
+		$iObject = pushIObject(createIID(), $url);
+		saveMappingFileIObjects();
+
+		return $iObject;
+	}
+
 	function updateIObjectFile($iObject) {
 		if (!$iObject) {
 			return $iObject;
