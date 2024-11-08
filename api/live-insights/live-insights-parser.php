@@ -533,6 +533,8 @@
 					parseOGC_OWS_WMS($xml, $body, $error, $contentType);
 				} else if (in_array('http://www.w3.org/2005/Atom', $ns)) {
 					parseAtom($xml, $body, $error, $contentType);
+				} else if ((count($ns) === 0) && ('WMT_MS_Capabilities' === $xml->getName())) {
+					parseOGC_OWS_WMS($xml, $body, $error, $contentType);
 				} else {
 					$body = 'namespaces: ' . implode(' | ', $ns);
 		//			$body = $xml->getName();
