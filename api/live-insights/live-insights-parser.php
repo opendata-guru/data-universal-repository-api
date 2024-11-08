@@ -309,6 +309,8 @@
 					parseXML_FooNamespace($children, $prefix, $body);
 				} else if ('https://geoportal.saarland.de/arcgis/services/Internet/Naturschutz/MapServer/WFSServer' === $uri) {
 					parseXML_FooNamespace($children, $prefix, $body);
+				} else if ('http://wapllarcgis03.lkvk.saarland.de:6080/arcgis/services/GDI/ALKIS_Gebaeude/MapServer/WFSServer' === $uri) {
+					parseXML_FooNamespace($children, $prefix, $body);
 				} else {
 					$body[] = 'prefix: ' . $prefix;
 					$body[] = 'uri:    ' . $uri;
