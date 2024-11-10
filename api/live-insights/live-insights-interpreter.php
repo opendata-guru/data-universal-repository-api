@@ -187,7 +187,7 @@
 						}
 
 						foreach($entry->ids as $id) {
-							if (str_contains($asset->title, $id)) {
+							if (str_contains($asset->title, $id) || str_contains($asset->descriptions, $id)) {
 								$exists = array_column($assets, null, 'id')[$entry->uri] ?? false;
 								if (false === $exists) {
 									$assets[] = (object) array(
