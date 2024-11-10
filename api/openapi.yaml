@@ -555,6 +555,23 @@ paths:
           $ref: "#/components/responses/400BadRequest"
       tags:
         - live
+  /live/inspireregistry:
+    get:
+      summary: Get the INSPIRE Registry
+      description: Get some of the information from the INSPIRE registry
+      operationId: getInspireRegistry
+      parameters:
+      responses:
+        '200':
+          description: Example of a successful answer
+          content:
+            application/json:
+              examples:
+                sample:
+                  value:
+                    tbd.
+      tags:
+        - live
   /suppliers:
     get:
       summary: Get a list of all suppliers
