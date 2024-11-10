@@ -3,6 +3,22 @@
 	// https://www.inspire.niedersachsen.de/doorman/noauth/alkis-dls-elu?REQUEST=GetCapabilities&SERVICE=WFS
 
 	function getSemanticRegistry() {
+		$inspireregistry = 'https://opendata.guru/api/2/live/inspireregistry';
+		$json = json_decode(file_get_contents($inspireregistry));
+
+		$registry = [];
+
+		foreach($json as $entry) {
+			$registry[] = (object) array(
+				'ids' => [$entry->layername, $entry->schemaname, $entry->themename],
+				'uri' => $entry->id,
+				'title_en' => $entry->label_en,
+				'title_de' => $entry->label_de,
+			);
+		}
+
+		return $registry;
+
 		return array(
 			(object) array(
 				'ids' => ['AD.Address', 'ad:Address'],
@@ -121,6 +137,28 @@
 				'definition' => 'A linear spatial object that describes the geometry and connectivity of a road network between two points in the network. Road links can represent paths, bicycle roads, single carriageways, multiple carriageway roads and even fictitious trajectories across traffic squares.',
 			),
 		);
+
+		// hy-p:Crossing
+		// hy-p:DamOrWeir
+		// hy-p:Ford
+		// hy-p:Lock
+		// hy-p:ShorelineConstruction
+		// hy-p:Sluice
+		// gn:NamedPlace -> <Name xmlns:gn="http://inspire.ec.europa.eu/schemas/gn/4.0">gn:NamedPlace</Name>
+		// OI.OrthoimageCoverage
+		// tn:TransportNetwork
+		// tn-ro:FormOfWay
+
+		// https://raw.githubusercontent.com/INSPIRE-MIF/application-schemas/refs/heads/main/schemas/gn/4.0/GeographicalNames.xsd
+		// https://inspire.ec.europa.eu/layer/GN.GeographicalNames/GN.GeographicalNames.en.rdf
+		// https://inspire.ec.europa.eu/layer/GN.GeographicalNames/GN.GeographicalNames.en.json
+		// Theme: Geographical names https://inspire.ec.europa.eu/theme/gn
+		// Application Schema: Geographical Names https://inspire.ec.europa.eu/applicationschema/gn
+		//   Theme: https://inspire.ec.europa.eu/theme/gn
+		//   XML application schemas: https://inspire.ec.europa.eu/schemas/gn/
+		//   UML application schemas: https://inspire-mif.github.io/uml-models/approved/html/index.htm?guid=A2995B4D-22FB-4a31-ADF6-3780F39BD53D
+
+		// https://inspire.ec.europa.eu/registry/registry.en.json
 	}
 
 	function interpret($file, $content) {
@@ -143,7 +181,7 @@
 							if (false === $exists) {
 								$assets[] = (object) array(
 									'id' => $entry->uri,
-									'title' => (object) ['de' => $entry->title_de, 'en' => $entry->title],
+									'title' => (object) ['de' => $entry->title_de, 'en' => $entry->title_en],
 								);
 							}
 						}
@@ -154,7 +192,7 @@
 								if (false === $exists) {
 									$assets[] = (object) array(
 										'id' => $entry->uri,
-										'title' => (object) ['de' => $entry->title_de, 'en' => $entry->title],
+										'title' => (object) ['de' => $entry->title_de, 'en' => $entry->title_en],
 									);
 								}
 							}
