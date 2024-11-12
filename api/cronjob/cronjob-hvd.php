@@ -4,6 +4,9 @@
     header('Access-Control-Allow-Headers: X-Requested-With');
 	header('Content-Type: application/json; charset=utf-8');
 
+	$DEBUG_distributionsInsights = false;
+	$DEBUG_ignoreUpTime = false;
+
 	// COMMENT THIS LINES
 //	ini_set('display_errors', 1);
 //	ini_set('display_startup_errors', 1);
@@ -287,10 +290,20 @@
 	}
 
 	function getNextData($data) {
+		global $DEBUG_distributionsInsights;
+		global $DEBUG_ignoreUpTime;
+
 		include('cronjob-hvd-queries.php');
 
 		foreach ($data as &$object) {
 			$catalog = $object->catalog;
+
+			$check_distributionsInsights = false;
+			$check_ignoreUpTime = false;
+			if (getEUcatalogGovData() === $catalog) {
+				$check_distributionsInsights = $DEBUG_distributionsInsights;
+				$check_ignoreUpTime = $DEBUG_ignoreUpTime;
+			}
 
 			$modified = $object->countDatasetsTimestamp;
 			if (is_null($modified)) {
@@ -355,7 +368,7 @@
 			}
 
 			$modified = $object->distributionsInsightsTimestamp;
-			if (is_null($modified)) {
+			if ($check_distributionsInsights || is_null($modified)) {
 				$now = microtime(true);
 
 				$upTime = new DateTime($object->distributionsTimestamp);
@@ -363,7 +376,7 @@
 				$upTimeMinutes = $upTimeDiff->h * 60 + $upTimeDiff->i;
 				$stamp = true;
 
-				if ($upTimeMinutes > (60 * 4)) {
+				if (!$check_ignoreUpTime && ($upTimeMinutes > (60 * 4))) {
 					// process insights of files maximum of 4 hours
 					$stamp = true;
 				} else if (getEUcatalogGovData() === $catalog) {
