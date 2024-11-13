@@ -10,9 +10,10 @@
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 20);
-		curl_setopt($curl, CURLOPT_TIMEOUT, 20);
+		curl_setopt($curl, CURLOPT_TIMEOUT, 10);
 		curl_setopt($curl, CURLOPT_FILETIME, true);
 		curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
+		curl_setopt($curl, CURLOPT_FAILONERROR, true);
 
 		$error = '';
 		$content = curl_exec($curl);
