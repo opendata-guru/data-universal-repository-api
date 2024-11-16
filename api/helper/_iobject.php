@@ -207,10 +207,16 @@
 	}
 
 	function loadIObject($iObject) {
+		if (!$iObject) {
+			return $iObject;
+		}
+
 		$filePath = (file_exists('live-insights/live-insights-get.php') ? '' : '../') . '../api-data/assets-iid/' . $iObject->iid . '.json';
 
 		$dir = dirname($filePath);
-		mkdir($dir, 0777, true);
+		if (!file_exists($dir)) {
+			mkdir($dir, 0777, true);
+		}
 
 		$data = file_get_contents($filePath);
 		if (false === $data) {
