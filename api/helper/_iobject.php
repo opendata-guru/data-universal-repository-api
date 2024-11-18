@@ -213,9 +213,8 @@
 
 		$filePath = (file_exists('live-insights/live-insights-get.php') ? '' : '../') . '../api-data/assets-iid/' . $iObject->iid . '.json';
 
-		$dir = dirname($filePath);
-		if (!file_exists($dir)) {
-			mkdir($dir, 0777, true);
+		if (!file_exists($filePath)) {
+			return $iObject;
 		}
 
 		$data = file_get_contents($filePath);
@@ -266,7 +265,7 @@
 		}
 	}
 
-	function pushIObject($iid, $url) {
+	function pushSimpleIObject($iid, $url) {
 		global $loadedIObjects;
 
 		$loadedIObjects[] = (object) array(
@@ -276,8 +275,14 @@
 		);
 
 		$iObject = end($loadedIObjects);
-		$iObject = updateIObjectFile($iObject);
 
+		return $iObject;
+	}
+
+	function pushIObject($iid, $url) {
+		$iObject = pushSimpleIObject($iid, $url);
+
+		$iObject = updateIObjectFile($iObject);
 		saveIObject($iObject);
 
 		return $iObject;
