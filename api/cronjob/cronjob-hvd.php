@@ -291,7 +291,7 @@
 
 		saveMappingFileIObjects();
 
-		return true;
+		return $newItems < 1000;
 	}
 
 	function getEUaccessURLInsights_old($catalog) {
