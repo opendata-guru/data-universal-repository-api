@@ -335,7 +335,7 @@
 			return null;
 		}
 
-		return $loadedIObjects[$iid];
+		return isset($loadedIObjects[$iid]) ? $loadedIObjects[$iid] : null;
 	}
 
 	function findIObjectByURL($url) {
@@ -351,6 +351,6 @@
 			return null;
 		}
 
-		return $loadedIObjects[$iid];
+		return isset($loadedIObjects[$iid]) ? $loadedIObjects[$iid] : null;
 	}
 ?>
