@@ -4,6 +4,8 @@
     header('Access-Control-Allow-Headers: X-Requested-With');
 	header('Content-Type: application/json; charset=utf-8');
 
+	ini_set('max_execution_time', '300');
+
 	$DEBUG_distributionsInsights = false;
 	$DEBUG_ignoreUpTime = false;
 
@@ -266,11 +268,46 @@
 		$fileDate = $basePath . 'hvd-access-url-date/' . date('Y-m') . '/hvd-access-date-' . $date . '.json';
 		$accessData = (array) loadCronjobData($fileDate);
 
+		$newItems = 0;
 		foreach($accessData as $data) {
 			if (!is_null($data->accessURL) && ('' !== $data->accessURL)) {
 				$iObject = findIObjectByURL($data->accessURL);
 
-				if (is_null($iObject) && !is_null($data->accessURL) && ('' !== $data->accessURL)) {
+				if ($iObject) {
+					$iObject = loadIObject($iObject);
+					$iObject = updateIObject($iObject->iid, $iObject->url);
+					saveIObject($iObject);
+				} else {
+					// add only 1000 items at once
+					// (the system behave strange at 10.000+ items)
+					if ($newItems < 1000) {
+						$iObject = pushSimpleIObject(createIID(), $data->accessURL);
+					}
+					++$newItems;
+				}
+
+			}
+		}
+
+		saveMappingFileIObjects();
+
+		return true;
+	}
+
+	function getEUaccessURLInsights_old($catalog) {
+		global $basePath;
+		global $loadedIObjects;
+
+		$date = date('Y-m-d');
+		$datetime = new DateTime($date);
+		$fileDate = $basePath . 'hvd-access-url-date/' . date('Y-m') . '/hvd-access-date-' . $date . '.json';
+		$accessData = (array) loadCronjobData($fileDate);
+
+		foreach($accessData as $data) {
+			if (!is_null($data->accessURL) && ('' !== $data->accessURL)) {
+				$iObject = findIObjectByURL($data->accessURL);
+
+				if (is_null($iObject)) {
 					pushIObject(createIID(), $data->accessURL);
 					saveMappingFileIObjects();
 
