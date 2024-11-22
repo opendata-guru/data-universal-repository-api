@@ -5,9 +5,10 @@
 //	error_reporting(E_ALL);
 
 	$loadedIObjects = [];
+	$indexIObjectsByURL = [];
 	$fileIObjects = __DIR__ . '/' . (file_exists(__DIR__ . '/' . 'live-insights/live-insights-get.php') ? '' : '../') . '../api-data/insights.csv';
 
-	loadMappingFileIObjects($loadedIObjects);
+	loadMappingFileIObjects($loadedIObjects, $indexIObjectsByURL);
 	$hashIObjects = md5(serialize($loadedIObjects));
 
 	function getIObject() {
@@ -27,11 +28,7 @@
 		}
 
 		if (!$error) {
-			foreach($loadedIObjects as $object) {
-				if ($object->iid == $parameterIID) {
-					$iObject = $object;
-				}
-			}
+			$iObject = $loadedIObjects[$parameterIID];
 
 			if (is_null($iObject)) {
 				$error = (object) array(
@@ -168,7 +165,7 @@
 		return $iObject;
 	}
 
-	function loadMappingFileIObjects(&$mapping) {
+	function loadMappingFileIObjects(&$mapping, &$indexByURL) {
 		global $fileIObjects;
 
 		$idModified = null;
@@ -197,11 +194,17 @@
 			if ($line != '') {
 				$arr = str_getcsv($line, ',');
 
-				$mapping[] = (object) array(
-					'iid' => $arr[$idIID] ?: '',
-					'url' => $arr[$idURL] ?: '',
-					'modified' => $arr[$idModified] ?: '',
-				);
+				if ($arr[$idIID]) {
+					$mapping[$arr[$idIID]] = (object) array(
+						'iid' => $arr[$idIID],
+						'url' => $arr[$idURL] ?: '',
+						'modified' => $arr[$idModified] ?: '',
+					);
+				}
+
+				if ($arr[$idURL]) {
+					$indexByURL[$arr[$idURL]] = $arr[$idIID] ?: '';
+				}
 			}
 		}
 	}
@@ -252,7 +255,7 @@
 
 			$fp = fopen($fileIObjects, 'wb');
 			fputcsv($fp, $header, ',');
-			foreach ($loadedIObjects as $iObject) {
+			foreach ($loadedIObjects as $key => $iObject) {
 				fputcsv($fp, [
 					$iObject->iid,
 					$iObject->url,
@@ -268,13 +271,17 @@
 	function pushSimpleIObject($iid, $url) {
 		global $loadedIObjects;
 
-		$loadedIObjects[] = (object) array(
+		if (!$iid) {
+			return null;
+		}
+
+		$loadedIObjects[$iid] = (object) array(
 			'iid' => $iid,
 			'url' => $url,
 			'modified' => date('Y-m-d'),
 		);
 
-		$iObject = end($loadedIObjects);
+		$iObject = $loadedIObjects[$iid];
 
 		return $iObject;
 	}
@@ -291,12 +298,12 @@
 	function updateIObject($iid, $url) {
 		global $loadedIObjects;
 
-		foreach($loadedIObjects as &$iObject) {
-			if ($iid === $iObject->iid) {
-				$iObject->url = $url;
-				$iObject->modified = date('Y-m-d');
-				return $iObject;
-			}
+		$iObject = $loadedIObjects[$iid];
+
+		if ($iObject) {
+			$iObject->url = $url;
+			$iObject->modified = date('Y-m-d');
+			return $iObject;
 		}
 
 		return null;
@@ -314,17 +321,9 @@
 		$prefix = 'i';
 		$length = 5;
 
-		$usedIIDs = [];
-		if ($loadedIObjects) {
-			foreach($loadedIObjects as $iObject) {
-				$usedIIDs[] = $iObject->iid;
-			}
-		}
-		$usedIIDs = array_filter($usedIIDs);
-
 		do {
 			$iid = $prefix . substr(str_shuffle($ALLOWED_CHARS), 0, $length);
-		} while(in_array($iid, $usedIIDs));
+		} while($loadedIObjects[$iid]);
 
 		return $iid;
 	}
@@ -336,30 +335,22 @@
 			return null;
 		}
 
-		foreach($loadedIObjects as $iObject) {
-			if ($iid == $iObject->iid) {
-				return $iObject;
-			}
-		}
-
-		return null;
+		return $loadedIObjects[$iid];
 	}
 
 	function findIObjectByURL($url) {
 		global $loadedIObjects;
+		global $indexIObjectsByURL;
 
 		if ($url == '') {
 			return null;
 		}
 
-		if ($loadedIObjects) {
-			foreach($loadedIObjects as $iObject) {
-				if ($url == $iObject->url) {
-					return $iObject;
-				}
-			}
+		$iid = $indexIObjectsByURL[$url];
+		if ($iid == '') {
+			return null;
 		}
 
-		return null;
+		return $loadedIObjects[$iid];
 	}
 ?>
