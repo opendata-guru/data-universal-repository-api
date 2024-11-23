@@ -214,7 +214,7 @@
 			return $iObject;
 		}
 
-		$filePath = (file_exists('live-insights/live-insights-get.php') ? '' : '../') . '../api-data/assets-iid/' . $iObject->iid . '.json';
+		$filePath = (file_exists('live-insights/live-insights-get.php') ? '' : '../') . '../api-data/assets-iid/' . strtolower(substr($iObject->iid, 0, 2)) . '/' . $iObject->iid . '.json';
 
 		if (!file_exists($filePath)) {
 			return $iObject;
@@ -229,7 +229,11 @@
 	}
 
 	function saveIObject($iObject) {
-		$filePath = (file_exists('live-insights/live-insights-get.php') ? '' : '../') . '../api-data/assets-iid/' . $iObject->iid . '.json';
+		if (!$iObject) {
+			return $iObject;
+		}
+
+		$filePath = (file_exists('live-insights/live-insights-get.php') ? '' : '../') . '../api-data/assets-iid/' . strtolower(substr($iObject->iid, 0, 2)) . '/' . $iObject->iid . '.json';
 
 		$dir = dirname($filePath);
 		if (!file_exists($dir)) {
@@ -237,6 +241,24 @@
 		}
 
 		file_put_contents($filePath, json_encode($iObject));
+	}
+
+	function deleteIObject($iObject) {
+		global $loadedIObjects;
+
+		if (!$iObject) {
+			return;
+		}
+
+		$filePath = (file_exists('live-insights/live-insights-get.php') ? '' : '../') . '../api-data/assets-iid/' . strtolower(substr($iObject->iid, 0, 2)) . '/' . $iObject->iid . '.json';
+
+		if (!file_exists($filePath)) {
+			return;
+		}
+
+		unlink($filePath);
+		unset($loadedIObjects[$iObject->iid]);
+		saveMappingFileIObjects();
 	}
 
 	function saveMappingFileIObjects() {
