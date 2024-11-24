@@ -156,6 +156,7 @@
 			}
 		}
 
+		$iObject->audited = date('Y-m-d');
 		$iObject->insights = (object) array(
 			'contentType' => $contentType,
 			'error' => $error,
