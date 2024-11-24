@@ -24,15 +24,17 @@
 		curl_close($curl);
 
 		$charset = '';
-		$ct = explode(';', $info['content_type']);
 		$ct2 = [];
-		foreach($ct as $value) {
-			$pair = explode('=', $value);
+		if ($info['content_type']) {
+			$ct = explode(';', $info['content_type']);
+			foreach($ct as $value) {
+				$pair = explode('=', $value);
 
-			if (trim(strtolower($pair[0])) === 'charset') {
-				$charset = trim(strtolower($pair[1]));
-			} else {
-				$ct2[] = $value;
+				if (trim(strtolower($pair[0])) === 'charset') {
+					$charset = trim(strtolower($pair[1]));
+				} else {
+					$ct2[] = $value;
+				}
 			}
 		}
 
