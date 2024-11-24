@@ -2,10 +2,12 @@
 	function getKeywordsWithID($keywords) {
 		$ret = [];
 
-		foreach($keywords as $keyword) {
-			$keyword = '' . $keyword;
-			if (strpbrk($keyword, '-._')) {
-				$ret[] = $keyword;
+		if ($keywords) {
+			foreach($keywords as $keyword) {
+				$keyword = '' . $keyword;
+				if (strpbrk($keyword, '-._')) {
+					$ret[] = $keyword;
+				}
 			}
 		}
 
