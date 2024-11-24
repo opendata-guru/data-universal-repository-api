@@ -200,8 +200,12 @@
 		if ($xml->OperationsMetadata) {
 			if ($xml->OperationsMetadata->ExtendedCapabilities) {
 				$path = $xml->OperationsMetadata->ExtendedCapabilities;
-				$path = ((array)$path->children())['ExtendedCapabilities']->SpatialDataSetIdentifier->Namespace;
-				$providerURI = ('' . $path) ? ('' . $path) : $providerURI;
+				$children = (array)$path->children();
+
+				if (isset($children['ExtendedCapabilities'])) {
+					$path = $children['ExtendedCapabilities']->SpatialDataSetIdentifier->Namespace;
+					$providerURI = ('' . $path) ? ('' . $path) : $providerURI;
+				}
 			}
 
 			unset($xml->OperationsMetadata->Constraint);

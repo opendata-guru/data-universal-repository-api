@@ -168,11 +168,19 @@
 		$assets = [];
 
 		if ($content && $content->body) {
-			$bodyAssets = $content->body->assets ?
-				$content->body->assets :
-				(property_exists((object) $content->body, 'assets') ?
-					(object) $content->body['assets'] :
-					null);
+			$bodyType = gettype($content->body);
+			if ('string' === $bodyType) {
+				$bodyAssets = property_exists((object) $content->body, 'assets') ?
+						(object) $content->body['assets'] :
+						null;
+			} else {
+				$bodyAssets = $content->body->assets ?
+					$content->body->assets :
+					(property_exists((object) $content->body, 'assets') ?
+						(object) $content->body['assets'] :
+						null);
+			}
+
 			if ($bodyAssets) {
 				foreach($bodyAssets as $asset) {
 					foreach($semRegistry as $entry) {
