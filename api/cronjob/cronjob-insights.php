@@ -9,6 +9,9 @@
 	$DEBUG_insights = false;
 	$DEBUG_ignoreUpTime = false;
 
+$DEBUG_insights = true;
+$DEBUG_ignoreUpTime = true;
+
 	// COMMENT THIS LINES
 	ini_set('display_errors', 1);
 	ini_set('display_startup_errors', 1);
@@ -59,49 +62,31 @@
 			if ($today === $iObject->modified) {
 				$obj = loadIObject($iObject);
 
-				if (isset($obj->audited) && ($today === $obj->audited)) {
+/*				if (isset($obj->audited) && ($today === $obj->audited)) {
 					// ignore objects audited today
 				} else {
+					$objects[] = $obj;
+				}*/
+				if (isset($obj->audited)) {
 					$objects[] = $obj;
 				}
 			}
 		}
+
+//var_dump($objects);
+var_dump(count($objects));
+exit;
 
 		foreach($objects as $iObject) {
 			if (!isset($iObject->insights)) {
 				$iObject = updateIObjectFile($iObject);
 				saveIObject($iObject);
 
-var_dump($iObject);
+echo json_encode($iObject);
 exit;
 				return false;
 			}
 		}
-var_dump($objects);
-//var_dump(count($objects));
-exit;
-
-var_dump($today);
-var_dump($iObject->modified);
-var_dump($iObject->insights);
-exit;
-			if (!is_null($data->accessURL) && ('' !== $data->accessURL)) {
-				$iObject = findIObjectByURL($data->accessURL);
-
-				if (is_null($iObject)) {
-					pushIObject(createIID(), $data->accessURL);
-					saveMappingFileIObjects();
-
-					return false;
-				}
-
-				$modified = new DateTime($iObject->modified);
-				if ($modified->diff($datetime)->format('%a') >= 5) {
-					// update every 5 days
-
-//					return false;
-				}
-			}
 
 		return true;
 	}
