@@ -318,6 +318,16 @@
 		return $iObject;
 	}
 
+	function persistIObject($iObject) {
+		global $loadedIObjects;
+
+		if (!$iObject) {
+			return null;
+		}
+
+		$loadedIObjects[$iObject->iid] = $iObject;
+	}
+
 	function updateIObject($iid, $url) {
 		global $loadedIObjects;
 

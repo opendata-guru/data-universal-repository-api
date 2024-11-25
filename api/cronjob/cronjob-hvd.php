@@ -275,6 +275,7 @@
 
 				if ($iObject) {
 					$iObject = loadIObject($iObject);
+					persistIObject($iObject);
 					$iObject = updateIObject($iObject->iid, $iObject->url);
 					saveIObject($iObject);
 				} else {
