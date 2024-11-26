@@ -9,13 +9,10 @@
 	$DEBUG_insights = false;
 	$DEBUG_ignoreUpTime = false;
 
-$DEBUG_insights = true;
-$DEBUG_ignoreUpTime = true;
-
 	// COMMENT THIS LINES
-	ini_set('display_errors', 1);
-	ini_set('display_startup_errors', 1);
-	error_reporting(E_ALL);
+//	ini_set('display_errors', 1);
+//	ini_set('display_startup_errors', 1);
+//	error_reporting(E_ALL);
 
 	include('../helper/_iobject.php');
 
@@ -62,28 +59,19 @@ $DEBUG_ignoreUpTime = true;
 			if ($today === $iObject->modified) {
 				$obj = loadIObject($iObject);
 
-/*				if (isset($obj->audited) && ($today === $obj->audited)) {
+				if (isset($obj->audited) && ($today === $obj->audited)) {
 					// ignore objects audited today
 				} else {
-					$objects[] = $obj;
-				}*/
-				if (isset($obj->audited)) {
 					$objects[] = $obj;
 				}
 			}
 		}
-
-//var_dump($objects);
-var_dump(count($objects));
-exit;
 
 		foreach($objects as $iObject) {
 			if (!isset($iObject->insights)) {
 				$iObject = updateIObjectFile($iObject);
 				saveIObject($iObject);
 
-echo json_encode($iObject);
-exit;
 				return false;
 			}
 		}
