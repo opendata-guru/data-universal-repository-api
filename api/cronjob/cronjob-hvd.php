@@ -7,7 +7,6 @@
 	ini_set('max_execution_time', '300');
 
 	$DEBUG_distributionsInsights = false;
-	$DEBUG_ignoreUpTime = false;
 
 	// COMMENT THIS LINES
 //	ini_set('display_errors', 1);
@@ -295,41 +294,8 @@
 		return $newItems < 1000;
 	}
 
-	function getEUaccessURLInsights_old($catalog) {
-		global $basePath;
-		global $loadedIObjects;
-
-		$date = date('Y-m-d');
-		$datetime = new DateTime($date);
-		$fileDate = $basePath . 'hvd-access-url-date/' . date('Y-m') . '/hvd-access-date-' . $date . '.json';
-		$accessData = (array) loadCronjobData($fileDate);
-
-		foreach($accessData as $data) {
-			if (!is_null($data->accessURL) && ('' !== $data->accessURL)) {
-				$iObject = findIObjectByURL($data->accessURL);
-
-				if (is_null($iObject)) {
-					pushIObject(createIID(), $data->accessURL);
-					saveMappingFileIObjects();
-
-					return false;
-				}
-
-				$modified = new DateTime($iObject->modified);
-				if ($modified->diff($datetime)->format('%a') >= 5) {
-					// update every 5 days
-
-//					return false;
-				}
-			}
-		}
-
-		return true;
-	}
-
 	function getNextData($data) {
 		global $DEBUG_distributionsInsights;
-		global $DEBUG_ignoreUpTime;
 
 		include('cronjob-hvd-queries.php');
 
@@ -337,10 +303,8 @@
 			$catalog = $object->catalog;
 
 			$check_distributionsInsights = false;
-			$check_ignoreUpTime = false;
 			if (getEUcatalogGovData() === $catalog) {
 				$check_distributionsInsights = $DEBUG_distributionsInsights;
-				$check_ignoreUpTime = $DEBUG_ignoreUpTime;
 			}
 
 			$modified = $object->countDatasetsTimestamp;
@@ -408,16 +372,9 @@
 			$modified = $object->distributionsInsightsTimestamp;
 			if ($check_distributionsInsights || is_null($modified)) {
 				$now = microtime(true);
-
-				$upTime = new DateTime($object->distributionsTimestamp);
-				$upTimeDiff = $upTime->diff(new DateTime());
-				$upTimeMinutes = $upTimeDiff->h * 60 + $upTimeDiff->i;
 				$stamp = true;
 
-				if (!$check_ignoreUpTime && ($upTimeMinutes > (60 * 4))) {
-					// process insights of files maximum of 4 hours
-					$stamp = true;
-				} else if (getEUcatalogGovData() === $catalog) {
+				if (getEUcatalogGovData() === $catalog) {
 					$stamp = getEUaccessURLInsights($catalog);
 					++$object->distributionsInsightsBuster;
 				}
