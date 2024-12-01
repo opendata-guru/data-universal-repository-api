@@ -6,6 +6,7 @@
 
 	$loadedIObjects = [];
 	$indexIObjectsByURL = [];
+	$lostIObjects = [];
 	$fileIObjects = __DIR__ . '/' . (file_exists(__DIR__ . '/' . 'live-insights/live-insights-get.php') ? '' : '../') . '../api-data/insights.csv';
 
 	loadMappingFileIObjects($loadedIObjects, $indexIObjectsByURL);
@@ -385,5 +386,54 @@
 		}
 
 		return isset($loadedIObjects[$iid]) ? $loadedIObjects[$iid] : null;
+	}
+
+	function scanIObjectDirRecursive($dir) {
+		$result = [];
+
+		foreach (scandir($dir) as $filename) {
+			if ($filename[0] === '.') continue;
+
+			$filepath = $dir . '/' . $filename;
+			if (is_dir($filepath)) {
+				$result = array_merge($result, scanIObjectDirRecursive($filepath));
+			} else {
+				$result[] = explode('.', $filename)[0];
+			}
+		}
+
+		return $result;
+	}
+
+	function getLostIObjects() {
+		global $lostIObjects;
+
+		if (0 === count($lostIObjects)) {
+			$filePath = (file_exists('live-insights/live-insights-get.php') ? '' : '../') . '../api-data/assets-iid/';
+
+			$dirIDs = scanIObjectDirRecursive($filePath);
+
+			foreach($dirIDs as $iid) {
+				$baseObject = findIObject($iid);
+
+				if (!$baseObject) {
+					$baseObject = (object) array(
+						'iid' => $iid,
+						'url' => '',
+						'modified' => '',
+					);
+
+					$iObject = loadIObject($baseObject);
+
+					if ($iObject) {
+						$lostIObjects[] = $iObject;
+					} else {
+						$lostIObjects[] = $baseObject;
+					}
+				}
+			}
+		}
+
+		return $lostIObjects;
 	}
 ?>
