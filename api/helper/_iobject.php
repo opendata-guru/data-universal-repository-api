@@ -436,4 +436,21 @@
 
 		return $lostIObjects;
 	}
+
+	function getUnauditedIObjects() {
+		global $loadedIObjects;
+
+		$missingIObjects = [];
+		$today = date('Y-m-d');
+
+		foreach($loadedIObjects as $iObject) {
+			$iObject = loadIObject($iObject);
+
+			if ($iObject && ($today === $iObject->modified) && !isset($iObject->audited)) {
+				$missingIObjects[] = $iObject;
+			}
+		}
+
+		return $missingIObjects;
+	}
 ?>
