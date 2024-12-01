@@ -453,4 +453,19 @@
 
 		return $missingIObjects;
 	}
+
+	function getAtticIObjects() {
+		global $loadedIObjects;
+
+		$atticIObjects = [];
+		$today = date('Y-m-d');
+
+		foreach($loadedIObjects as $iObject) {
+			if ($iObject && ($today !== $iObject->modified)) {
+				$atticIObjects[] = $iObject;
+			}
+		}
+
+		return $atticIObjects;
+	}
 ?>
