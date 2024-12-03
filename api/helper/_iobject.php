@@ -468,4 +468,21 @@
 
 		return $atticIObjects;
 	}
+
+	function getErrorIObject() {
+		global $loadedIObjects;
+
+		$errorIObjects = [];
+		$today = date('Y-m-d');
+
+		foreach($loadedIObjects as $iObject) {
+			$iObject = loadIObject($iObject);
+
+			if ($iObject && ($today === $iObject->modified) && isset($iObject->insights) && $iObject->insights->error) {
+				$errorIObjects[] = $iObject;
+			}
+		}
+
+		return $errorIObjects;
+	}
 ?>

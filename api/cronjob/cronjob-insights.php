@@ -67,8 +67,19 @@
 			}
 		}
 
+		// process new iObjects - daily
 		foreach($objects as $iObject) {
 			if (!isset($iObject->insights)) {
+				$iObject = updateIObjectFile($iObject);
+				saveIObject($iObject);
+
+				return false;
+			}
+		}
+
+		// process error iObjects - daily
+		foreach($objects as $iObject) {
+			if ($iObject->insights->error) {
 				$iObject = updateIObjectFile($iObject);
 				saveIObject($iObject);
 
