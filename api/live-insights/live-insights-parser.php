@@ -557,6 +557,10 @@
 			$contentType = 'html';
 
 			// to do
+		} else if('error' === $file->content) {
+			$error = (object) array(
+				'descriptions' => $file->content,
+			);
 		}
 
 		$ret = (object) array(
