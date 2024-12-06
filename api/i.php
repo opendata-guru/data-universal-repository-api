@@ -7,11 +7,16 @@
     header('Content-Type: application/json; charset=utf-8');
 
 	include('helper/_iobject.php');
+	include('i--fileexplorer.php');
 
 	if ('POST' === $_SERVER['REQUEST_METHOD']) {
 		include('helper/_post.php');
 
-		if (validPost()) {
+		$fileExplorer = handleFileExplorer();
+
+		if (null !== $fileExplorer) {
+			echo json_encode($fileExplorer);
+		} else if (validPost()) {
 			echo json_encode(postIObject());
 		} else {
 			header('HTTP/1.0 401 Unauthorized');
