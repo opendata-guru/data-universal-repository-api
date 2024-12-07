@@ -40,7 +40,7 @@
 		}
 
 		if ($type === 'file') {
-			$entry['size'] = 1234567;
+			$entry['size'] = 127;
 
 //			$entry["thumb"] = $options["base_url"] . substr($path, strlen($options["base_dir"])) . "/" . $file;
 //			$entry["thumb"] = $options["thumbs_url"] . $filename;
@@ -52,47 +52,69 @@
 		return $entry;
 	}
 
+	function getFilesAndFoldersHVDFile($path, $result) {
+		$result->files[] = 'File Name.txt';
+
+		return $result;
+	}
+
+	function getFilesAndFoldersHVD($path, $result) {
+		if (count($path) < 1) {
+			$result->folders[] = 'Changes by date';
+			$result->folders[] = 'All files';
+			$result->folders[] = 'Member States';
+
+			return $result;
+		}
+
+		array_shift($path);
+		return getFilesAndFoldersHVDFile($path, $result);
+	}
+
+	function getFilesAndFolders($path) {
+		$result = (object) array(
+			'files' => [],
+			'folders' => [],
+		);
+		$path = explode('/', $path);
+
+		if (count($path) < 1) {
+			return null;
+		}
+		if ('hvd' === $path[0]) {
+			array_shift($path);
+			return getFilesAndFoldersHVD($path, $result);
+		}
+
+		return $result;
+	}
+
 	function processRefreshAction($post) {
 		$path = isset($post['path']) ? $post['path'] : '';
+		$dir = getFilesAndFolders($path);
 
-		if (false) {
-			return array(
-				'success' => false,
-				'error' => 'Operation denied.',
-				'errorcode' => 'refresh_not_allowed'
-			);
-		} else if (false) {
+		if (!$dir) {
 			return array(
 				'success' => false,
 				'error' => 'Invalid path specified.',
 				'errorcode' => 'invalid_path'
 			);
 		} else {
-			$dir = '';
+			$depth = getPathDepth($path);
 
-			if (false) {
-				return array(
-					'success' => false,
-					'error' => 'The server was unable to open the path.',
-					'errorcode' => 'path_open_failed'
-				);
-			} else {
-				$depth = getPathDepth($path);
+			$result = array(
+				'success' => true,
+				'entries' => array()
+			);
 
-				$result = array(
-					'success' => true,
-					'entries' => array()
-				);
-
-				$file = 'Folder Name';
-
-				$entry = buildEntry($path, $file, 'folder', $depth);
+			foreach($dir->folders as $folder) {
+				$entry = buildEntry($path, $folder, 'folder', $depth);
 				if ($entry !== false) {
 					$result['entries'][] = $entry;
 				}
+			}
 
-				$file = 'File Name';
-
+			foreach($dir->files as $file) {
 				$entry = buildEntry($path, $file, 'file', $depth);
 				if ($entry !== false) {
 					$result['entries'][] = $entry;
@@ -101,11 +123,6 @@
 		}
 
 		return $result;
-/*		return array(
-			'success' => false,
-			'error' => 'Supplied base directory does not exist.',
-			'errorcode' => 'invalid_base_dir'
-		);*/
 	}
 
 	function handleFileExplorer() {
