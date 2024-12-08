@@ -23,11 +23,15 @@
 		return md5($path . '|' . $file);
 	}
 
-	function getTooltip($title) {
+	function getTooltip($title, $arr) {
 		$tooltip = array();
 
 		if (strlen($title) > 35) {
 			$tooltip[] = $title;
+		}
+
+		if ($arr) {
+			$tooltip = array_merge($tooltip, $arr);
 		}
 
 		return implode("\n", $tooltip);
@@ -35,13 +39,13 @@
 
 	function buildFile($path, $file) {
 		$entry = array(
-			'id' => $file,
-			'name' => $file,
+			'id' => $file->id,
+			'name' => $file->title,
 			'type' => 'file',
-			'hash' => getEntryHash($path, $file),
+			'hash' => getEntryHash($path, $file->id),
 
 			// optional
-			'tooltip' => getTooltip($file),
+			'tooltip' => getTooltip($file->title, [$file->error]),
 //			'size' => 127,
 		);
 
@@ -62,7 +66,7 @@
 			'hash' => getEntryHash($path, $folder->id),
 
 			// optional
-			'tooltip' => getTooltip($folder->title),
+			'tooltip' => getTooltip($folder->title, []),
 //			'overlay' => 'overlay_own_class',
 //			'attrs' => ???,
 //			'thumb' => 'https://opendata.guru/govdata/assets/folder.svg',
@@ -72,7 +76,11 @@
 	}
 
 	function getSampleFile($path, $lang, $result) {
-		$result->files[] = 'File Name.txt';
+		$result->files[] = (object) array(
+			'id' => 'foobar',
+			'title' => 'File Name.txt',
+			'error' => null,
+		);
 
 		return $result;
 	}
@@ -81,13 +89,46 @@
 		global $dict;
 
 		$iObjects = getErrorIObject();
+		$folders = [];
 
 		foreach($iObjects as $iObject) {
 			$name = $iObject->url;
 			$name = trim($name, '/');
 			$name = end(explode('/', $name));
-//			$iObject->iid
-			$result->files[] = $name;
+			$name = reset(explode('?', $name));
+
+			$error = isset($iObject->insights) ? $iObject->insights->error : null;
+			if ($error) {
+				if ('string' === gettype($error)) {
+					$error = trim($error);
+				} else {
+					if (isset($error->{'@attributes'}) && isset($error->{'@attributes'}->code)) {
+						$error = $error->{'@attributes'}->code;
+					} else {
+						$error = json_encode($error);
+					}
+				}
+			}
+
+			$folders[$error][] = (object) array(
+				'id' => $iObject->iid,
+				'title' => $name,
+				'error' => $error,
+			);
+		}
+
+		if (count($path) < 1) {
+			foreach($folders as $folder => $value) {
+				$result->folders[] = (object) array(
+					'id' => $folder,
+					'title' => $folder
+				);
+			}
+		} else {
+			$level = $path[0];
+			array_shift($path);
+
+			$result->files = $folders[$level];
 		}
 
 		return $result;
