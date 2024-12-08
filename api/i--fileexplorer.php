@@ -5,14 +5,16 @@
 		'de' => (object) array(
 			'all_objects' => 'Alle Objekte',
 			'new_objects' => 'Neue Objekte',
-			'defective_objects' => 'Defekte Objekte',
+			'defects' => 'Defekte Objekte',
 			'member_states' => 'EU-Mitgliedstaaten',
+			'attic' => 'Dachboden',
 		),
 		'en' => (object) array(
 			'all_objects' => 'All objects',
 			'new_objects' => 'New objects',
-			'defective_objects' => 'Defective objects',
+			'defects' => 'Defective objects',
 			'member_states' => 'EU member states',
+			'attic' => 'Attic',
 		),
 	);
 
@@ -40,7 +42,7 @@
 
 			// optional
 			'tooltip' => getTooltip($file),
-			'size' => 127,
+//			'size' => 127,
 		);
 
 //		$entry["thumb"] = $options["base_url"] . substr($path, strlen($options["base_dir"])) . "/" . $file;
@@ -69,8 +71,24 @@
 		return $entry;
 	}
 
-	function getFilesAndFoldersHVDFile($path, $lang, $result) {
+	function getSampleFile($path, $lang, $result) {
 		$result->files[] = 'File Name.txt';
+
+		return $result;
+	}
+
+	function getFilesAndFoldersHVDDefects($path, $lang, $result) {
+		global $dict;
+
+		$iObjects = getErrorIObject();
+
+		foreach($iObjects as $iObject) {
+			$name = $iObject->url;
+			$name = trim($name, '/');
+			$name = end(explode('/', $name));
+//			$iObject->iid
+			$result->files[] = $name;
+		}
 
 		return $result;
 	}
@@ -79,28 +97,38 @@
 		global $dict;
 
 		if (count($path) < 1) {
-			$result->folders[] = (object) array(
+/*			$result->folders[] = (object) array(
 				'id' => 'all_objects',
 				'title' => $dict[$lang]->all_objects
-			);
-			$result->folders[] = (object) array(
+			);*/
+/*			$result->folders[] = (object) array(
 				'id' => 'new_objects',
 				'title' => $dict[$lang]->new_objects
-			);
+			);*/
 			$result->folders[] = (object) array(
-				'id' => 'defective_objects',
-				'title' => $dict[$lang]->defective_objects
+				'id' => 'defects',
+				'title' => $dict[$lang]->defects
 			);
-			$result->folders[] = (object) array(
+/*			$result->folders[] = (object) array(
 				'id' => 'member_states',
 				'title' => $dict[$lang]->member_states
-			);
+			);*/
+/*			$result->folders[] = (object) array(
+				'id' => 'attic',
+				'title' => $dict[$lang]->attic
+			);*/
 
 			return $result;
 		}
 
+		$level = $path[0];
 		array_shift($path);
-		return getFilesAndFoldersHVDFile($path, $lang, $result);
+
+		if ('defects' === $level) {
+			return getFilesAndFoldersHVDDefects($path, $lang, $result);
+		}
+
+		return getSampleFile($path, $lang, $result);
 	}
 
 	function getFilesAndFolders($path, $lang) {
