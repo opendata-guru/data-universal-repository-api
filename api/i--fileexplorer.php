@@ -1,77 +1,109 @@
 <?php
 	// https://github.com/cubiclesoft/js-fileexplorer
 
-	function getPathDepth($path)
+	$dict = array(
+		'de' => (object) array(
+			'all_objects' => 'Alle Objekte',
+			'new_objects' => 'Neue Objekte',
+			'defective_objects' => 'Defekte Objekte',
+			'member_states' => 'EU-Mitgliedstaaten',
+		),
+		'en' => (object) array(
+			'all_objects' => 'All objects',
+			'new_objects' => 'New objects',
+			'defective_objects' => 'Defective objects',
+			'member_states' => 'EU member states',
+		),
+	);
+
+	function getEntryHash($path, $file)
 	{
-		return substr_count($path, '/');
+		return md5($path . '|' . $file);
 	}
 
-	function getEntryHash($type, $file)
-	{
-		return md5($type . "|" . $file);
-	}
-
-	function getTooltip($path, $file, $type)
-	{
+	function getTooltip($title) {
 		$tooltip = array();
 
-		if (strlen($file) > 35) {
-			$tooltip[] = $file;
+		if (strlen($title) > 35) {
+			$tooltip[] = $title;
 		}
 
 		return implode("\n", $tooltip);
 	}
 
-	function buildEntry($path, $file, $type, $depth)
-	{
-//		$info = @stat($path . "/" . $file);
-//		if ($info === false)  return false;
-
+	function buildFile($path, $file) {
 		$entry = array(
 			'id' => $file,
 			'name' => $file,
-			'type' => $type,
-			'hash' => getEntryHash($type, $file),
-			'tooltip' => getTooltip($path, $file, $type)
+			'type' => 'file',
+			'hash' => getEntryHash($path, $file),
+
+			// optional
+			'tooltip' => getTooltip($file),
+			'size' => 127,
 		);
 
-		if (1 > $depth + 1) {
-			$entry['attrs'] = array('canmodify' => false);
-		}
-
-		if ($type === 'file') {
-			$entry['size'] = 127;
-
-//			$entry["thumb"] = $options["base_url"] . substr($path, strlen($options["base_dir"])) . "/" . $file;
-//			$entry["thumb"] = $options["thumbs_url"] . $filename;
-//			$entry["thumb"] = $options["thumb_create_url"] . (strpos($options["thumb_create_url"], "?") !== false ? "&" : "?") . "path=" . urlencode(json_encode(explode("/", substr($path, strlen($options["base_dir"]))), JSON_UNESCAPED_SLASHES)) . "&id=" . urlencode($file);
-//			$entry["thumb"] = $options["base_url"] . substr($path, strlen($options["base_dir"])) . "/" . $file;
-//			$entry["thumb"] = $options["thumbs_url"] . $filename;
-		}
+//		$entry["thumb"] = $options["base_url"] . substr($path, strlen($options["base_dir"])) . "/" . $file;
+//		$entry["thumb"] = $options["thumbs_url"] . $filename;
+//		$entry["thumb"] = $options["thumb_create_url"] . (strpos($options["thumb_create_url"], "?") !== false ? "&" : "?") . "path=" . urlencode(json_encode(explode("/", substr($path, strlen($options["base_dir"]))), JSON_UNESCAPED_SLASHES)) . "&id=" . urlencode($file);
+//		$entry["thumb"] = $options["base_url"] . substr($path, strlen($options["base_dir"])) . "/" . $file;
+//		$entry["thumb"] = $options["thumbs_url"] . $filename;
 
 		return $entry;
 	}
 
-	function getFilesAndFoldersHVDFile($path, $result) {
+	function buildFolder($path, $folder) {
+		$entry = array(
+			'id' => $folder->id,
+			'name' => $folder->title,
+			'type' => 'folder',
+			'hash' => getEntryHash($path, $folder->id),
+
+			// optional
+			'tooltip' => getTooltip($folder->title),
+//			'overlay' => 'overlay_own_class',
+//			'attrs' => ???,
+//			'thumb' => 'https://opendata.guru/govdata/assets/folder.svg',
+		);
+
+		return $entry;
+	}
+
+	function getFilesAndFoldersHVDFile($path, $lang, $result) {
 		$result->files[] = 'File Name.txt';
 
 		return $result;
 	}
 
-	function getFilesAndFoldersHVD($path, $result) {
+	function getFilesAndFoldersHVD($path, $lang, $result) {
+		global $dict;
+
 		if (count($path) < 1) {
-			$result->folders[] = 'Changes by date';
-			$result->folders[] = 'All files';
-			$result->folders[] = 'Member States';
+			$result->folders[] = (object) array(
+				'id' => 'all_objects',
+				'title' => $dict[$lang]->all_objects
+			);
+			$result->folders[] = (object) array(
+				'id' => 'new_objects',
+				'title' => $dict[$lang]->new_objects
+			);
+			$result->folders[] = (object) array(
+				'id' => 'defective_objects',
+				'title' => $dict[$lang]->defective_objects
+			);
+			$result->folders[] = (object) array(
+				'id' => 'member_states',
+				'title' => $dict[$lang]->member_states
+			);
 
 			return $result;
 		}
 
 		array_shift($path);
-		return getFilesAndFoldersHVDFile($path, $result);
+		return getFilesAndFoldersHVDFile($path, $lang, $result);
 	}
 
-	function getFilesAndFolders($path) {
+	function getFilesAndFolders($path, $lang) {
 		$result = (object) array(
 			'files' => [],
 			'folders' => [],
@@ -83,15 +115,15 @@
 		}
 		if ('hvd' === $path[0]) {
 			array_shift($path);
-			return getFilesAndFoldersHVD($path, $result);
+			return getFilesAndFoldersHVD($path, $lang, $result);
 		}
 
 		return $result;
 	}
 
-	function processRefreshAction($post) {
-		$path = isset($post['path']) ? $post['path'] : '';
-		$dir = getFilesAndFolders($path);
+	function processRefreshAction($param, $lang) {
+		$path = isset($param['path']) ? $param['path'] : '';
+		$dir = getFilesAndFolders($path, $lang);
 
 		if (!$dir) {
 			return array(
@@ -100,22 +132,20 @@
 				'errorcode' => 'invalid_path'
 			);
 		} else {
-			$depth = getPathDepth($path);
-
 			$result = array(
 				'success' => true,
 				'entries' => array()
 			);
 
 			foreach($dir->folders as $folder) {
-				$entry = buildEntry($path, $folder, 'folder', $depth);
+				$entry = buildFolder($path, $folder);
 				if ($entry !== false) {
 					$result['entries'][] = $entry;
 				}
 			}
 
 			foreach($dir->files as $file) {
-				$entry = buildEntry($path, $file, 'file', $depth);
+				$entry = buildFile($path, $file);
 				if ($entry !== false) {
 					$result['entries'][] = $entry;
 				}
@@ -126,11 +156,18 @@
 	}
 
 	function handleFileExplorer() {
-		$post = $_POST;
-		$action = isset($post['action']) ? $post['action'] : '';
+		global $dict;
+
+		$param = $_POST;
+		$action = isset($param['action']) ? $param['action'] : '';
+		$lang = strtolower(isset($param['lang']) ? substr($param['lang'], 0, 2) : 'en');
+
+		if (!isset($dict[$lang])) {
+			$lang = 'en';
+		}
 
 		if ('file_explorer_refresh' === $action) {
-			return processRefreshAction($post);
+			return processRefreshAction($param, $lang);
 		}
 		/*
 		file_explorer_thumbnail
