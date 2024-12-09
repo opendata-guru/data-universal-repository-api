@@ -123,7 +123,7 @@
 
 			foreach($folders as $folder) {
 				$result->folders[] = (object) array(
-					'id' => $folder,
+					'id' => md5($folder),
 					'title' => $folder
 				);
 			}
@@ -132,7 +132,7 @@
 			array_shift($path);
 
 			foreach($iObjects as $iObject) {
-				if($level === getError($iObject)) {
+				if($level === md5(getError($iObject))) {
 					$name = $iObject->url;
 					$name = trim($name, '/');
 					$name = end(explode('/', $name));
