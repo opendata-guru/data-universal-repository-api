@@ -85,40 +85,43 @@
 		return $result;
 	}
 
+	function getError($iObject) {
+		if (!$iObject) {
+			return null;
+		}
+
+		$error = isset($iObject->insights) ? $iObject->insights->error : null;
+
+		if ($error) {
+			if ('string' === gettype($error)) {
+				return trim($error);
+			} else {
+				if (isset($error->{'@attributes'}) && isset($error->{'@attributes'}->code)) {
+					return $error->{'@attributes'}->code;
+				} else {
+					return json_encode($error);
+				}
+			}
+		}
+
+		return null;
+	}
+
 	function getFilesAndFoldersHVDDefects($path, $lang, $result) {
 		global $dict;
 
 		$iObjects = getErrorIObject();
-		$folders = [];
-
-		foreach($iObjects as $iObject) {
-			$name = $iObject->url;
-			$name = trim($name, '/');
-			$name = end(explode('/', $name));
-			$name = reset(explode('?', $name));
-
-			$error = isset($iObject->insights) ? $iObject->insights->error : null;
-			if ($error) {
-				if ('string' === gettype($error)) {
-					$error = trim($error);
-				} else {
-					if (isset($error->{'@attributes'}) && isset($error->{'@attributes'}->code)) {
-						$error = $error->{'@attributes'}->code;
-					} else {
-						$error = json_encode($error);
-					}
-				}
-			}
-
-			$folders[$error][] = (object) array(
-				'id' => $iObject->iid,
-				'title' => $name,
-				'error' => $error,
-			);
-		}
 
 		if (count($path) < 1) {
-			foreach($folders as $folder => $value) {
+			$folders = [];
+
+			foreach($iObjects as $iObject) {
+				$error = getError($iObject);
+
+				$folders[$error] = $error;
+			}
+
+			foreach($folders as $folder) {
 				$result->folders[] = (object) array(
 					'id' => $folder,
 					'title' => $folder
@@ -128,7 +131,20 @@
 			$level = $path[0];
 			array_shift($path);
 
-			$result->files = $folders[$level];
+			foreach($iObjects as $iObject) {
+				if($level === getError($iObject)) {
+					$name = $iObject->url;
+					$name = trim($name, '/');
+					$name = end(explode('/', $name));
+					$name = reset(explode('?', $name));
+
+					$result->files[] = (object) array(
+						'id' => $iObject->iid,
+						'title' => $name,
+						'error' => $error,
+					);
+				}
+			}
 		}
 
 		return $result;
