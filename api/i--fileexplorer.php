@@ -4,17 +4,41 @@
 	$dict = array(
 		'de' => (object) array(
 			'all_objects' => 'Alle Objekte',
-			'new_objects' => 'Neue Objekte',
 			'defects' => 'Defekte Objekte',
+			'journal' => 'Tagebuch',
 			'member_states' => 'EU-Mitgliedstaaten',
-			'attic' => 'Dachboden',
+			'month01' => 'Januar',
+			'month02' => 'Februar',
+			'month03' => 'März',
+			'month04' => 'April',
+			'month05' => 'Mai',
+			'month06' => 'Juni',
+			'month07' => 'Juli',
+			'month08' => 'August',
+			'month09' => 'September',
+			'month10' => 'Oktober',
+			'month11' => 'November',
+			'month12' => 'Dezember',
+			'tombstones' => 'Archiv',
 		),
 		'en' => (object) array(
 			'all_objects' => 'All objects',
-			'new_objects' => 'New objects',
 			'defects' => 'Defective objects',
+			'journal' => 'Journal',
 			'member_states' => 'EU member states',
-			'attic' => 'Attic',
+			'month01' => 'January',
+			'month02' => 'February',
+			'month03' => 'March',
+			'month04' => 'April',
+			'month05' => 'May',
+			'month06' => 'June',
+			'month07' => 'July',
+			'month08' => 'August',
+			'month09' => 'September',
+			'month10' => 'October',
+			'month11' => 'November',
+			'month12' => 'December',
+			'tombstones' => 'Archive',
 		),
 	);
 
@@ -107,9 +131,53 @@
 		return null;
 	}
 
-	function getFilesAndFoldersHVDDefects($path, $lang, $result) {
+	function getFilesAndFoldersHVDJournal($path, $lang, $result) {
 		global $dict;
 
+		if (count($path) < 1) {
+			$datetime = new DateTime('today');
+			$datetime->sub(new DateInterval('P' . (intval($datetime->format('d')) - 1) . 'D'));
+			$datetime->add(new DateInterval('P1M'));
+
+			do {
+				$datetime->sub(new DateInterval('P1M'));
+				$iso = $datetime->format('Y-m');
+
+				$result->folders[] = (object) array(
+					'id' => $iso,
+					'title' => $iso . ' ' . $dict[$lang]->{'month' . $datetime->format('m')}
+				);
+			} while($iso !== '2024-08');
+		} else if (count($path) < 2) {
+			$level = $path[0];
+			array_shift($path);
+
+			$datetime = new DateTime('today');
+			$datetime->add(new DateInterval('P1D'));
+
+			do {
+				$datetime->sub(new DateInterval('P1D'));
+				$iso = $datetime->format('Y-m-d');
+				$titleDE = intval($datetime->format('d')) . '. ' . $dict[$lang]->{'month' . $datetime->format('m')};
+				$titleEN = $dict[$lang]->{'month' . $datetime->format('m')} . ' ' . intval($datetime->format('d'));
+				$title = 'en' === $lang ? $titleEN : $titleDE;
+
+				if (0 === strpos($iso, $level)) {
+					$result->folders[] = (object) array(
+						'id' => $iso,
+						'title' => $title
+					);
+				}
+			} while($iso !== '2024-08-02');
+		} else {
+			$level = $path[0];
+			array_shift($path);
+		}
+
+		return $result;
+	}
+
+	function getFilesAndFoldersHVDDefects($path, $lang, $result) {
 		$iObjects = getErrorIObject();
 
 		if (count($path) < 1) {
@@ -150,6 +218,31 @@
 		return $result;
 	}
 
+	function getFilesAndFoldersHVDTombstones($path, $lang, $result) {
+		$iObjects = getAtticIObjects();
+
+		if (count($path) < 1) {
+			foreach($iObjects as $iObject) {
+				$name = $iObject->url;
+				$name = trim($name, '/');
+				$name = end(explode('/', $name));
+				$name = reset(explode('?', $name));
+
+				$result->files[] = (object) array(
+					'id' => $iObject->iid,
+					'title' => $name,
+				);
+			}
+		} else {
+			$level = $path[0];
+			array_shift($path);
+
+			// nothing to do
+		}
+
+		return $result;
+	}
+
 	function getFilesAndFoldersHVD($path, $lang, $result) {
 		global $dict;
 
@@ -158,10 +251,10 @@
 				'id' => 'all_objects',
 				'title' => $dict[$lang]->all_objects
 			);*/
-/*			$result->folders[] = (object) array(
-				'id' => 'new_objects',
-				'title' => $dict[$lang]->new_objects
-			);*/
+			$result->folders[] = (object) array(
+				'id' => 'journal',
+				'title' => $dict[$lang]->journal
+			);
 			$result->folders[] = (object) array(
 				'id' => 'defects',
 				'title' => $dict[$lang]->defects
@@ -170,10 +263,10 @@
 				'id' => 'member_states',
 				'title' => $dict[$lang]->member_states
 			);*/
-/*			$result->folders[] = (object) array(
-				'id' => 'attic',
-				'title' => $dict[$lang]->attic
-			);*/
+			$result->folders[] = (object) array(
+				'id' => 'tombstones',
+				'title' => $dict[$lang]->tombstones
+			);
 
 			return $result;
 		}
@@ -181,8 +274,12 @@
 		$level = $path[0];
 		array_shift($path);
 
-		if ('defects' === $level) {
+		if ('journal' === $level) {
+			return getFilesAndFoldersHVDJournal($path, $lang, $result);
+		} else if ('defects' === $level) {
 			return getFilesAndFoldersHVDDefects($path, $lang, $result);
+		} else if ('tombstones' === $level) {
+			return getFilesAndFoldersHVDTombstones($path, $lang, $result);
 		}
 
 		return getSampleFile($path, $lang, $result);
