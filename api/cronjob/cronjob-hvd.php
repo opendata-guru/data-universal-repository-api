@@ -162,6 +162,7 @@
 		$result = json_decode($data)->results->bindings;
 
 		$valuesCCBYcomparable = array(
+			'http://dcat-ap.de/def/licenses/bsd',
 			'http://dcat-ap.de/def/licenses/odbl',
 			'http://dcat-ap.de/def/licenses/dl-by-de/2.0',
 			'http://dcat-ap.de/def/licenses/geonutz/20130319',
