@@ -6,6 +6,8 @@
 			'all_objects' => 'Alle Objekte',
 			'defects' => 'Defekte Objekte',
 			'journal' => 'Tagebuch',
+			'linksAdded' => 'Neue Links',
+			'linksRemoved' => 'Entfernte Links',
 			'member_states' => 'EU-Mitgliedstaaten',
 			'month01' => 'Januar',
 			'month02' => 'Februar',
@@ -25,6 +27,8 @@
 			'all_objects' => 'All objects',
 			'defects' => 'Defective objects',
 			'journal' => 'Journal',
+			'linksAdded' => 'New links',
+			'linksRemoved' => 'Removed links',
 			'member_states' => 'EU member states',
 			'month01' => 'January',
 			'month02' => 'February',
@@ -41,6 +45,31 @@
 			'tombstones' => 'Archive',
 		),
 	);
+
+	function curlAPI($url) {
+		$headers = [
+			'User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:28.0) Gecko/20100101 Firefox/28.0',
+		];
+
+		$ch = curl_init($url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+		$ret = curl_exec($ch);
+		curl_close($ch);
+
+		return $ret;
+	}
+
+	function callAPI($link) {
+		$uri = 'https://' . $_SERVER['HTTP_HOST'] . htmlspecialchars($_SERVER['REQUEST_URI']);
+		$uri = dirname($uri);
+		$uri .= '/' . $link;
+
+		$data = curlAPI($uri);
+		return json_decode($data);
+	}
 
 	function getEntryHash($path, $file)
 	{
@@ -131,6 +160,26 @@
 		return null;
 	}
 
+	function getFilesAndFoldersHVDDataset($dataset) {
+		$iObject = $dataset->distribution;
+
+		$filetype = '';
+		if (isset($iObject->insights) && isset($iObject->insights->contentType)) {
+			$filetype = end(explode(':', $iObject->insights->contentType));
+		}
+
+		$error = getError($iObject);
+		if ($error) {
+			$filetype = '🚨';
+		}
+
+		return (object) array(
+			'id' => $dataset->distributionAccessURL,
+			'title' => $iObject->iid . '.'. $filetype,
+			'error' => $error,
+		);
+	}
+
 	function getFilesAndFoldersHVDJournal($path, $lang, $result) {
 		global $dict;
 
@@ -148,10 +197,14 @@
 					'title' => $iso . ' ' . $dict[$lang]->{'month' . $datetime->format('m')}
 				);
 			} while($iso !== '2024-08');
-		} else if (count($path) < 2) {
-			$level = $path[0];
-			array_shift($path);
 
+			return $result;
+		}
+
+		$pathYM = $path[0];
+		array_shift($path);
+
+		if (count($path) < 1) {
 			$datetime = new DateTime('today');
 			$datetime->add(new DateInterval('P1D'));
 
@@ -162,16 +215,53 @@
 				$titleEN = $dict[$lang]->{'month' . $datetime->format('m')} . ' ' . intval($datetime->format('d'));
 				$title = 'en' === $lang ? $titleEN : $titleDE;
 
-				if (0 === strpos($iso, $level)) {
+				if (0 === strpos($iso, $pathYM)) {
 					$result->folders[] = (object) array(
 						'id' => $iso,
 						'title' => $title
 					);
 				}
 			} while($iso !== '2024-08-02');
-		} else {
-			$level = $path[0];
-			array_shift($path);
+
+			return $result;
+		}
+
+		$pathYMD = $path[0];
+		array_shift($path);
+
+		if (count($path) < 1) {
+			$result->folders[] = (object) array(
+				'id' => 'added',
+				'title' => $dict[$lang]->linksAdded
+			);
+			$result->folders[] = (object) array(
+				'id' => 'removed',
+				'title' => $dict[$lang]->linksRemoved
+			);
+
+			return $result;
+		}
+
+		$pathAction = $path[0];
+		array_shift($path);
+
+		if (count($path) < 1) {
+			$api = callAPI('hvd/accessurls/' . $pathYMD . '/change');
+
+			if ($api && isset($api->added) && isset($api->removed)) {
+				if (('added' === $pathAction) && (0 < count($api->added))) {
+					foreach($api->added as $dataset) {
+						$result->files[] = getFilesAndFoldersHVDDataset($dataset);
+					}
+				}
+				if (('removed' === $pathAction) && (0 < count($api->added))) {
+					foreach($api->removed as $dataset) {
+						$result->files[] = getFilesAndFoldersHVDDataset($dataset);
+					}
+				}
+			}
+
+			return $result;
 		}
 
 		return $result;
