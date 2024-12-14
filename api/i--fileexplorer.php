@@ -91,6 +91,15 @@
 	}
 
 	function buildFile($path, $file) {
+		$iObject = $file->iObject;
+		$filetype = '';
+
+		if (isset($iObject) && isset($iObject->insights) && isset($iObject->insights->contentType)) {
+			$filetype = end(explode(':', $iObject->insights->contentType));
+		}
+		$filetype = str_replace(':', '_', $filetype);
+		$filetype = str_replace('-', '_', $filetype);
+
 		$entry = array(
 			'id' => $file->id,
 			'name' => $file->title,
@@ -99,7 +108,9 @@
 
 			// optional
 			'tooltip' => getTooltip($file->title, [$file->error]),
+			'overlay' => 'filetype_' . $filetype,
 //			'size' => 127,
+			'iObject' => $iObject,
 		);
 
 //		$entry["thumb"] = $options["base_url"] . substr($path, strlen($options["base_dir"])) . "/" . $file;
@@ -126,16 +137,6 @@
 		);
 
 		return $entry;
-	}
-
-	function getSampleFile($path, $lang, $result) {
-		$result->files[] = (object) array(
-			'id' => 'foobar',
-			'title' => 'File Name.txt',
-			'error' => null,
-		);
-
-		return $result;
 	}
 
 	function getError($iObject) {
@@ -177,6 +178,7 @@
 			'id' => $dataset->distributionAccessURL,
 			'title' => $iObject->iid . '.'. $filetype,
 			'error' => $error,
+			'iObject' => $iObject,
 		);
 	}
 
@@ -296,10 +298,12 @@
 					$name = end(explode('/', $name));
 					$name = reset(explode('?', $name));
 
+//					$result->files[] = getFilesAndFoldersHVDDataset($dataset);
 					$result->files[] = (object) array(
 						'id' => $iObject->iid,
 						'title' => $name,
 						'error' => $error,
+						'iObject' => $iObject,
 					);
 				}
 			}
@@ -318,9 +322,11 @@
 				$name = end(explode('/', $name));
 				$name = reset(explode('?', $name));
 
+//				$result->files[] = getFilesAndFoldersHVDDataset($dataset);
 				$result->files[] = (object) array(
 					'id' => $iObject->iid,
 					'title' => $name,
+					'iObject' => $iObject,
 				);
 			}
 		} else {
@@ -372,7 +378,7 @@
 			return getFilesAndFoldersHVDTombstones($path, $lang, $result);
 		}
 
-		return getSampleFile($path, $lang, $result);
+		return $result;
 	}
 
 	function getFilesAndFolders($path, $lang) {
