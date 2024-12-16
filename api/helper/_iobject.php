@@ -469,6 +469,23 @@
 		return $atticIObjects;
 	}
 
+	function getAtticIObjectsDetails() {
+		global $loadedIObjects;
+
+		$atticIObjects = [];
+		$today = date('Y-m-d');
+
+		foreach($loadedIObjects as $iObject) {
+			if ($iObject && ($today !== $iObject->modified)) {
+				$iObject = loadIObject($iObject);
+
+				$atticIObjects[] = $iObject;
+			}
+		}
+
+		return $atticIObjects;
+	}
+
 	function getErrorIObject() {
 		global $loadedIObjects;
 
@@ -476,10 +493,12 @@
 		$today = date('Y-m-d');
 
 		foreach($loadedIObjects as $iObject) {
-			$iObject = loadIObject($iObject);
+			if ($iObject && ($today === $iObject->modified)) {
+				$iObject = loadIObject($iObject);
 
-			if ($iObject && ($today === $iObject->modified) && isset($iObject->insights) && $iObject->insights->error) {
-				$errorIObjects[] = $iObject;
+				if (isset($iObject->insights) && $iObject->insights->error) {
+					$errorIObjects[] = $iObject;
+				}
 			}
 		}
 

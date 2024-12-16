@@ -46,6 +46,8 @@
 		),
 	);
 
+	$feStupidID = 0;
+
 	function curlAPI($url) {
 		$headers = [
 			'User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:28.0) Gecko/20100101 Firefox/28.0',
@@ -91,6 +93,8 @@
 	}
 
 	function buildFile($path, $file) {
+		global $feStupidID;
+
 		$iObject = $file->iObject;
 		$filetype = '';
 
@@ -100,16 +104,21 @@
 		$filetype = str_replace(':', '_', $filetype);
 		$filetype = str_replace('-', '_', $filetype);
 
+		++$feStupidID;
+
 		$entry = array(
-			'id' => $file->id,
+			'id' => $feStupidID,
 			'name' => $file->title,
 			'type' => 'file',
-			'hash' => getEntryHash($path, $file->id),
+			'hash' => getEntryHash($path, $iObject->iid),
 
 			// optional
 			'tooltip' => getTooltip($file->title, [$file->error]),
 			'overlay' => 'filetype_' . $filetype,
 //			'size' => 127,
+
+			// customized
+			'datasetIdentifier' => $file->datasetIdentifier,
 			'iObject' => $iObject,
 		);
 
@@ -162,6 +171,7 @@
 	}
 
 	function getFilesAndFoldersHVDDataset($dataset) {
+		$datasetIdentifier = $dataset->datasetIdentifier;
 		$iObject = $dataset->distribution;
 
 		$filetype = '';
@@ -175,9 +185,9 @@
 		}
 
 		return (object) array(
-			'id' => $dataset->distributionAccessURL,
 			'title' => $iObject->iid . '.'. $filetype,
 			'error' => $error,
+			'datasetIdentifier' => $datasetIdentifier,
 			'iObject' => $iObject,
 		);
 	}
@@ -293,18 +303,11 @@
 
 			foreach($iObjects as $iObject) {
 				if($level === md5(getError($iObject))) {
-					$name = $iObject->url;
-					$name = trim($name, '/');
-					$name = end(explode('/', $name));
-					$name = reset(explode('?', $name));
-
-//					$result->files[] = getFilesAndFoldersHVDDataset($dataset);
-					$result->files[] = (object) array(
-						'id' => $iObject->iid,
-						'title' => $name,
-						'error' => $error,
-						'iObject' => $iObject,
+					$dataset = (object) array(
+						'datasetIdentifier' => '',
+						'distribution' => $iObject,
 					);
+					$result->files[] = getFilesAndFoldersHVDDataset($dataset);
 				}
 			}
 		}
@@ -313,21 +316,15 @@
 	}
 
 	function getFilesAndFoldersHVDTombstones($path, $lang, $result) {
-		$iObjects = getAtticIObjects();
+		$iObjects = getAtticIObjectsDetails();
 
 		if (count($path) < 1) {
 			foreach($iObjects as $iObject) {
-				$name = $iObject->url;
-				$name = trim($name, '/');
-				$name = end(explode('/', $name));
-				$name = reset(explode('?', $name));
-
-//				$result->files[] = getFilesAndFoldersHVDDataset($dataset);
-				$result->files[] = (object) array(
-					'id' => $iObject->iid,
-					'title' => $name,
-					'iObject' => $iObject,
+				$dataset = (object) array(
+					'datasetIdentifier' => '',
+					'distribution' => $iObject,
 				);
+				$result->files[] = getFilesAndFoldersHVDDataset($dataset);
 			}
 		} else {
 			$level = $path[0];
