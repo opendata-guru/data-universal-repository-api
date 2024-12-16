@@ -103,6 +103,9 @@
 		}
 		$filetype = str_replace(':', '_', $filetype);
 		$filetype = str_replace('-', '_', $filetype);
+		if ($file->error) {
+			$filetype = 'error';
+		}
 
 		++$feStupidID;
 
@@ -113,7 +116,7 @@
 			'hash' => getEntryHash($path, $iObject->iid),
 
 			// optional
-			'tooltip' => getTooltip($file->title, [$file->error]),
+			'tooltip' => getTooltip($file->title, []),
 			'overlay' => 'filetype_' . $filetype,
 //			'size' => 127,
 
@@ -180,9 +183,6 @@
 		}
 
 		$error = getError($iObject);
-		if ($error) {
-			$filetype = '🚨';
-		}
 
 		return (object) array(
 			'title' => $iObject->iid . '.'. $filetype,
