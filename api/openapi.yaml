@@ -120,8 +120,8 @@ paths:
         - portal
   /p/{pID}/l:
     get:
-      summary: tbd.
-      description: + Get a list of all linked ...
+      summary: Get a list of all linked data sources
+      description: Get a list of all linked data sources. These can be manually entered data sources or automatically retrieved data sources (supplier).
       parameters:
         - $ref: "#/components/parameters/pidPathRandomParam"
       responses:
@@ -132,7 +132,28 @@ paths:
               examples:
                 pSample:
                   value:
-                    tbd.
+                    pid: pn50
+                    sobject:
+                      sid: s907x
+                      title:
+                        de: Münster
+                        en: Münster
+                      type: municipality
+                      sameAs:
+                        wikidata: http://www.wikidata.org/entity/Q2742
+                    lobjects:
+                      - lid: lbf5d
+                        pid: pn50
+                        identifier: stadt-münster
+                        title: Stadt Münster
+                        sid: ''
+                        lastseen: '2024-12-17'
+                      - lid: lVv8b
+                        pid: pn50
+                        identifier: stadtwerke-münster
+                        title: Stadtwerke Münster
+                        sid: ''
+                        lastseen: '2024-12-17'
         '400':
           $ref: "#/components/responses/400BadRequest"
       tags:
@@ -560,7 +581,6 @@ paths:
       summary: Get the INSPIRE Registry
       description: Get some of the information from the INSPIRE registry
       operationId: getInspireRegistry
-      parameters:
       responses:
         '200':
           description: Example of a successful answer
@@ -688,7 +708,8 @@ paths:
         - live
   /data-providers:
     get:
-      summary: Deprecated
+      summary: List all known providers
+      deprecated: true
       description: A list of all known data providers is returned. For each entry, a type, an official region key, and a Wikidata ID are returned where possible. The "sid" and "link" parameter can be used in other API endpoints.
       operationId: getDataProviders
       responses:

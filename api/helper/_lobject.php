@@ -138,4 +138,18 @@
 
 		$loadedLObjects[] = $obj;
 	}
+
+	function getLObjectChildren($pid) {
+		global $loadedLObjects;
+
+		$lObjects = [];
+
+		foreach($loadedLObjects as $lObject) {
+			if ($pid === $lObject['pid']) {
+				$lObjects[] = $lObject;
+			}
+		}
+
+		return $lObjects;
+	}
 ?>
