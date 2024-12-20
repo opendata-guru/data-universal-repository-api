@@ -324,4 +324,23 @@
 
 		return null;
 	}
+
+	function findPObjectsBySID($sid) {
+		global $loadedProviders;
+		$pObjects = [];
+
+		foreach($loadedProviders as $pObject) {
+			if (providerGetSID($pObject) == $sid) {
+				$obj = [];
+				$obj['pid'] = providerGetPID($pObject);
+				$obj['sid'] = providerGetSID($pObject);
+				$obj['url'] = providerGetURL($pObject);
+				$obj['deeplink'] = providerGetDeepLink($pObject);
+
+				$pObjects[] = $obj;
+			}
+		}
+
+		return $pObjects;
+	}
 ?>

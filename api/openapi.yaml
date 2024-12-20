@@ -314,6 +314,24 @@ paths:
           $ref: '#/components/responses/401Unauthorized'
       tags:
         - supplier
+  /s/{sID}/p:
+    get:
+      summary: Get a list of all portals operated by the supplier
+      description: A supplier can operate zero, one or more data portals
+      parameters:
+        - $ref: "#/components/parameters/sidPathRandomParam"
+      responses:
+      tags:
+        - supplier
+  /s/{sID}/l:
+    get:
+      summary: Get a list of where the supplier has been linked
+      description: A supplier can distribute data across multiple portals or be linked from there.
+      parameters:
+        - $ref: "#/components/parameters/sidPathRandomParam"
+      responses:
+      tags:
+        - supplier
   /i:
     post:
       summary: Add a URL
