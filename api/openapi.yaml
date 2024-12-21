@@ -158,6 +158,26 @@ paths:
           $ref: "#/components/responses/400BadRequest"
       tags:
         - portal
+  /p/counts/{date}:
+    get:
+      summary: Get the number of datasets from all portals
+      description: Get the number of datasets of all portals for a specific day
+      operationId: getPObjectsCountsDate
+      parameters:
+        - $ref: "#/components/parameters/datePathParam"
+      responses:
+        '200':
+          description: Example of a successful answer
+          content:
+            application/json:
+              examples:
+                pSample:
+                  value:
+                    tbd.
+        '400':
+          $ref: "#/components/responses/400BadRequest"
+      tags:
+        - portal
   /p/systems/{date}:
     get:
       summary: Get system status information from all portals
@@ -332,6 +352,26 @@ paths:
       responses:
       tags:
         - supplier
+  /l/counts/{date}:
+    get:
+      summary: Get the number of datasets from all links
+      description: Get the number of datasets of all links for a specific day
+      operationId: getLObjectsCountsDate
+      parameters:
+        - $ref: "#/components/parameters/datePathParam"
+      responses:
+        '200':
+          description: Example of a successful answer
+          content:
+            application/json:
+              examples:
+                pSample:
+                  value:
+                    tbd.
+        '400':
+          $ref: "#/components/responses/400BadRequest"
+      tags:
+        - link
   /i:
     post:
       summary: Add a URL
@@ -1044,6 +1084,8 @@ tags:
     description: Portal functions of the API can query both historical data from the database and live data (in the future) from the source systems.
   - name: supplier
     description: Supplier functions of the API can query both historical data from the database and live data (in the future) from the source systems.
+  - name: link
+    description: Link functions of the API retrieve the current structure of the portals and suppliers and can query historical data from the database from the source systems.
   - name: insights
     description: Experimental! The data (not the metadata) is evaluated and semantic information is generated.
   - name: hvd
