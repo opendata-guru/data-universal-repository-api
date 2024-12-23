@@ -249,7 +249,7 @@
         ]
       }
     },
-    "/p/counts/{date}": {
+    "/p/count/{date}": {
       "get": {
         "summary": "Get the number of datasets from all portals",
         "description": "Get the number of datasets of all portals for a specific day",
@@ -266,7 +266,10 @@
               "application/json": {
                 "examples": {
                   "pSample": {
-                    "value": "tbd."
+                    "value": {
+                      "psd5": 5021,
+                      "p000": 1816361
+                    }
                   }
                 }
               }
@@ -563,7 +566,7 @@
         ]
       }
     },
-    "/l/counts/{date}": {
+    "/l/count/{date}": {
       "get": {
         "summary": "Get the number of datasets from all links",
         "description": "Get the number of datasets of all links for a specific day",
@@ -580,7 +583,10 @@
               "application/json": {
                 "examples": {
                   "pSample": {
-                    "value": "tbd."
+                    "value": {
+                      "lqAIo": 63295,
+                      "lPdcu": 14478
+                    }
                   }
                 }
               }
