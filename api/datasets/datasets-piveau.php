@@ -8,7 +8,8 @@
 
 		if ($paramId === '') {
 			$uri = $url . $searchSuffix;
-			$source = file_get_contents($uri);
+//			$source = file_get_contents($uri);
+			$source = get_contents($uri);
 
 			$list = json_decode($source);
 
@@ -17,7 +18,8 @@
 			}
 		} else {
 			$uri = $url . $datasetsSuffix . $paramId;
-			$source = file_get_contents($uri);
+//			$source = file_get_contents($uri);
+			$source = get_contents($uri);
 
 			$data = json_decode($source);
 		}

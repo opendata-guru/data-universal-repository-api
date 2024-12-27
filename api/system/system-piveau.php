@@ -8,7 +8,8 @@
 		// $useCasesSuffix = '/en/export-use-cases';
 
 		function getVersion($path) {
-			$yaml = file_get_contents($path);
+//			$yaml = file_get_contents($path);
+			$yaml = get_contents($path);
 
 			if ($yaml) {
 				$lines = preg_split("/\r\n|\n|\r/", $yaml);

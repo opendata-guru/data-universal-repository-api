@@ -7,7 +7,8 @@
 		$uri = $url . $catalogSuffix;
 		$uriDomain = end(explode('/', $url));
 
-		$source = file_get_contents($uri);
+//		$source = file_get_contents($uri);
+		$source = get_contents($uri);
 
 		$data = [];
 
@@ -15,12 +16,14 @@
 
 		for ($l = 0; $l < count($list); ++$l) {
 			$catalogURI = $url . $catalogsSuffix . $list[$l];
-			$source = file_get_contents($catalogURI);
+//			$source = file_get_contents($catalogURI);
+			$source = get_contents($catalogURI);
 			$catalog = json_decode($source);
 
 			$countURI = $url . $countSuffix;
 			$countURI = str_replace('###', $catalog->result->id, $countURI);
-			$source = file_get_contents($countURI);
+//			$source = file_get_contents($countURI);
+			$source = get_contents($countURI);
 			$countData = json_decode($source);
 
 			$title = $catalog->result->title;
