@@ -45,6 +45,61 @@
 		);
 	}
 
+	function postLID() {
+		$parameterLID = htmlspecialchars($_GET['lid']);
+		$error = null;
+
+		if ($parameterLID == '') {
+			$error = (object) array(
+				'error' => 400,
+				'header' => 'HTTP/1.0 400 Bad Request',
+				'message' => 'Bad Request. Path parameter \'lID\' is not set',
+				'parameter' => $parameterLID,
+			);
+		}
+
+		if (!$error) {
+			$lObject = findLObjectByLID($parameterLID);
+
+			if (is_null($lObject)) {
+				$error = (object) array(
+					'error' => 400,
+					'header' => 'HTTP/1.0 400 Bad Request',
+					'message' => 'Bad Request. Unknown ID in the \'lID\' path parameter.',
+					'parameter' => $parameterLID,
+				);
+			}
+		}
+
+		$parameterSID = htmlspecialchars($_GET['sid']);
+		if ($parameterSID == '') {
+			$parameterSID = htmlspecialchars($_GET['sID']);
+		}
+		if ($parameterSID != '') {
+			$sObject = findSObject($parameterSID);
+
+			if (is_null($sObject)) {
+				$error = (object) array(
+					'error' => 400,
+					'header' => 'HTTP/1.0 400 Bad Request',
+					'message' => 'Bad Request. Unknown ID in the \'sID\' path parameter.',
+					'parameter' => $parameterSID,
+				);
+			} else {
+				updateLObjectSID($lObject, $parameterSID);
+				$lObject = findLObjectByLID($parameterLID);
+
+				saveMappingFileLObjects();
+			}
+		}
+
+		return (object) array(
+			'error' => $error,
+			'parameter' => $parameterLID,
+			'lObject' => $lObject,
+		);
+	}
+
 	function loadMappingFileLObjects(&$mapping) {
 		global $fileLObjects;
 
@@ -189,6 +244,18 @@
 		$obj['lastseen'] = date('Y-m-d');
 
 		$loadedLObjects[] = $obj;
+	}
+
+	function updateLObjectSID(&$obj, $sid) {
+		global $loadedLObjects;
+
+		foreach($loadedLObjects as &$lObject) {
+			if ($obj['lid'] === $lObject['lid']) {
+				$lObject['sid'] = $sid;
+				$obj['sid'] = $sid;
+				return;
+			}
+		}
 	}
 
 	function getLObjectChildren($pid) {

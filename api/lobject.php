@@ -7,13 +7,13 @@
 	$lObject = null;
 
 	if ('POST' === $_SERVER['REQUEST_METHOD']) {
-/*		include('helper/_post.php');
+		include('helper/_post.php');
 
 		if (validPost()) {
 			include('helper/_lobject.php');
 			include('helper/_sobject.php');
 
-			$link = postPID();
+			$link = postLID();
 
 			if ($link->error) {
 				header($link->error->header);
@@ -23,9 +23,9 @@
 				));
 				exit;
 			} else {
-				$lObject = $link->pObject;
+				$lObject = $link->lObject;
 			}
-		} else {*/
+		} else {
 			header('HTTP/1.0 401 Unauthorized');
 			echo json_encode((object) array(
 				'error' => 401,
@@ -34,7 +34,7 @@
 				'repository' => 'https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data',
 			));
 			exit;
-//		}
+		}
 	} else if ('GET' !== $_SERVER['REQUEST_METHOD']) {
 		header('HTTP/1.0 405 Method Not Allowed');
 		echo json_encode((object) array(
@@ -64,21 +64,17 @@
 	}
 
 	include('helper/_provider.php');
-	include('helper/_sobject.php');
+	include_once('helper/_sobject.php');
 
 	$sObject = findSObject($lObject['sid']);
 	$pObject = findPObjectByPID($lObject['pid']);
 
-//	$obj = [];
-//	$obj['pid'] = providerGetPID($lObject);
 	$lObject['pobject'] = [
 		'pid' => providerGetPID($pObject),
 		'sid' => providerGetSID($pObject),
 		'url' => providerGetURL($pObject),
 	];
 	$lObject['sobject'] = $sObject;
-//	$obj['url'] = providerGetURL($lObject);
-//	$obj['deeplink'] = providerGetDeepLink($lObject);
 
 	echo json_encode($lObject);
 ?>

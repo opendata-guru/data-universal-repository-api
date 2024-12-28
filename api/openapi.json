@@ -583,7 +583,40 @@
               "application/json": {
                 "examples": {
                   "pSample": {
-                    "value": null
+                    "value": {
+                      "lid": "lpiCj",
+                      "pid": "p000",
+                      "identifier": "govdata",
+                      "title": "GovData",
+                      "sid": "smZ1A",
+                      "lastseen": "2024-12-28",
+                      "pobject": {
+                        "pid": "p000",
+                        "sid": "sYyj9",
+                        "url": "https://data.europa.eu"
+                      },
+                      "sobject": {
+                        "sid": "smZ1A",
+                        "title": {
+                          "de": "Deutschland",
+                          "en": "Germany"
+                        },
+                        "type": "country",
+                        "sameAs": {
+                          "wikidata": "http://www.wikidata.org/entity/Q183"
+                        },
+                        "partOf": {
+                          "wikidata": ""
+                        },
+                        "image": {
+                          "source": "http://commons.wikimedia.org/wiki/Special:FilePath/Flag%20of%20Germany.svg",
+                          "url": "https://opendata.guru/api-data/assets/smZ1A.svg"
+                        },
+                        "geocoding": {
+                          "germanRegionalKey": ""
+                        }
+                      }
+                    }
                   }
                 }
               }
@@ -1412,7 +1445,7 @@
         "examples": {
           "root": {
             "value": "lpiCj",
-            "summary": "GovData in European data portal"
+            "summary": "GovData linked in European data portal"
           }
         }
       },
@@ -1432,7 +1465,7 @@
           },
           "root": {
             "value": "lpiCj",
-            "summary": "GovData in European data portal"
+            "summary": "GovData linked in European data portal"
           }
         }
       },
