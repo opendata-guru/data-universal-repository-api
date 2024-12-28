@@ -265,6 +265,28 @@
 
 		foreach($loadedLObjects as $lObject) {
 			if ($pid === $lObject['pid']) {
+				$lObject['sobject'] = findSObject($lObject['sid']);
+				$lObjects[] = $lObject;
+			}
+		}
+
+		return $lObjects;
+	}
+
+	function getLObjectParents($sid) {
+		global $loadedLObjects;
+
+		$lObjects = [];
+
+		foreach($loadedLObjects as $lObject) {
+			if ($sid === $lObject['sid']) {
+				$pObject = findPObjectByPID($lObject['pid']);
+				$lObject['pobject'] = [
+					'pid' => providerGetPID($pObject),
+					'sid' => providerGetSID($pObject),
+					'url' => providerGetURL($pObject),
+					'sobject' => findSObject(providerGetSID($pObject)),
+				];
 				$lObjects[] = $lObject;
 			}
 		}

@@ -14,6 +14,7 @@
 		));
 		return;
 	} else {
+		include('helper/_provider.php');
 		include('helper/_sobject.php');
 		include('helper/_lobject.php');
 
@@ -37,7 +38,7 @@
 
 	$sid = $sObject->sid;
 
-	$lObjects = getLObjectChildren($sid);
+	$lObjects = getLObjectParents($sid);
 
 	$obj = [];
 	$obj['sid'] = $sid;
