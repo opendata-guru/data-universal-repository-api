@@ -24,7 +24,7 @@ RewriteRule ^$               /api/2/        [R,L,QSA]
 RewriteRule ^2$              /api/2/        [R,L,QSA]
 
 RewriteRule ^2/(i|p|s)$                               /api/$1.php                                  [L]
-RewriteRule ^2/(i|p|s)/([^/]+)$                       /api/$1object.php?$1id=$2&%{QUERY_STRING}    [L]
+RewriteRule ^2/(i|l|p|s)/([^/]+)$                     /api/$1object.php?$1id=$2&%{QUERY_STRING}    [L]
 RewriteRule ^2/(i|p|s)/([^/]+)/(l|p)$                 /api/$1object-$3.php?$1id=$2&%{QUERY_STRING} [L]
 RewriteRule ^2/(l|p)/(count|systems)/([^/]+)$         /api/$1-$2.php?date=$3&%{QUERY_STRING}       [L]
 RewriteRule ^2/hvd/(statistics|accessurls)/([^/]+)$   /api/hvd-$1.php?date=$2&%{QUERY_STRING}      [L]

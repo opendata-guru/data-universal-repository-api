@@ -353,6 +353,39 @@ paths:
       responses:
       tags:
         - supplier
+  /l/{lID}:
+    get:
+      summary: Learn more about a link
+      description: The information about the specified link is returned. Alternatively, the value “random” can be specified to receive information about a random link.
+      operationId: getLObject
+      parameters:
+        - $ref: "#/components/parameters/lidPathRandomParam"
+      responses:
+        '200':
+          description: Example of a successful answer
+          content:
+            application/json:
+              examples:
+                pSample:
+                  value:
+        '400':
+          $ref: "#/components/responses/400BadRequest"
+      tags:
+        - link
+    post:
+      summary: Changing the data of a link
+      description: Unfortunately, the link data cannot be changed here. Please create an issue on GitHub at https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data.
+      operationId: postLObject
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/lidPathParam"
+        - $ref: "#/components/parameters/sidParam"
+      responses:
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+      tags:
+        - link
   /l/count/{date}:
     get:
       summary: Get the number of datasets from all links
@@ -848,6 +881,33 @@ components:
         wfs:
           value: iYETj5
           summary: Renewable and waste resource (WFS)
+    lidPathParam:
+      name: lID
+      in: path
+      description: The unique lID of the link must be specified.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      examples:
+        root:
+          value: lpiCj
+          summary: GovData in European data portal
+    lidPathRandomParam:
+      name: lID
+      in: path
+      description: The unique lID of the link must be specified. Alternatively, the value 'random' can be specified to obtain a random link.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      examples:
+        random:
+          value: random
+          summary: Random lID
+        root:
+          value: lpiCj
+          summary: GovData in European data portal
     linkParam:
       name: link
       in: query

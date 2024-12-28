@@ -5,6 +5,46 @@
 	loadMappingFileLObjects($loadedLObjects);
 	$hashLObjects = md5(serialize($loadedLObjects));
 
+	function getLObject() {
+		global $loadedLObjects;
+
+		$parameterLID = htmlspecialchars($_GET['lid']);
+		$error = null;
+		$lObject = null;
+
+		if ($parameterLID == '') {
+			$error = (object) array(
+				'error' => 400,
+				'header' => 'HTTP/1.0 400 Bad Request',
+				'message' => 'Bad Request. Path parameter for \'lID\' is not set',
+				'parameter' => $parameterLID,
+			);
+		}
+
+		if (!$error) {
+			foreach($loadedLObjects as $object) {
+				if ($object['lid'] == $parameterLID) {
+					$lObject = $object;
+				}
+			}
+
+			if (is_null($lObject)) {
+				$error = (object) array(
+					'error' => 400,
+					'header' => 'HTTP/1.0 400 Bad Request',
+					'message' => 'Bad Request. Unknown ID in the \'lID\' path parameter.',
+					'parameter' => $parameterLID,
+				);
+			}
+		}
+
+		return (object) array(
+			'error' => $error,
+			'parameter' => $parameterLID,
+			'lObject' => $lObject,
+		);
+	}
+
 	function loadMappingFileLObjects(&$mapping) {
 		global $fileLObjects;
 
@@ -117,6 +157,18 @@
 
 		foreach($loadedLObjects as $lObject) {
 			if (($pid === $lObject['pid']) && ($identifier === $lObject['identifier'])) {
+				return $lObject;
+			}
+		}
+
+		return null;
+	}
+
+	function findLObjectByLID($lid) {
+		global $loadedLObjects;
+
+		foreach($loadedLObjects as $lObject) {
+			if ($lObject['lid'] === $lid) {
 				return $lObject;
 			}
 		}
