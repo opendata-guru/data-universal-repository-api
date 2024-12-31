@@ -69,7 +69,7 @@ s8uGo,Bayern,state,Bayern,http://dcat-ap.de/def/contributors/openDataBayern,,,,h
 sIzdu,Beauftragter der Bundesregierung für Kultur und Medien,federalAgency,Die Beauftragte der Bundesregierung für Kultur und Medien,http://dcat-ap.de/def/contributors/dieBeauftragteDerBundesregierungFuerKulturUndMedien,,,,,,,,Q813386,,,,
 ,Bedburg,municipality,Bedburg,offenedaten.kdvz-frechen.de|bedburg,offenedaten.kdvz.nrw|bedburg,,,https://offenedaten.kdvz.nrw/group/bedburg,2017-04-29,053620004004,,Q245292,,,,2023-12-15
 ,Bedburg-Hau,municipality,Gemeinde Bedburg-Hau,geoportal.de|GemeindeBedburgHau,,,,,,051540004004,,Q243433,,,,2023-05-21
-,Beetzsee,collectiveMunicipality,Amt Beetzsee,geoportal.de|AmtBeetzsee,,,,,,120695902,,Q478957,,,,2023-11-14
+sAkQP,Beetzsee,collectiveMunicipality,Amt Beetzsee,geoportal.de|AmtBeetzsee,,,,,,120695902,,Q478957,,,,2023-11-14
 ,Belm,municipality,Gemeinde Belm,geoportal.de|GemeindeBelm,,,,,,034590008008,,Q570299,,,,2023-08-11
 ,Bendorf,municipality,Stadt Bendorf,daten.rlp.de|stadt_bendorf,,,,,,071370203203,,Q708708,,,,2023-07-18
 ,Berga/Elster,municipality,Stadt Berga/Elster,geoportal.de|StadtBergaElster,,,,,,160760004004,,Q276150,,,,2023-08-13
@@ -150,7 +150,7 @@ s2MHv,Bundesministerium für Familie， Senioren， Frauen und Jugend,federal,Bu
 smSVM,Bundesministerium für Wirtschaft und Klimaschutz,federal,Bundesministerium für Wirtschaft und Klimaschutz,http://dcat-ap.de/def/contributors/bundesministeriumFuerWirtschaftUndKlimaschutz,,,,,,,,Q488589,,,,
 sumbK,Bundesministerium für wirtschaftliche Zusammenarbeit und Entwicklung,federal,Bundesministerium für wirtschaftliche Zusammenarbeit und Entwicklung,http://dcat-ap.de/def/contributors/bundesministeriumFuerWirtschaftlicheZusammenarbeitUndEntwicklung,,,,,,,,Q684357,,,,
 ,Bundesministerium für Wohnen， Stadtentwicklung und Bauwesen,federal,Bundesministerium für Wohnen， Stadtentwicklung und Bauwesen,geoportal.de|BundesministeriumfrWohnenStadtentwicklungundBauwesen,,,,,,,,Q110021824,,,,2023-08-17
-,Bundesnetzagentur,federalAgency,Bundesnetzagentur,opendata.schleswig-holstein.de|bundesnetzagentur,mcloud.de|OpenDataSchleswigHolsteinBundesnetzagentur,geoportal.de|BundesnetzagenturBNetzA,,,,,,Q269138,,,,2023-07-17
+s1VTM,Bundesnetzagentur,federalAgency,Bundesnetzagentur,opendata.schleswig-holstein.de|bundesnetzagentur,mcloud.de|OpenDataSchleswigHolsteinBundesnetzagentur,geoportal.de|BundesnetzagenturBNetzA,,,,,,Q269138,,,,2023-07-17
 s5DdX,Bundessortenamt,federalAgency,Bundessortenamt,http://dcat-ap.de/def/contributors/bundessortenamt,,,,,,,,Q1006713,,,,
 ,Bundesstelle für Eisenbahnunfalluntersuchung,federalAgency,Bundesstelle für Eisenbahnunfalluntersuchung (BEU),mcloud.de|BundesstellefrEisenbahnunfalluntersuchungBEU,,,,,,,,Q1311374,,,,2023-08-17
 ,Bundesstelle für Flugunfalluntersuchung,federalAgency,Bundesstelle für Flugunfalluntersuchung BFU,mcloud.de|BundesstellefrFlugunfalluntersuchungBFU,,,,,,,,Q315221,,,,2023-08-17
@@ -242,7 +242,7 @@ syLhj,Essen,municipality,Essen,open.nrw|essen,opendata.ruhr|essen,,,https://open
 ,Flensburg,municipality,Stadt Flensburg,geoportal.de|StadtFlensburg,opendata.schleswig-holstein.de|flensburg,,,,,010010000000,,Q3798,,,,2023-09-09
 ,Frankelbach,municipality,Ortsgemeinde Frankelbach,daten.rlp.de|ortsgemeinde_frankelbach,,,,,,073355010009,,Q566972,,,,2023-07-19
 ,Frankenblick,municipality,Gemeinde Frankenblick,geoportal.de|GemeindeFrankenblick,,,,,,160720023023,,Q507639,,,,2023-09-09
-,Frankfurt (Oder),municipality,Stadt Frankfurt (Oder),geoportal.de|StadtFrankfurtOder,,,,,,120530000000,,Q4024,,,,2023-08-13
+sTOy3,Frankfurt (Oder),municipality,Stadt Frankfurt (Oder),geoportal.de|StadtFrankfurtOder,,,,,,120530000000,,Q4024,,,,2023-08-13
 ,Frankfurt (Oder)， Kataster- und Vermessungsamt,municipalityAgency,Stadt Frankfurt (Oder)， Kataster- und Vermessungsamt,geoportal.de|StadtFrankfurtOderKatasterundVermessungsamt,,,,,,,120530000000,,,,,2023-08-11
 s4Urw,Frankfurt am Main,municipality,Stadt Frankfurt am Main,http://dcat-ap.de/def/contributors/stadtFrankfurtAmMain,,,,https://offenedaten.frankfurt.de/,2014-10-15,064120000000,,Q1794,https://offenedaten.frankfurt.de/api/3/action/package_list,https://offenedaten.frankfurt.de/api/3/action/organization_list,,2023-12-15
 ,Fredenbeck,collectiveMunicipality,Samtgemeinde Fredenbeck,geoportal.de|SamtgemeindeFredenbeck,,,,,,033595402,,Q488336,,,,2024-03-14
@@ -439,14 +439,14 @@ spIhj,Köln,municipalityPortal,Köln,open.nrw|koeln,geoportal.de|StadtKln,mcloud
 svdFe,Lahr/Schwarzwald,municipality,Stadt Lahr,www.daten-bw.de|stadt-lahr,,,,,,083175007065,,Q7039,,,,2023-12-28
 ,Lambsheim,municipality,Ortsgemeinde Lambsheim,daten.rlp.de|ortsgemeinde_lambsheim,,,,,,073385006016,,Q22961,,,,2023-07-18
 ,Landau in der Pfalz - Stadtbauamt,municipalityAgency,Stadt Landau - Stadtbauamt,daten.rlp.de|stadt_landau,,,,https://daten.rlp.de/organization/stadt_landau,,,073130000000,Q7052,,,,2023-07-18
-,"Landesamt für Bergbau, Geologie und Rohstoffe",stateAgency,"Landesamt für Bergbau, Geologie und Rohstoffe Brandenburg (LBGR)",geoportal.de|LandesamtfrBergbauGeologieundRohstoffeBrandenburgLBGR,,,,,,,12,Q1802046,,,,2023-11-17
+sWneH,"Landesamt für Bergbau, Geologie und Rohstoffe",stateAgency,"Landesamt für Bergbau, Geologie und Rohstoffe Brandenburg (LBGR)",geoportal.de|LandesamtfrBergbauGeologieundRohstoffeBrandenburgLBGR,,,,,,,12,Q1802046,,,,2023-11-17
 ,Landesamt für Denkmalpflege Schleswig-Holstein,stateAgency,Landesamt für Denkmalpflege,opendata.schleswig-holstein.de|landesamt-fur-denkmalpflege,,,,https://opendata.schleswig-holstein.de/organization/landesamt-fur-denkmalpflege,,,01,Q17124210,,,,2023-03-04
 ,Landesamt für Landwirtschaft und nachhaltige Landentwicklung,stateAgency,Landesamt für Landwirtschaft und nachhaltige Landentwicklung,opendata.schleswig-holstein.de|llnl,,,,,,,01,Q118695656,,,,2023-08-15
 ,Landesamt für Landwirtschaft， Umwelt und ländliche Räume,stateAgency,Landesamt für Landwirtschaft， Umwelt und ländliche Räume (LLUR),opendata.schleswig-holstein.de|llur,,,,https://opendata.schleswig-holstein.de/organization/llur,,,01,Q1802059,,,,2023-03-04
 ,Landesamt für Natur， Umwelt und Verbraucherschutz Nordrhein-Westfalen,stateAgency,Landesamt für Natur， Umwelt und Verbraucherschutz Nordrhein-Westfalen,geoportal.de|LandesamtfrNaturUmweltundVerbraucherschutzNordrheinWestfalen,,,,,,,05,Q1315485,,,,2023-08-16
 ,Landesamt für soziale Dienste,stateAgency,Landesamt für soziale Dienste,opendata.schleswig-holstein.de|landesamt-fur-soziale-dienste,,,,https://opendata.schleswig-holstein.de/organization/landesamt-fur-soziale-dienste,,,01,Q1802073,,,,2023-03-04
 ,Landesamt für Umwelt,stateAgency,Landesamt für Umwelt,opendata.schleswig-holstein.de|lfu,geoportal.de|LandesamtfrUmweltdesLandesSchleswigHolsteinLfU,mcloud.de|OpenDataSchleswigHolsteinLandesamtfrUmwelt,,,,,01,Q118695658,,,,2023-07-17
-,Landesamt für Umwelt,stateAgency,Landesamt für Umwelt Brandenburg (LfU),geoportal.de|LandesamtfrUmweltBrandenburgLfU,,,,,,,12,Q1325063,,,,2023-11-17
+szRQ5,Landesamt für Umwelt,stateAgency,Landesamt für Umwelt Brandenburg (LfU),geoportal.de|LandesamtfrUmweltBrandenburgLfU,,,,,,,12,Q1325063,,,,2023-11-17
 ,"Landesamt für Umwelt, Naturschutz und Geologie",stateAgency,"Landesamt für Umwelt, Naturschutz und Geologie Mecklenburg-Vorpommern (LUNG)",geoportal.de|LandesamtfrUmweltNaturschutzundGeologieMecklenburgVorpommernLUNG,,,,,,,13,Q1802062,,,,2023-11-17
 ,Landesamt für Umwelt， Landwirtschaft und Geologie,stateAgency,Sächsisches Landesamt für Umwelt， Landwirtschaft und Geologie,geoportal.de|SchsischesLandesamtfrUmweltLandwirtschaftundGeologie,register.opendata.sachsen.de|urn:uuid:ef916bfc-5d97-a8bb-a117-b10e5da45c6b,,,,,,14,Q1802061,,,,2023-07-24
 ,Landesamt für Vermessung und Geobasisinformation Rheinland-Pfalz,stateAgency,Landesamt für Vermessung und Geobasisinformationen,daten.rlp.de|landesamt_fuer_vermessung_und_geobasisinformationen,,,,,,,07,Q1802069,,,,2023-05-14
@@ -461,14 +461,14 @@ svdFe,Lahr/Schwarzwald,municipality,Stadt Lahr,www.daten-bw.de|stadt-lahr,,,,,,0
 ,Landesbetrieb Geoinformation und Vermessung,stateAgency,HMDKLGV,suche.transparenz.hamburg.de|hmdklgv,geoportal.de|LandesbetriebGeoinformationundVermessungLGVHamburg,,,https://metaver.de/freitextsuche?rstart=0&currentSelectorPage=1&f=type:opendata;provider:hh;,,,02,Q93384739,,,,2023-04-11
 ,Landesbetrieb Mobilität Rheinland-Pfalz,stateAgency,Landesbetrieb Mobilität Rheinland-Pfalz,daten.rlp.de|lbm_zentrale,mcloud.de|GovDataLandesbetriebMobilittRheinlandPfalz,,,,,,07,Q1802132,,,,2023-07-18
 ,Landesbetrieb Straßenbau und Verkehr Schleswig-Holstein,stateAgency,Landesbetrieb Straßenbau und Verkehr Schleswig-Holstein (LBV.SH),opendata.schleswig-holstein.de|lbv,mcloud.de|OpenDataSchleswigHolsteinLandesbetriebStraenbauundVerkehrSchleswigHolsteinLBVSH,,,,,,01,,,,,2023-08-15
-,Landesbetrieb Straßenwesen Brandenburg,stateAgency,Landesbetrieb Straßenwesen Brandenburg (LS),geoportal.de|LandesbetriebStraenwesenBrandenburgLS,geoportal.de|LandesbetriebStraenwesenBrandenburg,mcloud.de|GovDataLandesbetriebStraenwesenBrandenburg,,,,,12,Q1562587,,,,2023-11-17
+sA7hI,Landesbetrieb Straßenwesen Brandenburg,stateAgency,Landesbetrieb Straßenwesen Brandenburg (LS),geoportal.de|LandesbetriebStraenwesenBrandenburgLS,geoportal.de|LandesbetriebStraenwesenBrandenburg,mcloud.de|GovDataLandesbetriebStraenwesenBrandenburg,,,,,12,Q1562587,,,,2023-11-17
 ,Landesbetrieb Wald und Holz NRW,stateAgency,Landesbetrieb Wald und Holz Nordrhein-Westfalen,geoportal.de|LandesbetriebWaldundHolzNordrheinWestfalen,,,,,,,05,Q1286885,,,,2023-08-16
 ,Landesbibliothekszentrum Rheinland-Pfalz,stateAgency,Landesbibliothekszentrum Rheinland-Pfalz,daten.rlp.de|lbz,,,,,,,07,Q1802141,,,,2023-07-19
 ,Landesdirektion Sachsen,stateAgency,Landesdirektion Sachsen,register.opendata.sachsen.de|https://katalog.opendata.sachsen.de/store/3/resource/3,,,,,,,14,Q24510,,,,2023-12-16
 ,Landeskriminalamt Schleswig-Holstein,stateAgency,Landeskriminalamt Schleswig-Holstein,opendata.schleswig-holstein.de|landeskriminalamt-schleswig-holstein,,,,,,,01,Q1802342,,,,2023-07-17
 ,Landesmeldestelle Schleswig-Holstein,stateAgency,Landesmeldestelle Schleswig-Holstein,opendata.schleswig-holstein.de|landesmeldestelle,,,,https://opendata.schleswig-holstein.de/organization/landesmeldestelle,,,01,,,,,2023-03-04
 ,Landestalsperrenverwaltung Sachsen,stateAgency,Landestalsperrenverwaltung Sachsen,register.opendata.sachsen.de|urn:uuid:47a2224a-f547-5de7-9a0f-0c325af4bd70,,,,,,,14,Q1802660,,,,2023-12-16
-,Landesvermessung und Geobasisinformation Brandenburg,stateAgency,Landesvermessung und Geobasisinformation Brandenburg (LGB),geoportal.de|LandesvermessungundGeobasisinformationBrandenburgLGB,,,,,,,12,Q1802711,,,,2023-05-16
+sndYa,Landesvermessung und Geobasisinformation Brandenburg,stateAgency,Landesvermessung und Geobasisinformation Brandenburg (LGB),geoportal.de|LandesvermessungundGeobasisinformationBrandenburgLGB,,,,,,,12,Q1802711,,,,2023-05-16
 ,Landkreis Rostock,district,Landkreis Rostock,geoportal.de|LandkreisRostock,,,,,,13072,,Q2898,,,,2023-11-14
 ,Langenhagen,municipality,Stadt Langenhagen,geoportal.de|StadtLangenhagen,,,,,,032410010010,,Q4158,,,,2023-07-15
 ,Langenwetzendorf,collectiveMunicipality,Gemeinde Langenwetzendorf und der beauftragenden Gemeinden,geoportal.de|GemeindeLangenwetzendorfundderbeauftragendenGemeinden,,,,,,160765056,,Q538924,,,,2023-08-14
@@ -484,7 +484,7 @@ sWZuy,Leipzig,municipality,Stadt Leipzig,geoportal.de|StadtLeipzig,register.open
 ,Leipzig,district,Landratsamt Leipzig,geoportal.de|LandratsamtLeipzig,,,,,,14729,,Q6308,,,,2023-07-28
 ,Lemwerder,municipality,Gemeinde Lemwerder,geoportal.de|GemeindeLemwerder,,,,,,034610006006,,Q676883,,,,2024-03-14
 ,Lengerich,municipality,Stadt Lengerich,geoportal.de|StadtLengerich,,,,https://www.o-sp.de/lengerich/opendata,,055660040040,,Q181609,,,,2023-05-30
-,Lenzen-Elbtalaue,collectiveMunicipality,Amt Lenzen-Elbtalaue,geoportal.de|AmtLenzenElbtalaue,,,,,,120705005,,Q479558,,,,2023-11-14
+swzr0,Lenzen-Elbtalaue,collectiveMunicipality,Amt Lenzen-Elbtalaue,geoportal.de|AmtLenzenElbtalaue,,,,,,120705005,,Q479558,,,,2023-11-14
 ,Leutenberg,municipality,Stadt Leutenberg,geoportal.de|StadtLeutenberg,,,,,,160730106106,,Q550813,,,,2023-08-13
 ,Lieser,municipality,Ortsgemeinde Lieser,daten.rlp.de|ortsgemeinde_lieser,,,,,,072315001075,,Q646892,,,,2023-07-19
 ,Lilienthal,municipality,Gemeinde Lilienthal,geoportal.de|GemeindeLilienthal,,,,,,033560005005,,Q499920,,,,2024-03-14
@@ -632,7 +632,7 @@ sZqUm,Ostrach,municipality,Gemeinde Ostrach,www.daten-bw.de|gemeinde-ostrach,,,,
 ,Papenburg,municipality,Stadt Papenburg,geoportal.de|StadtPapenburg,,,,,,034540041041,,Q14957,,,,2023-08-13
 ,Parchim,municipality,Stadt Parchim,geoportal.de|StadtParchim,,,,,,130760108108,,Q559010,,,,2023-08-13
 ,Parlamentsdatenbank Dokrates,stateAgency,DOKRATES,suche.transparenz.hamburg.de|dokrates,,,,,,,02,,,,,2023-07-24
-,Petershagen/Eggersdorf,municipality,Gemeinde Petershagen/Eggersdorf,datenadler.de|GemeindePetershagenEggersdorf,geoportal.de|GemeindePetershagenEggersdorf,,,,,120640380380,,Q581905,,,,2024-03-14
+s6mBP,Petershagen/Eggersdorf,municipality,Gemeinde Petershagen/Eggersdorf,datenadler.de|GemeindePetershagenEggersdorf,geoportal.de|GemeindePetershagenEggersdorf,,,,,120640380380,,Q581905,,,,2024-03-14
 ,Piesport,municipality,Ortsgemeinde Piesport,daten.rlp.de|ortsgemeinde_piesport,,,,,,072315001105,,Q375762,,,,2023-07-19
 ,Pinneberg,district,Kreis Pinneberg,opendata.schleswig-holstein.de|kreis-pinneberg,geoportal.de|KreisverwaltungPinneberg,,,https://opendata.schleswig-holstein.de/organization/kreis-pinneberg,,01056,,Q3006,,,,2023-05-08
 ,Pleißenaue,collectiveMunicipality,Verwaltungsgemeinschaft Pleißenaue,geoportal.de|VerwaltungsgemeinschaftPleienaue,,,,,,160775004,,Q37658,,,,2023-09-19
@@ -861,7 +861,7 @@ sO6Gl,Umweltbundesamt,federalAgency,Umweltbundesamt (UBA),geoportal.de|Umweltbun
 ,Wittlich-Land,collectiveMunicipality,Verbandsgemeinde Wittlich-Land,daten.rlp.de|verbandsgemeinde_wittlich_land,,,,,,072315008,,Q17300305,,,,2023-07-19
 ,Wolfsburg,municipality,Stadt Wolfsburg,geoportal.de|StadtWolfsburg,,,,,,031030000000,,Q3014,,,,2023-09-09
 ,Worms,municipality,Stadt Worms,daten.rlp.de|stadt_worms,,,,,,073190000000,,Q3852,,,,2023-07-19
-,Wriezen,municipality,Stadt Wriezen,geoportal.de|StadtWriezen,,,,,,120640512512,,Q588598,,,,2023-08-13
+s1YTb,Wriezen,municipality,Stadt Wriezen,geoportal.de|StadtWriezen,,,,,,120640512512,,Q588598,,,,2023-08-13
 s8hHk,Wuppertal,municipalityPortal,Stadt Wuppertal,open.nrw|wuppertal,geoportal.de|StadtWuppertal,mcloud.de|OpenNRWWuppertal,,https://www.offenedaten-wuppertal.de/,2016-09-05,,051240000000,,https://www.offenedaten-wuppertal.de/api/3/action/package_list,https://www.offenedaten-wuppertal.de/api/3/action/group_list,https://www.offenedaten-wuppertal.de/catalog.xml,2023-12-03
 ,Wuppertal,municipality,Stadt Wuppertal,www.offenedaten-wuppertal.de|stadt-wuppertal,,,,,,051240000000,,Q2107,,,,2023-12-03
 ,Wurster Nordseeküste,municipality,Gemeinde Wurster Nordseeküste,geoportal.de|GemeindeWursterNordseekste,,,,,,033520061061,,Q2595304,,,,2024-03-14
