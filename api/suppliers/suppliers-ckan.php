@@ -1,7 +1,8 @@
 <?php
 	function scrapeWebsite($groupID, $url, $groupWebsiteSuffix) {
 		$uri = $url . $groupWebsiteSuffix . $groupID;
-		$source = file_get_contents($uri);
+//		$source = file_get_contents($uri);
+		$source = get_contents($uri);
 
 		$html = $source;
 		$start = stripos($html, 'breadcrumb');
@@ -77,7 +78,8 @@
 		} else {
 			// DKAN
 			$uri = $url . $groupListSuffix;
-			$json = json_decode(file_get_contents($uri));
+//			$json = json_decode(file_get_contents($uri));
+			$json = json_decode(get_contents($uri));
 
 			$jsonData = $json;
 			if ($json->result) {
@@ -86,7 +88,8 @@
 
 			foreach($jsonData as $groupID) {
 				$uri = $url . $groupShowSuffix;
-				$json = json_decode(file_get_contents($uri . $groupID->name));
+//				$json = json_decode(file_get_contents($uri . $groupID->name));
+				$json = json_decode(get_contents($uri . $groupID->name));
 
 				if ($json) {
 					$uris = json_decode($json->result->extras[0]->value);
