@@ -111,6 +111,9 @@
 			$PIVEAU_SEARCH_SEARCH = '/api/hub/search/search';
 			$PIVEAU_SEARCH_ = '/api/hub/search/';
 			$PIVEAU_SEARCH = '/api/hub/search';
+			$PIVEAU_REPO_DATASETS = '/api/hub/repo/datasets';
+			$PIVEAU_REPO_ = '/api/hub/repo/';
+			$PIVEAU_REPO = '/api/hub/repo';
 			$found = null;
 
 			if ($PIVEAU_SEARCH_CATALOGUES_ == substr($link['path'], -strlen($PIVEAU_SEARCH_CATALOGUES_))) {
@@ -127,6 +130,12 @@
 				$found = substr($link['path'], 0, -strlen($PIVEAU_SEARCH_));
 			} else if ($PIVEAU_SEARCH == substr($link['path'], -strlen($PIVEAU_SEARCH))) {
 				$found = substr($link['path'], 0, -strlen($PIVEAU_SEARCH));
+			} else if ($PIVEAU_REPO_DATASETS == substr($link['path'], -strlen($PIVEAU_REPO_DATASETS))) {
+				$found = substr($link['path'], 0, -strlen($PIVEAU_REPO_DATASETS));
+			} else if ($PIVEAU_REPO_ == substr($link['path'], -strlen($PIVEAU_REPO_))) {
+				$found = substr($link['path'], 0, -strlen($PIVEAU_REPO_));
+			} else if ($PIVEAU_REPO == substr($link['path'], -strlen($PIVEAU_REPO))) {
+				$found = substr($link['path'], 0, -strlen($PIVEAU_REPO));
 			}
 
 			if ($found !== null) {
