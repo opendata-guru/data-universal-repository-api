@@ -106,6 +106,8 @@
 		$idIdentifier = null;
 		$idLastSeen = null;
 		$idTitle = null;
+		$idHasPart = null;
+		$idIsPartOf = null;
 		$idLID = null;
 		$idPID = null;
 		$idSID = null;
@@ -122,6 +124,10 @@
 				$idIdentifier = $m;
 			} else if ($mappingHeader[$m] === 'title') {
 				$idTitle = $m;
+			} else if ($mappingHeader[$m] === 'has_part') {
+				$idHasPart = $m;
+			} else if ($mappingHeader[$m] === 'is_part_of') {
+				$idIsPartOf = $m;
 			} else if ($mappingHeader[$m] === 'sid') {
 				$idSID = $m;
 			} else if ($mappingHeader[$m] === 'lastseen') {
@@ -139,6 +145,8 @@
 				$lObject['pid'] = $arr[$idPID] ?: '';
 				$lObject['identifier'] = $arr[$idIdentifier] ?: '';
 				$lObject['title'] = $arr[$idTitle] ?: '';
+				$lObject['has_part'] = json_decode($arr[$idHasPart] ?: '[]');
+				$lObject['is_part_of'] = $arr[$idIsPartOf] ?: '';
 				$lObject['sid'] = $arr[$idSID] ?: '';
 				$lObject['lastseen'] = $arr[$idLastSeen] ?: '';
 
@@ -160,6 +168,8 @@
 				'pid',
 				'identifier',
 				'title',
+				'has_part',
+				'is_part_of',
 				'sid',
 				'lastseen'
 			];
@@ -172,6 +182,8 @@
 					$line['pid'],
 					$line['identifier'],
 					$line['title'],
+					json_encode($line['has_part'] ?: []),
+					$line['is_part_of'] ?: '',
 					$line['sid'],
 					$line['lastseen']
 				], ',');
@@ -236,6 +248,9 @@
 
 		foreach($loadedLObjects as &$lObject) {
 			if (($obj['pid'] === $lObject['pid']) && ($obj['identifier'] === $lObject['identifier'])) {
+				$lObject['title'] = $obj['title'];
+				$lObject['has_part'] = $obj['has_part'];
+				$lObject['is_part_of'] = $obj['is_part_of'];
 				$lObject['lastseen'] = date('Y-m-d');
 				return;
 			}

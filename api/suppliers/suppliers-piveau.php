@@ -7,7 +7,6 @@
 		$uri = $url . $catalogSuffix;
 		$uriDomain = end(explode('/', $url));
 
-//		$source = file_get_contents($uri);
 		$source = get_contents($uri);
 
 		$data = [];
@@ -16,13 +15,11 @@
 
 		for ($l = 0; $l < count($list); ++$l) {
 			$catalogURI = $url . $catalogsSuffix . $list[$l];
-//			$source = file_get_contents($catalogURI);
 			$source = get_contents($catalogURI);
 			$catalog = json_decode($source);
 
 			$countURI = $url . $countSuffix;
 			$countURI = str_replace('###', $catalog->result->id, $countURI);
-//			$source = file_get_contents($countURI);
 			$source = get_contents($countURI);
 			$countData = json_decode($source);
 
@@ -34,7 +31,7 @@
 //			$count = $catalog->result->count;
 			$count = $countData->result->count;
 
-			// new in Bavaria
+			// used in Bavaria and Europe
 			$is_part_of = $catalog->result->is_part_of;
 			$has_part = $catalog->result->has_part;
 
@@ -53,10 +50,19 @@
 		for ($d = 0; $d < count($data); ++$d) {
 			if ($data[$d]['is_part_of'] === null) {
 				unset($data[$d]['is_part_of']);
+			} else {
+				$lObject = findLObject($data[$d]['lobject']['pid'], $data[$d]['is_part_of']);
+				$data[$d]['lobject']['is_part_of'] = $lObject['lid'];
+
+				updateLObject($data[$d]['lobject']);
 			}
+
 			if ($data[$d]['has_part']) {
 				if (!$data[$d]['parts']) {
 					$data[$d]['parts'] = array();
+				}
+				if (!$data[$d]['lobject']['has_part']) {
+					$data[$d]['lobject']['has_part'] = array();
 				}
 				$reset = false;
 
@@ -74,6 +80,9 @@
 
 								array_splice($data[$d]['has_part'], $h, 1);
 								$data[$d]['parts'][] = $data[$d2];
+
+								$data[$d]['lobject']['has_part'][] = $data[$d2]['lobject']['lid'];
+								updateLObject($data[$d]['lobject']);
 
 								array_splice($data, $d2, 1);
 								$reset = true;
