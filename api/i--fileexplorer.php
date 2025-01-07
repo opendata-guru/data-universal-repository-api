@@ -6,6 +6,7 @@
 			'all_objects' => 'Alle Objekte',
 			'defects' => 'Defekte Objekte',
 			'journal' => 'Tagebuch',
+			'journalToday' => 'Tagebuch (heute)',
 			'linksAdded' => 'Neue Links',
 			'linksRemoved' => 'Entfernte Links',
 			'member_states' => 'EU-Mitgliedstaaten',
@@ -27,6 +28,7 @@
 			'all_objects' => 'All objects',
 			'defects' => 'Defective objects',
 			'journal' => 'Journal',
+			'journalToday' => 'Journal (today)',
 			'linksAdded' => 'New links',
 			'linksRemoved' => 'Removed links',
 			'member_states' => 'EU member states',
@@ -135,6 +137,12 @@
 	}
 
 	function buildFolder($path, $folder) {
+		$foldertype = '';
+
+		if (isset($folder->overlay)) {
+			$foldertype = $folder->overlay;
+		}
+
 		$entry = array(
 			'id' => $folder->id,
 			'name' => $folder->title,
@@ -143,7 +151,7 @@
 
 			// optional
 			'tooltip' => getTooltip($folder->title, []),
-//			'overlay' => 'overlay_own_class',
+			'overlay' => 'foldertype_' . $foldertype,
 //			'attrs' => ???,
 //			'thumb' => 'https://opendata.guru/govdata/assets/folder.svg',
 		);
@@ -359,6 +367,15 @@
 			$result->folders[] = (object) array(
 				'id' => 'tombstones',
 				'title' => $dict[$lang]->tombstones
+			);
+
+			$datetime = new DateTime('today');
+			$isoMonth = $datetime->format('Y-m');
+			$isoDate = $datetime->format('Y-m-d');
+			$result->folders[] = (object) array(
+				'id' => 'journal/' . $isoMonth . '/' . $isoDate,
+				'overlay' => 'symlink',
+				'title' => $dict[$lang]->journalToday
 			);
 
 			return $result;
