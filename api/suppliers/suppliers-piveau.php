@@ -1,4 +1,9 @@
 <?php
+	// COMMENT THIS LINES
+//	ini_set('display_errors', 1);
+//	ini_set('display_startup_errors', 1);
+//	error_reporting(E_ALL);
+
 	function suppliersPiveau($url, $pid) {
 		$catalogSuffix = '/api/hub/search/catalogues';
 		$catalogsSuffix = '/api/hub/search/catalogues/';
@@ -30,8 +35,12 @@
 			}
 
 			$title = $catalog->result->title;
-			$titleLang = array_keys((array)$title)[0];
-			$title = ((array)$title)[$titleLang];
+			if ($title) {
+				$titleLang = array_keys((array)$title)[0];
+				$title = ((array)$title)[$titleLang];
+			} else if ($catalog->result->publisher) {
+				$title = $catalog->result->publisher->name;
+			}
 
 			$id = $catalog->result->id;
 
@@ -54,26 +63,29 @@
 		for ($d = 0; $d < count($data); ++$d) {
 			if ($data[$d]['ispartof']) {
 				$parentLObject = findLObject($data[$d]['lobject']['pid'], $data[$d]['ispartof']);
-				$parentIndex = array_search($parentLObject['lid'], array_column($data, 'lid'));
+				if ($parentLObject) {
+					$parentIndex = array_search($parentLObject['lid'], array_column($data, 'lid'));
 
-				if (!$data[$d]['lobject']['ispartof']) {
-					$data[$d]['lobject']['ispartof'] = array();
-				}
-				$data[$d]['lobject']['ispartof'][] = $parentLObject['lid'];
-				$data[$d]['lobject']['ispartof'] = array_unique($data[$d]['lobject']['ispartof']);
-
-				updateLObject($data[$d]['lobject']);
-
-				if ($parentIndex !== false) {
-					if (!$data[$parentIndex]['lobject']['haspart']) {
-						$data[$parentIndex]['lobject']['haspart'] = array();
+					if (!$data[$d]['lobject']['ispartof']) {
+						$data[$d]['lobject']['ispartof'] = array();
 					}
-					$data[$parentIndex]['lobject']['haspart'][] = $data[$d]['lobject']['lid'];
-					$data[$parentIndex]['lobject']['haspart'] = array_unique($data[$parentIndex]['lobject']['haspart']);
+					$data[$d]['lobject']['ispartof'][] = $parentLObject['lid'];
+					$data[$d]['lobject']['ispartof'] = array_unique($data[$d]['lobject']['ispartof']);
+					$data[$d]['lobject']['ispartof'] = array_filter($data[$d]['lobject']['ispartof']);
 
-					updateLObject($data[$parentIndex]['lobject']);
+					updateLObject($data[$d]['lobject']);
+
+					if ($parentIndex !== false) {
+						if (!$data[$parentIndex]['lobject']['haspart']) {
+							$data[$parentIndex]['lobject']['haspart'] = array();
+						}
+						$data[$parentIndex]['lobject']['haspart'][] = $data[$d]['lobject']['lid'];
+						$data[$parentIndex]['lobject']['haspart'] = array_unique($data[$parentIndex]['lobject']['haspart']);
+						$data[$parentIndex]['lobject']['haspart'] = array_filter($data[$parentIndex]['lobject']['haspart']);
+
+						updateLObject($data[$parentIndex]['lobject']);
+					}
 				}
-
 			}
 
 			if ($data[$d]['haspart']) {
@@ -82,25 +94,32 @@
 						// error - recursion
 					} else {
 						$childLObject = findLObject($data[$d]['lobject']['pid'], $data[$d]['haspart'][$h]);
-						$childIndex = array_search($childLObject['lid'], array_column($data, 'lid'));
+						if ($childLObject) {
+							$childIndex = array_search($childLObject['lid'], array_column($data, 'lid'));
 
-						if (!$data[$d]['lobject']['haspart']) {
-							$data[$d]['lobject']['haspart'] = array();
-						}
-
-						$data[$d]['lobject']['haspart'][] = $childLObject['lid'];
-						$data[$d]['lobject']['haspart'] = array_unique($data[$d]['lobject']['haspart']);
-
-						updateLObject($data[$d]['lobject']);
-
-						if ($childIndex !== false) {
-							if (!$data[$childIndex]['lobject']['ispartof']) {
-								$data[$childIndex]['lobject']['ispartof'] = array();
+							if (!$data[$d]['lobject']['haspart']) {
+								$data[$d]['lobject']['haspart'] = array();
 							}
-							$data[$childIndex]['lobject']['ispartof'][] = $data[$d]['lobject']['lid'];
-							$data[$childIndex]['lobject']['ispartof'] = array_unique($data[$childIndex]['lobject']['ispartof']);
+							if (!is_array($data[$d]['lobject']['haspart'])) {
+								$data[$d]['lobject']['haspart'] = array();
+							}
 
-							updateLObject($data[$childIndex]['lobject']);
+							$data[$d]['lobject']['haspart'][] = $childLObject['lid'];
+							$data[$d]['lobject']['haspart'] = array_unique($data[$d]['lobject']['haspart']);
+							$data[$d]['lobject']['haspart'] = array_filter($data[$d]['lobject']['haspart']);
+
+							updateLObject($data[$d]['lobject']);
+
+							if ($childIndex !== false) {
+								if (!$data[$childIndex]['lobject']['ispartof']) {
+									$data[$childIndex]['lobject']['ispartof'] = array();
+								}
+								$data[$childIndex]['lobject']['ispartof'][] = $data[$d]['lobject']['lid'];
+								$data[$childIndex]['lobject']['ispartof'] = array_unique($data[$childIndex]['lobject']['ispartof']);
+								$data[$childIndex]['lobject']['ispartof'] = array_filter($data[$childIndex]['lobject']['ispartof']);
+
+								updateLObject($data[$childIndex]['lobject']);
+							}
 						}
 					}
 				}
