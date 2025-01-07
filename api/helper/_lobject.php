@@ -124,9 +124,9 @@
 				$idIdentifier = $m;
 			} else if ($mappingHeader[$m] === 'title') {
 				$idTitle = $m;
-			} else if ($mappingHeader[$m] === 'has_part') {
+			} else if ($mappingHeader[$m] === 'haspart') {
 				$idHasPart = $m;
-			} else if ($mappingHeader[$m] === 'is_part_of') {
+			} else if ($mappingHeader[$m] === 'ispartof') {
 				$idIsPartOf = $m;
 			} else if ($mappingHeader[$m] === 'sid') {
 				$idSID = $m;
@@ -145,8 +145,8 @@
 				$lObject['pid'] = $arr[$idPID] ?: '';
 				$lObject['identifier'] = $arr[$idIdentifier] ?: '';
 				$lObject['title'] = $arr[$idTitle] ?: '';
-				$lObject['has_part'] = json_decode($arr[$idHasPart] ?: '[]');
-				$lObject['is_part_of'] = $arr[$idIsPartOf] ?: '';
+				$lObject['haspart'] = json_decode($arr[$idHasPart] ?: '[]');
+				$lObject['ispartof'] = json_decode($arr[$idIsPartOf] ?: '[]');
 				$lObject['sid'] = $arr[$idSID] ?: '';
 				$lObject['lastseen'] = $arr[$idLastSeen] ?: '';
 
@@ -168,8 +168,8 @@
 				'pid',
 				'identifier',
 				'title',
-				'has_part',
-				'is_part_of',
+				'haspart',
+				'ispartof',
 				'sid',
 				'lastseen'
 			];
@@ -182,8 +182,8 @@
 					$line['pid'],
 					$line['identifier'],
 					$line['title'],
-					json_encode($line['has_part'] ?: []),
-					$line['is_part_of'] ?: '',
+					json_encode($line['haspart'] ?: []),
+					json_encode($line['ispartof'] ?: []),
 					$line['sid'],
 					$line['lastseen']
 				], ',');
@@ -249,8 +249,8 @@
 		foreach($loadedLObjects as &$lObject) {
 			if (($obj['pid'] === $lObject['pid']) && ($obj['identifier'] === $lObject['identifier'])) {
 				$lObject['title'] = $obj['title'];
-				$lObject['has_part'] = $obj['has_part'];
-				$lObject['is_part_of'] = $obj['is_part_of'];
+				$lObject['haspart'] = $obj['haspart'];
+				$lObject['ispartof'] = $obj['ispartof'];
 				$lObject['lastseen'] = date('Y-m-d');
 				return;
 			}
