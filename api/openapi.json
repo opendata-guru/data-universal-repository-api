@@ -377,7 +377,7 @@
           {
             "name": "type",
             "in": "query",
-            "description": "Type of the supplier. The types are grouped by:\n\n- international\n- supranational (e.g. Europe)\n- country (e.g. Germany)\n- federal (e.g. Bundesministerium des Innern)\n- state (e.g. Saarland)\n- governmentRegion\n- regional\n- district\n- collectiveMunicipality\n- municipality\n- business, civilSociety and research\n",
+            "description": "Type of the supplier. The types are grouped by:\n\n- international\n- supranational (e.g. Europe)\n- country (e.g. Germany)\n- federal (e.g. Bundesministerium des Innern)\n- state (e.g. Saarland)\n- governmentRegion\n- regional\n- district\n- collectiveMunicipality\n- municipality\n- business, civilSociety, research and religiousCommunity\n",
             "required": true,
             "allowEmptyValue": false,
             "schema": {
@@ -402,7 +402,8 @@
                 "municipalityAgency",
                 "business",
                 "civilSociety",
-                "research"
+                "research",
+                "religiousCommunity"
               ]
             }
           },

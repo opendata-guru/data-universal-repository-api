@@ -12,7 +12,7 @@
 		'district', 'districtAgency',
 		'collectiveMunicipality',
 		'municipality', 'municipalityAgency',
-		'business','civilSociety','research',
+		'business','civilSociety','research','religiousCommunity'
 	);
 
 	loadMappingFileSObjects($loadedSObjects);

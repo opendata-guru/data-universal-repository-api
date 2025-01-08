@@ -252,12 +252,12 @@ paths:
             - district
             - collectiveMunicipality
             - municipality
-            - business, civilSociety and research
+            - business, civilSociety, research and religiousCommunity
           required: true
           allowEmptyValue: false
           schema:
             type: string
-            enum: [international,supranational,supranationalAgency,country,countryAgency,federal,federalAgency,state,stateAgency,state+municipality,governmentRegion,regionalNetwork,district,districtAgency,collectiveMunicipality,municipality,municipalityAgency,business,civilSociety,research]
+            enum: [international,supranational,supranationalAgency,country,countryAgency,federal,federalAgency,state,stateAgency,state+municipality,governmentRegion,regionalNetwork,district,districtAgency,collectiveMunicipality,municipality,municipalityAgency,business,civilSociety,research,religiousCommunity]
         - $ref: "#/components/parameters/sameaswikidataParam"
         - $ref: "#/components/parameters/partofwikidataParam"
         - name: title
