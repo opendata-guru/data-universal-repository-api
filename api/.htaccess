@@ -26,14 +26,15 @@ RewriteRule ^2$              /api/2/        [R,L,QSA]
 RewriteRule ^2/(i|p|s)$                               /api/$1.php                                  [L]
 RewriteRule ^2/(i|l|p|s)/([^/]+)$                     /api/$1object.php?$1id=$2&%{QUERY_STRING}    [L]
 RewriteRule ^2/(i|p|s)/([^/]+)/(l|p)$                 /api/$1object-$3.php?$1id=$2&%{QUERY_STRING} [L]
-RewriteRule ^2/(l|p)/(count|systems)/([^/]+)$         /api/$1-$2.php?date=$3&%{QUERY_STRING}       [L]
+RewriteRule ^2/(l)/(count)/([^/]+)$                   /api/$1-$2.php?date=$3&%{QUERY_STRING}       [L]
+RewriteRule ^2/(p)/(count|issues|systems)/([^/]+)$    /api/$1-$2.php?date=$3&%{QUERY_STRING}       [L]
 RewriteRule ^2/hvd/(statistics|accessurls)/([^/]+)$   /api/hvd-$1.php?date=$2&%{QUERY_STRING}      [L]
 RewriteRule ^2/hvd/(accessurls)/([^/]+)/(change)$     /api/hvd-$1-$3.php?date=$2&%{QUERY_STRING}   [L]
+RewriteRule ^2/(live)/(harvester|insights|inspireregistry)$  /api/$1-$2.php                        [L]
 RewriteRule ^2/(datasets|suppliers|system)$           /api/$1.php               [L]
-RewriteRule ^2/(data-providers)$                      /api/$1.php               [L]
 RewriteRule ^2/datasets/(count|find)$                 /api/datasets-$1.php      [L]
-RewriteRule ^2/(live)/(insights|inspireregistry)$     /api/$1-$2.php            [L]
 RewriteRule ^2/system/changelog$                      /api/system-changelog.php [L]
+RewriteRule ^2/(data-providers)$                      /api/$1.php               [L]
 
 <IfModule mod_headers.c>
     Header set Access-Control-Allow-Origin "*"

@@ -179,6 +179,26 @@ paths:
           $ref: "#/components/responses/400BadRequest"
       tags:
         - portal
+  /p/issues/{date}:
+    get:
+      summary: Get the problems of all portals
+      description: Get the errors, warnings and information of all portals for a specific day
+      operationId: getPObjectsIssuesDate
+      parameters:
+        - $ref: "#/components/parameters/datePathParam"
+      responses:
+        '200':
+          description: Example of a successful answer
+          content:
+            application/json:
+              examples:
+                pSample:
+                  value:
+                    To do
+        '400':
+          $ref: "#/components/responses/400BadRequest"
+      tags:
+        - portal
   /p/systems/{date}:
     get:
       summary: Get system status information from all portals
@@ -342,6 +362,14 @@ paths:
       parameters:
         - $ref: "#/components/parameters/sidPathRandomParam"
       responses:
+        '200':
+          description: Example of a successful answer
+          content:
+            application/json:
+              examples:
+                pSample:
+                  value:
+                    tbd.
       tags:
         - supplier
   /s/{sID}/l:
@@ -351,6 +379,14 @@ paths:
       parameters:
         - $ref: "#/components/parameters/sidPathRandomParam"
       responses:
+        '200':
+          description: Example of a successful answer
+          content:
+            application/json:
+              examples:
+                pSample:
+                  value:
+                    tbd.
       tags:
         - supplier
   /l/{lID}:
@@ -643,6 +679,25 @@ paths:
           $ref: "#/components/responses/400BadRequest"
       tags:
         - live
+  /live/harvester:
+    get:
+      summary: Get all harvesters
+      description: Get a list of all harvesters on a portal
+      operationId: getLiveHarvester
+      parameters:
+        - $ref: "#/components/parameters/linkParamOptional"
+        - $ref: "#/components/parameters/pidParam"
+      responses:
+        '200':
+          description: Example of a successful answer
+          content:
+            application/json:
+              examples:
+                sample:
+                  value:
+                    tbd.
+      tags:
+        - live
   /live/insights:
     get:
       summary: Get insights from a link
@@ -699,7 +754,7 @@ paths:
     get:
       summary: Get the INSPIRE Registry
       description: Get some of the information from the INSPIRE registry
-      operationId: getInspireRegistry
+      operationId: getLiveInspireRegistry
       responses:
         '200':
           description: Example of a successful answer
