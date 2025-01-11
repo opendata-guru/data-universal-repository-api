@@ -194,7 +194,16 @@ paths:
               examples:
                 pSample:
                   value:
-                    To do
+                    p000:
+                      - message: couldNotCountPObject
+                        severity: error
+                      - message: noSObjectFound
+                        severity: warning
+                      - message: missingSObjects
+                        sObjects: 115
+                        lObjects: 190
+                        severity: info
+                    
         '400':
           $ref: "#/components/responses/400BadRequest"
       tags:

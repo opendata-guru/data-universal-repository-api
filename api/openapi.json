@@ -301,7 +301,24 @@
               "application/json": {
                 "examples": {
                   "pSample": {
-                    "value": "To do"
+                    "value": {
+                      "p000": [
+                        {
+                          "message": "couldNotCountPObject",
+                          "severity": "error"
+                        },
+                        {
+                          "message": "noSObjectFound",
+                          "severity": "warning"
+                        },
+                        {
+                          "message": "missingSObjects",
+                          "sObjects": 115,
+                          "lObjects": 190,
+                          "severity": "info"
+                        }
+                      ]
+                    }
                   }
                 }
               }
