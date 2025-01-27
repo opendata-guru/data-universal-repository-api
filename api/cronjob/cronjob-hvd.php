@@ -174,6 +174,7 @@
 			'http://dcat-ap.de/def/licenses/dl-zero-de/2.0'
 		);
 		$valuesRestrictive = array(
+			'http://dcat-ap.de/def/licenses/other-open',
 			'http://dcat-ap.de/def/licenses/other-closed',
 			'http://dcat-ap.de/def/licenses/cc-by-sa/4.0',
 			'http://dcat-ap.de/def/licenses/cc-by-nc-de/3.0',
