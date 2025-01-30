@@ -50,6 +50,7 @@
 				'catalogURI' => $key,
 				'sObject' => findSObject($sid),
 				'datasets' => $value->datasets,
+				'dataservices' => $value->dataservices,
 				'distributions' => $value->distributions,
 				'licenses' => $value->licenses,
 			);
