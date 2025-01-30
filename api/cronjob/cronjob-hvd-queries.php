@@ -3,6 +3,8 @@
 		return 'http://data.europa.eu/88u/catalogue/govdata';
 
     // denmark HVD catalog: http://data.europa.eu/88u/catalogue/datavejviser
+    // http://data.europa.eu/88u/catalogue/plateforme-ouverte-des-donnees-publiques-francaises
+    // http://data.europa.eu/88u/catalogue/data-gov-sk
   }
 
 	function getSPARQLgetEUcatalogs() {
@@ -58,7 +60,7 @@ select (count(?dist) as ?count) where {
 prefix dcat: <http://www.w3.org/ns/dcat#>
 prefix r5r: <http://data.europa.eu/r5r/>
 
-select (count(?api) as ?count) where {
+select (count(distinct ?api) as ?count) where {
   <?MSCat?> ?cp ?d.
   ?d r5r:applicableLegislation <http://data.europa.eu/eli/reg_impl/2023/138/oj>.
   {
