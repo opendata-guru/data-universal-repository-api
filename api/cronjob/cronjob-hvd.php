@@ -166,14 +166,18 @@
 			'http://dcat-ap.de/def/licenses/odbl',
 			'http://dcat-ap.de/def/licenses/dl-by-de/2.0',
 			'http://dcat-ap.de/def/licenses/geonutz/20130319',
+			'https://www.ine.es/aviso_legal',
 			'https://www.etalab.gouv.fr/licence-ouverte-open-licence',
 			'https://www.etalab.gouv.fr/wp-content/uploads/2014/05/Licence_Ouverte.pdf'
 		);
 		$valuesCC0comparable = array(
+			'http://creativecommons.org/publicdomain/mark/1.0/deed.nl',
+			'http://inspire.ec.europa.eu/metadata-codelist/ConditionsApplyingToAccessAndUse/noConditionsApply',
 			'http://dcat-ap.de/def/licenses/dl-de-zero-2.0',
 			'http://dcat-ap.de/def/licenses/dl-zero-de/2.0'
 		);
 		$valuesRestrictive = array(
+			'https://creativecommons.org/licenses/by-sa/4.0/',
 			'http://dcat-ap.de/def/licenses/other-open',
 			'http://dcat-ap.de/def/licenses/other-closed',
 			'http://dcat-ap.de/def/licenses/cc-by-sa/4.0',
@@ -183,7 +187,10 @@
 		$valuesCCBY = array(
 			'http://publications.europa.eu/resource/authority/licence/CC_BY_4_0',
 			'https://creativecommons.org/licenses/by/4.0/',
+			'https://creativecommons.org/licenses/by/4.0/deed.da',
+			'https://creativecommons.org/licenses/by/4.0/deed.es',
 			'http://creativecommons.org/licenses/by/4.0/',
+			'http://creativecommons.org/licenses/by/4.0/deed.nl',
 			'http://dcat-ap.de/def/licenses/cc-by',
 			'http://dcat-ap.de/def/licenses/cc-by-de/3.0',
 			'http://dcat-ap.de/def/licenses/cc-by/4.0',
@@ -191,7 +198,9 @@
 		);
 		$valuesCC0 = array(
 			'http://publications.europa.eu/resource/authority/licence/CC0',
+			'https://creativecommons.org/publicdomain/zero/1.0/',
 			'http://creativecommons.org/publicdomain/zero/1.0/',
+			'http://creativecommons.org/publicdomain/zero/1.0/deed.nl',
 			'http://dcat-ap.de/def/licenses/cc-zero'
 		);
 
