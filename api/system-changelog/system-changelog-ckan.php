@@ -10,7 +10,13 @@
 			if (substr($line, 0, 1) === '=') {
 				$title = $content[$index - 1];
 				$parts = explode(' ', $title);
-				$date = new DateTime($parts[1]);
+
+				try {
+					$date = new DateTime($parts[1]);
+				} catch (Exception $e) {
+					// may be $title === 'v.2.12.0 (Not yet released)'
+					continue;
+				}
 				$version = trim($parts[0], 'v. ');
 
 				$list[] = (object) array(
