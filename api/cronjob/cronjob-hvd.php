@@ -166,6 +166,7 @@
 			'http://dcat-ap.de/def/licenses/odbl',
 			'http://dcat-ap.de/def/licenses/dl-by-de/2.0',
 			'http://dcat-ap.de/def/licenses/geonutz/20130319',
+			'http://dcat-ap.de/def/licenses/%20geoNutz/20130319',
 			'https://www.ine.es/aviso_legal',
 			'https://www.etalab.gouv.fr/licence-ouverte-open-licence',
 			'https://www.etalab.gouv.fr/wp-content/uploads/2014/05/Licence_Ouverte.pdf'
