@@ -186,12 +186,15 @@
 			'http://dcat-ap.de/def/licenses/cc-by-nd/4.0'
 		);
 		$valuesCCBY = array(
+			'https://publications.europa.eu/resource/authority/licence/CC_BY_4_0',
 			'http://publications.europa.eu/resource/authority/licence/CC_BY_4_0',
+			'http://publications.europa.eu/resource/authority/licence/CC_BY',
 			'https://creativecommons.org/licenses/by/4.0/',
 			'https://creativecommons.org/licenses/by/4.0/deed.da',
 			'https://creativecommons.org/licenses/by/4.0/deed.es',
 			'http://creativecommons.org/licenses/by/4.0/',
 			'http://creativecommons.org/licenses/by/4.0/deed.nl',
+			'http://www.opendefinition.org/licenses/cc-by',
 			'http://dcat-ap.de/def/licenses/cc-by',
 			'http://dcat-ap.de/def/licenses/cc-by-de/3.0',
 			'http://dcat-ap.de/def/licenses/cc-by/4.0',
