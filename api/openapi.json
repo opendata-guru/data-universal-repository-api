@@ -1631,6 +1631,10 @@
             "value": "https://opendata.bayern/api/hub/search/",
             "summary": "Piveau portal"
           },
+          "sparql": {
+            "value": "https://www.govdata.de/sparql",
+            "summary": "SPARQL endpoint"
+          },
           "czech": {
             "value": "https://data.gov.cz/api/v1/solr/info",
             "summary": "Portal from Czech Republic"

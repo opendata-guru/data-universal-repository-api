@@ -12,5 +12,8 @@
 	// entryscape
 	// https://register.opendata.sachsen.de/organization/475/information
 
+	// GDI-DE
+	// https://gdk.gdi-de.org/gdk_harvesting/#/
+
 	echo json_encode($ret);
 ?>
