@@ -42,7 +42,6 @@
 		$uri = $url . $orgaListSuffix;
 //		$uriDomain = end(explode('/', $url));
 		$uriDomain = explode('/', $url)[2];
-//		$json = json_decode(file_get_contents($uri));
 		$json = json_decode(get_contents($uri));
 
 		$data = [];
@@ -50,10 +49,11 @@
 		if ($json) {
 			foreach($json->result as $orgaID) {
 				$uri = $url . $orgaShowSuffix;
-//				$json = json_decode(file_get_contents($uri . $orgaID));
 				$json = json_decode(get_contents($uri . $orgaID));
 				$uris = json_decode($json->result->extras[0]->value);
 				$title = $json->result->title;
+				$id = $json->result->id;
+				$name = $json->result->name;
 
 				if (is_object($title)) {
 					if ($title->en && ($title->en !== '')) {
@@ -65,10 +65,20 @@
 					}
 				}
 
+				if (is_null($id)) {
+					$id = $orgaID;
+				}
+				if (is_null($name)) {
+					$name = $id;
+				}
+				if (is_null($title)) {
+					$title = $orgaID;
+				}
+
 				// extras - key=gnd - value
 				$data[] = semanticContributor($uriDomain, $pid, array(
-					'id' => $json->result->id,
-					'name' => $json->result->name,
+					'id' => $id,
+					'name' => $name,
 					'title' => $title,
 					'created' => $json->result->created,
 					'packages' => $json->result->package_count,
