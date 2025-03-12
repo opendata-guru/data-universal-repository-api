@@ -50,6 +50,15 @@
 			foreach($json->result as $orgaID) {
 				$uri = $url . $orgaShowSuffix;
 				$json = json_decode(get_contents($uri . $orgaID));
+
+				if (is_null($json)) {
+					// I'm to fast for CKAN APIs. The CKAN need a cool down phase ;)
+					// If I wait for 1/10 second for every call, it will work fine
+					// (but I want more speed)
+					time_nanosleep(0, 1000000000 / 2); // 1/2 second
+					$json = json_decode(get_contents($uri . $orgaID));
+				}
+
 				$uris = json_decode($json->result->extras[0]->value);
 				$title = $json->result->title;
 				$id = $json->result->id;
