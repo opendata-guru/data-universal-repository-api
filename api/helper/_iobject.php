@@ -139,6 +139,12 @@
 			$pass = end($insights->passes);
 
 			if ($pass) {
+				if ($pass->file && $pass->file->error) {
+					$fileError = $pass->file->error;
+					if ($fileError !== '') {
+						$error = $fileError;
+					}
+				}
 				if ($pass->file && $pass->file->metadata) {
 					$contentType = $pass->file->metadata->contentType;
 					if ($pass->file->metadata->httpCode >= 400) {
