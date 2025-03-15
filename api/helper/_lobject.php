@@ -308,4 +308,15 @@
 
 		return $lObjects;
 	}
+
+	function deleteLObject($lObject) {
+		global $loadedLObjects;
+
+		$offset = array_search($lObject['lid'], array_column($loadedLObjects, 'lid'));
+		array_splice($loadedLObjects, $offset, 1);
+		saveMappingFileLObjects();
+
+		$lObject = findLObjectByLID($lObject['lid']);
+		return is_null($lObject);
+	}
 ?>

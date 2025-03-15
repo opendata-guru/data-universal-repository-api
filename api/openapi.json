@@ -731,6 +731,29 @@
         "tags": [
           "link"
         ]
+      },
+      "delete": {
+        "summary": "Delete a link",
+        "description": "Deletes a link, but only if it is not used.",
+        "operationId": "deleteLObject",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lidPathParam"
+          }
+        ],
+        "responses": {
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
+          }
+        },
+        "tags": [
+          "link"
+        ]
       }
     },
     "/l/count/{date}": {

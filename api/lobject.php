@@ -35,6 +35,40 @@
 			));
 			exit;
 		}
+	} else if ('DELETE' === $_SERVER['REQUEST_METHOD']) {
+		include('helper/_lobject.php');
+
+		$link = getLObject();
+
+		if ($link->error) {
+			header($link->error->header);
+			echo json_encode((object) array(
+				'error' => $link->error->error,
+				'message' => $link->error->message,
+			));
+			exit;
+		}
+
+		$lid = $link->parameter;
+		$lObject = findLObjectByLID($lid);
+		$isZombie = ($lObject['identifier'] === '') && ($lObject['title'] === '') && ($lObject['sid'] === '') && empty($lObject['haspart']) && empty($lObject['ispartof']);
+
+		if ($isZombie) {
+			$successful = deleteLObject($lObject);
+
+			echo json_encode((object) array(
+				'deleted' => $successful,
+				'lObject' => $lObject,
+			));
+		} else {
+			header('HTTP/1.0 405 Method Not Allowed');
+			echo json_encode((object) array(
+				'error' => 405,
+				'message' => 'Method Not Allowed. The object to be deleted is still in use',
+			));
+		}
+
+		return;
 	} else if ('GET' !== $_SERVER['REQUEST_METHOD']) {
 		header('HTTP/1.0 405 Method Not Allowed');
 		echo json_encode((object) array(
