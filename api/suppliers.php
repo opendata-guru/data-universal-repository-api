@@ -79,6 +79,9 @@
 	} else if ('Spain' === $link->system) {
 		include 'suppliers/suppliers-spain.php';
 		suppliersSpain($link->url, $pid);
+	} else if ('SPARQL' === $link->system) {
+		include 'suppliers/suppliers-sparql.php';
+		suppliersSPARQL($link->url, $pid);
 	} else if ('unknown' !== $link->system) {
 		header('HTTP/1.0 400 Bad Request');
 		echo json_encode((object) array(
