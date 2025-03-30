@@ -83,7 +83,7 @@ pCM3,sZT8Q,https://geoserver4.kreis-re.de/geonetwork/,https://geoserver4.kreis-r
 pNSt,sLkZ4,https://opendata.ruhr,https://opendata.ruhr/api/3/action/organization_list,2023-08-11
 pTjz,sUDxP,https://offenedaten.kdvz.nrw,https://offenedaten.kdvz.nrw/api/3/action/group_list,2023-08-25
 pwMo,shltM,https://opendata.rhein-kreis-neuss.de,https://opendata.rhein-kreis-neuss.de/api/explore/v2.1/catalog/facets,2023-12-15
-p5ce,sGBST,https://daten.rlp.de,https://daten.rlp.de/api/3/action/organization_list,2023-02-06
+p5ce,sGBST,https://open.rlp.de,https://open.rlp.de/api/action/package_search,2025-03-30
 pjkE,sEQVZ,https://www.opendata-hro.de,https://www.opendata-hro.de/api/3/action/organization_list,2023-12-03
 pYEb,sJ8qB,https://register.opendata.sachsen.de,https://register.opendata.sachsen.de/store/,2023-12-15
 psrb,sDZ01,https://opendata.schleswig-holstein.de,https://opendata.schleswig-holstein.de/api/3/action/organization_list,2023-02-05
@@ -101,3 +101,13 @@ p8r4,smZ1A,https://www.govdata.de/sparql,https://www.govdata.de/sparql,2024-07-3
 pDoB,s8uGo,https://open.bydata.de/api/sparql,https://open.bydata.de/api/sparql,2024-07-31
 pVGN,sYyj9,https://data.europa.eu/sparql,https://data.europa.eu/sparql,2024-07-31
 pvyO,s3t18,http://datos.gob.es/virtuoso/sparql,http://datos.gob.es/virtuoso/sparql,2024-07-31
+pnkv,,https://brandenburg-smartgeohub.opendata.arcgis.com,https://brandenburg-smartgeohub.opendata.arcgis.com/,2024-08-30
+pIGz,,https://geoportal.bafg.de/CSWView/od.xhtml,https://geoportal.bafg.de/CSWView/od.xhtml,2024-09-17
+pGBx,sFqC0,https://catalog.opendata.li,https://catalog.opendata.li/store/,2024-12-20
+p1Fl,s7yS4,https://www.landwirtschaftsdaten.de/suche.html,https://www.landwirtschaftsdaten.de/suche.html,2024-10-06
+pzSW,,https://advmis.geodatenzentrum.de/freitextsuche,https://advmis.geodatenzentrum.de/freitextsuche,2024-10-17
+pNgX,sISTB,https://data.zg.ch,https://data.zg.ch/store/,2024-12-17
+pCG3,s3hgJ,https://piveau.offene.daten-brandenburg.de,https://piveau.offene.daten-brandenburg.de/api/hub/repo/datasets,2025-01-02
+pwuS,s3hgJ,https://piveau.offene.daten-brandenburg.de/api/sparql,https://piveau.offene.daten-brandenburg.de/api/sparql,2025-01-02
+pXdy,sO6Gl,https://mvp.umwelt.info/,https://mvp.umwelt.info/,2025-01-08
+pXSc,sm4xC,https://data.gov.il,https://data.gov.il/api/3/action/organization_list,2025-02-03

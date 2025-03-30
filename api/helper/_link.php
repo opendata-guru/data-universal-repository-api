@@ -66,7 +66,8 @@
 		if (!$error && ($system === 'unknown')) {
 			$CKAN_CURRENT_PACKAGE_LIST = '/api/3/action/current_package_list_with_resources';
 			$CKAN_ORGANIZATION_LIST = '/api/3/action/organization_list';
-			$CKAN_PACKAGE_SEARCH = '/api/3/action/package_search';
+			$CKAN_PACKAGE_SEARCH_3 = '/api/3/action/package_search';
+			$CKAN_PACKAGE_SEARCH = '/api/action/package_search';
 			$CKAN_PACKAGE_SHOW = '/api/3/action/package_show';
 			$CKAN_PACKAGE_LIST = '/api/3/action/package_list';
 			$CKAN_STATUS_SHOW = '/api/3/action/status_show';
@@ -80,6 +81,8 @@
 				$found = substr($link['path'], 0, -strlen($CKAN_GROUP_LIST));
 			} else if ($CKAN_CURRENT_PACKAGE_LIST == substr($link['path'], -strlen($CKAN_CURRENT_PACKAGE_LIST))) {
 				$found = substr($link['path'], 0, -strlen($CKAN_CURRENT_PACKAGE_LIST));
+			} else if ($CKAN_PACKAGE_SEARCH_3 == substr($link['path'], -strlen($CKAN_PACKAGE_SEARCH_3))) {
+				$found = substr($link['path'], 0, -strlen($CKAN_PACKAGE_SEARCH_3));
 			} else if ($CKAN_PACKAGE_SEARCH == substr($link['path'], -strlen($CKAN_PACKAGE_SEARCH))) {
 				$found = substr($link['path'], 0, -strlen($CKAN_PACKAGE_SEARCH));
 			} else if ($CKAN_PACKAGE_SHOW == substr($link['path'], -strlen($CKAN_PACKAGE_SHOW))) {

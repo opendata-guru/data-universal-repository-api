@@ -17,30 +17,36 @@
 	}
 
 	function datasetsCountCKAN($url) {
-		$packageShowSuffix = '/api/3/action/package_search?rows=1&start=0';
+		$packageShowSuffix_3 = '/api/3/action/package_search?rows=1&start=0';
+		$packageShowSuffix = '/api/action/package_search?rows=1&start=0';
 		$packageShowAllSuffix = '/api/3/action/package_search';
 		$resourcesShowSuffix = '/api/3/action/current_package_list_with_resources?limit=1000';
 
-//		$json = json_decode(file_get_contents($url . $packageShowSuffix));
-		$json = json_decode(get_contents($url . $packageShowSuffix));
+		$json = json_decode(get_contents($url . $packageShowSuffix_3));
 		$count = 0;
 
 		if ($json && $json->result) {
 			$count = $json->result->count;
 		} else {
-//			$json = json_decode(file_get_contents($url . $packageShowAllSuffix));
-			$json = json_decode(get_contents($url . $packageShowAllSuffix));
+			$json = json_decode(get_contents($url . $packageShowSuffix));
 
 			if ($json) {
 				$count = $json->result->count;
 			} else {
-//				$json = json_decode(file_get_contents($url . $resourcesShowSuffix));
-				$json = json_decode(get_contents($url . $resourcesShowSuffix));
+	//			$json = json_decode(file_get_contents($url . $packageShowAllSuffix));
+				$json = json_decode(get_contents($url . $packageShowAllSuffix));
 
 				if ($json) {
-					$count = count($json->result[0]);
+					$count = $json->result->count;
 				} else {
-					$count = scrapeWebsite($url);
+	//				$json = json_decode(file_get_contents($url . $resourcesShowSuffix));
+					$json = json_decode(get_contents($url . $resourcesShowSuffix));
+
+					if ($json) {
+						$count = count($json->result[0]);
+					} else {
+						$count = scrapeWebsite($url);
+					}
 				}
 			}
 		}
