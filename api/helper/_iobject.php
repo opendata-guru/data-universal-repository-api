@@ -166,6 +166,7 @@
 		}
 
 		$iObject->audited = date('Y-m-d');
+//		$iObject->sid = null;
 		$iObject->insights = (object) array(
 			'contentType' => $contentType,
 			'error' => $error,
@@ -235,7 +236,13 @@
 			return $iObject;
 		}
 
-		return json_decode($data);
+		$json = json_decode($data);
+
+		if (!property_exists($json, 'sid')) {
+			$json->sid = null;
+		}
+
+		return $json;
 	}
 
 	function saveIObject($iObject) {
