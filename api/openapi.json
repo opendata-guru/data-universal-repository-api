@@ -1274,6 +1274,35 @@
         ]
       }
     },
+    "/live/url": {
+      "get": {
+        "summary": "Analyzes the URL",
+        "description": "Parses the specified URL. The URL can, for example, be a deep link to a dataset.",
+        "operationId": "getLiveURL",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/urlLinkParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Example of a successful answer",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "sample": {
+                    "value": "tbd."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "live"
+        ]
+      }
+    },
     "/suppliers": {
       "get": {
         "summary": "Get a list of all suppliers",
@@ -1871,6 +1900,22 @@
           "sample-dcan-ressoure": {
             "value": "https://offenedaten-koeln.de/dataset/strassen-k%C3%B6ln/resource/cf8ff4f5-5cf6-424f-b5f6-c9ac6c9c351c",
             "summary": "Sample DCAN ressource portal link"
+          }
+        }
+      },
+      "urlLinkParam": {
+        "name": "url",
+        "in": "query",
+        "description": "URL to be examined",
+        "required": true,
+        "allowEmptyValue": false,
+        "schema": {
+          "type": "string"
+        },
+        "examples": {
+          "todo": {
+            "value": "https://www.geoportal.hessen.de/mapbender/php/wfs.php",
+            "summary": "WFS link from the geoportal of Hesse"
           }
         }
       }
