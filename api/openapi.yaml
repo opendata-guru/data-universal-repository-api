@@ -511,7 +511,7 @@ paths:
       description: Obtain semantic insights into a data object.
       operationId: getIObject
       parameters:
-        - $ref: "#/components/parameters/iidPathParam"
+        - $ref: "#/components/parameters/iidPathRandomParam"
       responses:
         '200':
           description: Example of a successful answer
@@ -996,6 +996,24 @@ components:
       schema:
         type: string
       examples:
+        wcs:
+          value: ixHTMn
+          summary: Elevation Bathymetry (WCS)
+        wfs:
+          value: iYETj5
+          summary: Renewable and waste resource (WFS)
+    iidPathRandomParam:
+      name: iID
+      in: path
+      description: The unique iID of the insight data object must be specified. Alternatively, the value 'random' can be specified to obtain a random insight.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      examples:
+        random:
+          value: random
+          summary: Random iID
         wcs:
           value: ixHTMn
           summary: Elevation Bathymetry (WCS)

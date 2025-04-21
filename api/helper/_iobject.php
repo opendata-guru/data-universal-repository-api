@@ -26,6 +26,8 @@
 				'message' => 'Bad Request. Path parameter for \'iID\' is not set',
 				'parameter' => $parameterIID,
 			);
+		} else if ($parameterIID == 'random') {
+			$parameterIID = array_rand($loadedIObjects);
 		}
 
 		if (!$error) {
