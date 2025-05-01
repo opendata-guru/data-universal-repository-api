@@ -48,6 +48,127 @@
 		),
 	);
 
+	$semHosts = (object) array(
+		'BY' => (object) array(
+			'title' => 'Bayern',
+			'hosts' => array(
+				'baysis.bayern.de','geodaten.bayern.de','geoservices.bayern.de','risby.bayern.de','wirtschaft-risby.bayern.de',
+				'ingolstadt.de',
+				'opendata.aschaffenburg.de',
+				'opendata.markt-goldbach.de',
+			),
+		),
+		'HB' => (object) array(
+			'title' => 'Bremen',
+			'hosts' => array('bremen.virtualcitymap.de','gdi2.geo.bremen.de','geodienste.bremen.de'),
+		),
+		'HE' => (object) array(
+			'title' => 'Hessen',
+			'hosts' => array(
+				'geoportal.hessen.de','inspire-hessen.de',
+			),
+		),
+		'HH' => (object) array(
+			'title' => 'Hamburg',
+			'hosts' => array('api.hamburg.de','daten-hamburg.de','geodienste.hamburg.de'),
+		),
+		'MV' => (object) array(
+			'title' => 'Mecklenburg-Vorpommern',
+			'hosts' => array(
+				'geodaten-mv.de','geoportal-mv.de','laiv-mv.de',
+				'geo.sv.rostock.de',
+				'service.geoportal-vg.de',
+			),
+		),
+		'NI' => (object) array(
+			'title' => 'Niedersachsen',
+			'hosts' => array(
+				'inspire.niedersachsen.de','numis.niedersachsen.de','geobasisdaten.niedersachsen.de','sla.niedersachsen.de',
+				'dop.stac.lgln.niedersachsen.de','opendata.lgln.niedersachsen.de','opengeodata.lgln.niedersachsen.de','single-datasets.opengeodata.lgln.niedersachsen.de',
+				'ni-lgln-opengeodata.hub.arcgis.com',
+				'umweltkarten-niedersachsen.de',
+				'cloud.goettingen.de','geoportal.goettingen.de',
+				'inspire.govconnect.de',
+				'opendata.oldenburg.de',
+			),
+		),
+		'NW' => (object) array(
+			'title' => 'Nordrhein-Westfalen',
+			'hosts' => array(
+				'ckan.open.nrw.de',
+				'offenedaten-koeln.de',
+				'opendata-duisburg.de',
+				'opendata.essen.de',
+				'opendata.stadt-muenster.de',
+			),
+		),
+		'RP' => (object) array(
+			'title' => 'Rheinland-Pfalz',
+			'hosts' => array(
+				'geoportal.rlp.de','geoshop.rlp.de'
+			),
+		),
+		'SL' => (object) array(
+			'title' => 'Saarland',
+			'hosts' => array(
+				'geoportal.saarland.de','shop.lvgl.saarland.de',
+			),
+		),
+		'ST' => (object) array(
+			'title' => 'Sachsen-Anhalt',
+			'hosts' => array(
+				'geodatenportal.sachsen-anhalt.de','mid.sachsen-anhalt.de',
+			),
+		),
+		'TH' => (object) array(
+			'title' => 'Thüringen',
+			'hosts' => array(
+				'antares.thueringen.de','geoportal-th.de','geoportal.thueringen.de','geoproxy.geoportal-th.de','tlubn.thueringen.de',
+			),
+		),
+		'ADV' => (object) array(
+			'title' => 'Arbeitsgemeinschaft der Vermessungsverwaltungen der Länder der Bundesrepublik Deutschland (AdV)',
+			'hosts' => array('adv-online.de'),
+		),
+		'Bund' => (object) array(
+			'title' => 'Bund',
+			'hosts' => array(
+				'geoportal.bafg.de','vorhersage.bafg.de',
+				'geodienste.bfn.de',
+				'bgr.bund.de','download.bgr.de','services.bgr.de',
+				'daten.gdz.bkg.bund.de','geodatenzentrum.de','sg.geodatenzentrum.de','sgx.geodatenzentrum.de',
+				'gdi-services.bmel.de',
+				'gdi.bsh.de',
+				'dwd.de','cdc.dwd.de','opendata.dwd.de',
+				'd-nb.info',
+				'geoinformation.eisenbahn-bundesamt.de',
+				'geoservices.julius-kuehn.de',
+				'lba.de','www2.lba.de',
+				'mobilithek.info',
+				'inspire.thuenen.de',
+				'map.bvwp-projekte.de',
+				'sgb2.info',
+			),
+		),
+		'EU' => (object) array(
+			'title' => 'Europa',
+			'hosts' => array('cds.climate.copernicus.eu'),
+		),
+		'World' => (object) array(
+			'title' => 'Welt',
+			'hosts' => array('library.wmo.int'),
+		),
+		'Others' => (object) array(
+			'title' => 'Diverses',
+			'hosts' => array(
+				'assets.plan4better.de','haleconnect.com','vbb.de',
+				'daten.zvbn.de','metaver.de',
+				'doi.org','zenodo.org',
+				'single-datasets.s3.eu-de.cloud-object-storage.appdomain.cloud',
+			),
+		),
+	);
+
 	$feStupidID = 0;
 
 	function curlAPI($url) {
@@ -254,6 +375,69 @@
 		return getFilesAndFoldersListFiles($path, $lang, $filteredIObjects, $result);
 	}
 
+	function getSemHost($host) {
+		global $semHosts;
+
+		foreach($semHosts as $id => $semHost) {
+			foreach($semHost->hosts as $url) {
+				if ($host === $url) {
+					return (object) array(
+						'id' => $id,
+						'title' => $semHost->title,
+					);
+				}
+			}
+		}
+
+		return null;
+	}
+
+	function getFilesAndFoldersListSemanticHosts($path, $lang, $iObjects, $result) {
+		$OTHERS = 'others';
+
+		if (count($path) < 1) {
+			$hosts = array();
+
+			foreach($iObjects as $iObject) {
+				$url = parse_url($iObject->url, PHP_URL_HOST);
+				$host = preg_replace('#^www\.(.+\.)#i', '$1', $url);
+				$semantic = getSemHost($host);
+
+				if ($semantic) {
+					$hosts[$semantic->id] = $semantic->title;
+				} else {
+//					$hosts[$OTHERS] = $OTHERS;
+					$hosts[$host] = $host;
+				}
+			}
+			foreach($hosts as $id => $title) {
+				$result->folders[] = (object) array(
+					'id' => $id,
+					'title' => $title
+				);
+			}
+
+			return $result;
+		}
+
+		$pathHost = $path[0];
+		array_shift($path);
+
+		$filteredIObjects = array_filter($iObjects, function($iObject) use ($pathHost) {
+			$url = parse_url($iObject->url, PHP_URL_HOST);
+			$host = preg_replace('#^www\.(.+\.)#i', '$1', $url);
+			$semantic = getSemHost($host);
+
+			if ($semantic) {
+				return $pathHost === $semantic->id;
+			}
+
+			return $pathHost === $host;
+		});
+
+		return getFilesAndFoldersListHosts($path, $lang, $filteredIObjects, $result);
+	}
+
 	function getFilesAndFoldersHVDJournal($path, $lang, $result) {
 		global $dict;
 
@@ -440,7 +624,7 @@
 
 		if ('repository' === $level) {
 			$iObjects = getValidIObjectsDetails();
-			return getFilesAndFoldersListHosts($path, $lang, $iObjects, $result);
+			return getFilesAndFoldersListSemanticHosts($path, $lang, $iObjects, $result);
 		} else if ('journal' === $level) {
 			return getFilesAndFoldersHVDJournal($path, $lang, $result);
 		} else if ('defects' === $level) {
