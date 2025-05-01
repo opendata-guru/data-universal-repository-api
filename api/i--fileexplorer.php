@@ -200,19 +200,14 @@
 		);
 	}
 
-	function getFilesAndFoldersByHost($path, $lang, $iObjects, $pathHost, $result) {
+	function getFilesAndFoldersListFiles($path, $lang, $iObjects, $result) {
 		if (count($path) < 1) {
 			foreach($iObjects as $iObject) {
-				$url = parse_url($iObject->url, PHP_URL_HOST);
-				$host = preg_replace('#^www\.(.+\.)#i', '$1', $url);
-
-				if ($pathHost === $host) {
-					$dataset = (object) array(
-						'datasetIdentifier' => '',
-						'distribution' => $iObject,
-					);
-					$result->files[] = getFilesAndFoldersHVDDataset($dataset);
-				}
+				$dataset = (object) array(
+					'datasetIdentifier' => '',
+					'distribution' => $iObject,
+				);
+				$result->files[] = getFilesAndFoldersHVDDataset($dataset);
 			}
 
 			return $result;
@@ -246,10 +241,17 @@
 			return $result;
 		}
 
-		$host = $path[0];
+		$pathHost = $path[0];
 		array_shift($path);
 
-		return getFilesAndFoldersByHost($path, $lang, $iObjects, $host, $result);
+		$filteredIObjects = array_filter($iObjects, function($iObject) use ($pathHost) {
+			$url = parse_url($iObject->url, PHP_URL_HOST);
+			$host = preg_replace('#^www\.(.+\.)#i', '$1', $url);
+
+			return $pathHost === $host;
+		});
+
+		return getFilesAndFoldersListFiles($path, $lang, $filteredIObjects, $result);
 	}
 
 	function getFilesAndFoldersHVDJournal($path, $lang, $result) {
