@@ -26,14 +26,11 @@
 		exit;
 	}
 
-	$host = parse_url($parameterURL, PHP_URL_HOST);
-
-	if ('www.' == substr($host, 0, 4)) {
-		$host = substr($host, 4);
-	}
+	$url = parse_url($parameterURL, PHP_URL_HOST);
+	$url = preg_replace('#^www\.(.+\.)#i', '$1', $url);
 
 	$ret = (object) array(
-		'host' => $host,
+		'host' => $url,
 		'url' => $parameterURL,
 	);
 

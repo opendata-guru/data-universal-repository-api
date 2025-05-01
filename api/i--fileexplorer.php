@@ -3,7 +3,6 @@
 
 	$dict = array(
 		'de' => (object) array(
-			'all_objects' => 'Alle Objekte',
 			'defects' => 'Defekte Objekte',
 			'journal' => 'Tagebuch',
 			'journalToday' => 'Tagebuch (heute)',
@@ -22,10 +21,10 @@
 			'month10' => 'Oktober',
 			'month11' => 'November',
 			'month12' => 'Dezember',
+			'repository' => 'Repositorium',
 			'tombstones' => 'Archiv',
 		),
 		'en' => (object) array(
-			'all_objects' => 'All objects',
 			'defects' => 'Defective objects',
 			'journal' => 'Journal',
 			'journalToday' => 'Journal (today)',
@@ -44,6 +43,7 @@
 			'month10' => 'October',
 			'month11' => 'November',
 			'month12' => 'December',
+			'repository' => 'Repository',
 			'tombstones' => 'Archive',
 		),
 	);
@@ -200,6 +200,58 @@
 		);
 	}
 
+	function getFilesAndFoldersByHost($path, $lang, $iObjects, $pathHost, $result) {
+		if (count($path) < 1) {
+			foreach($iObjects as $iObject) {
+				$url = parse_url($iObject->url, PHP_URL_HOST);
+				$host = preg_replace('#^www\.(.+\.)#i', '$1', $url);
+
+				if ($pathHost === $host) {
+					$dataset = (object) array(
+						'datasetIdentifier' => '',
+						'distribution' => $iObject,
+					);
+					$result->files[] = getFilesAndFoldersHVDDataset($dataset);
+				}
+			}
+
+			return $result;
+		}
+
+		$level = $path[0];
+		array_shift($path);
+
+		// nothing to do
+
+		return $result;
+	}
+
+	function getFilesAndFoldersListHosts($path, $lang, $iObjects, $result) {
+		if (count($path) < 1) {
+			$hosts = array();
+
+			foreach($iObjects as $iObject) {
+				$url = parse_url($iObject->url, PHP_URL_HOST);
+				$host = preg_replace('#^www\.(.+\.)#i', '$1', $url);
+
+				$hosts[$host] = true;
+			}
+			foreach($hosts as $host => $value) {
+				$result->folders[] = (object) array(
+					'id' => $host,
+					'title' => $host
+				);
+			}
+
+			return $result;
+		}
+
+		$host = $path[0];
+		array_shift($path);
+
+		return getFilesAndFoldersByHost($path, $lang, $iObjects, $host, $result);
+	}
+
 	function getFilesAndFoldersHVDJournal($path, $lang, $result) {
 		global $dict;
 
@@ -348,10 +400,10 @@
 		global $dict;
 
 		if (count($path) < 1) {
-/*			$result->folders[] = (object) array(
-				'id' => 'all_objects',
-				'title' => $dict[$lang]->all_objects
-			);*/
+			$result->folders[] = (object) array(
+				'id' => 'repository',
+				'title' => $dict[$lang]->repository
+			);
 			$result->folders[] = (object) array(
 				'id' => 'journal',
 				'title' => $dict[$lang]->journal
@@ -384,7 +436,10 @@
 		$level = $path[0];
 		array_shift($path);
 
-		if ('journal' === $level) {
+		if ('repository' === $level) {
+			$iObjects = getValidIObjectsDetails();
+			return getFilesAndFoldersListHosts($path, $lang, $iObjects, $result);
+		} else if ('journal' === $level) {
 			return getFilesAndFoldersHVDJournal($path, $lang, $result);
 		} else if ('defects' === $level) {
 			return getFilesAndFoldersHVDDefects($path, $lang, $result);

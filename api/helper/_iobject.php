@@ -469,6 +469,38 @@
 		return $missingIObjects;
 	}
 
+	function getValidIObjects() {
+		global $loadedIObjects;
+
+		$validIObjects = [];
+		$today = date('Y-m-d');
+
+		foreach($loadedIObjects as $iObject) {
+			if ($iObject && ($today === $iObject->modified)) {
+				$validIObjects[] = $iObject;
+			}
+		}
+
+		return $validIObjects;
+	}
+
+	function getValidIObjectsDetails() {
+		global $loadedIObjects;
+
+		$validIObjects = [];
+		$today = date('Y-m-d');
+
+		foreach($loadedIObjects as $iObject) {
+			if ($iObject && ($today === $iObject->modified)) {
+				$iObject = loadIObject($iObject);
+
+				$validIObjects[] = $iObject;
+			}
+		}
+
+		return $validIObjects;
+	}
+
 	function getAtticIObjects() {
 		global $loadedIObjects;
 
