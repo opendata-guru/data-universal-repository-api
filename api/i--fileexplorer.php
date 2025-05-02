@@ -49,10 +49,35 @@
 	);
 
 	$semHosts = (object) array(
+		'BB' => (object) array(
+			'title' => 'Brandenburg',
+			'hosts' => array(
+				'apw.brandenburg.de','bravors.brandenburg.de','forst.brandenburg.de','inspire.brandenburg.de','lbv-gis.brandenburg.de','lbv.brandenburg.de','lfu.brandenburg.de','maps.brandenburg.de','mleuv.brandenburg.de','mluk.brandenburg.de','viewer.brandenburg.de',
+				'brandenburg-forst.de',
+				'data.geobasis-bb.de','isk.geobasis-bb.de','ogc-api.geobasis-bb.de',
+				'geoportal-michendorf.de',
+				'havelland-flaeming.de',
+				'potsdam.de',
+				'prignitz-oberhavel.de',
+				'uckermark-barnim.de',
+			),
+		),
+		'BE' => (object) array(
+			'title' => 'Berlin',
+			'hosts' => array(
+			),
+		),
+		'BW' => (object) array(
+			'title' => 'Baden‑Württemberg',
+			'hosts' => array(
+				'rips-gdi.lubw.baden-wuerttemberg.de',
+				'rips-datenlink.lubw.de',
+			),
+		),
 		'BY' => (object) array(
 			'title' => 'Bayern',
 			'hosts' => array(
-				'baysis.bayern.de','geodaten.bayern.de','geoservices.bayern.de','risby.bayern.de','wirtschaft-risby.bayern.de',
+				'baysis.bayern.de','geodaten.bayern.de','geoservices.bayern.de','risby.bayern.de','wirtschaft-risby.bayern.de','geoportal.bayern.de',
 				'ingolstadt.de',
 				'opendata.aschaffenburg.de',
 				'opendata.markt-goldbach.de',
@@ -60,12 +85,15 @@
 		),
 		'HB' => (object) array(
 			'title' => 'Bremen',
-			'hosts' => array('bremen.virtualcitymap.de','gdi2.geo.bremen.de','geodienste.bremen.de'),
+			'hosts' => array(
+				'bremen.virtualcitymap.de','gdi1.geo.bremen.de','gdi2.geo.bremen.de','geodienste.bremen.de',
+			),
 		),
 		'HE' => (object) array(
 			'title' => 'Hessen',
 			'hosts' => array(
-				'geoportal.hessen.de','inspire-hessen.de',
+				'geoportal.hessen.de','gds.hessen.de',
+				'inspire-hessen.de',
 			),
 		),
 		'HH' => (object) array(
@@ -90,16 +118,20 @@
 				'cloud.goettingen.de','geoportal.goettingen.de',
 				'inspire.govconnect.de',
 				'opendata.oldenburg.de',
+				'gis.landkreis-osterholz.de',
 			),
 		),
 		'NW' => (object) array(
 			'title' => 'Nordrhein-Westfalen',
 			'hosts' => array(
-				'ckan.open.nrw.de',
+				'ckan.open.nrw.de','gis-rest.nrw.de','opengeodata.nrw.de','wfs.nrw.de','wms.nrw.de','ogc-api.nrw.de','wcs.nrw.de','wmts.nrw.de',
 				'offenedaten-koeln.de',
 				'opendata-duisburg.de',
 				'opendata.essen.de',
 				'opendata.stadt-muenster.de',
+				'geodaten.herne.de',
+				'geodienste.kreis-heinsberg.de',
+				'geoservices.krzn.de','alkisservices.krzn.de','gdi-niederrhein-geodienste.de',
 			),
 		),
 		'RP' => (object) array(
@@ -108,10 +140,21 @@
 				'geoportal.rlp.de','geoshop.rlp.de'
 			),
 		),
+		'SH' => (object) array(
+			'title' => 'Schleswig-Holstein',
+			'hosts' => array(
+				'service.gdi-sh.de',
+			),
+		),
 		'SL' => (object) array(
 			'title' => 'Saarland',
 			'hosts' => array(
 				'geoportal.saarland.de','shop.lvgl.saarland.de',
+			),
+		),
+		'SN' => (object) array(
+			'title' => 'Sachsen',
+			'hosts' => array(
 			),
 		),
 		'ST' => (object) array(
@@ -123,7 +166,8 @@
 		'TH' => (object) array(
 			'title' => 'Thüringen',
 			'hosts' => array(
-				'antares.thueringen.de','geoportal-th.de','geoportal.thueringen.de','geoproxy.geoportal-th.de','tlubn.thueringen.de',
+				'antares.thueringen.de','geoportal.thueringen.de','tlubn.thueringen.de',
+				'geoportal-th.de','geoportal.geoportal-th.de','geoproxy.geoportal-th.de',
 			),
 		),
 		'ADV' => (object) array(
@@ -135,16 +179,18 @@
 			'hosts' => array(
 				'geoportal.bafg.de','vorhersage.bafg.de',
 				'geodienste.bfn.de',
+				'via.bund.de',
 				'bgr.bund.de','download.bgr.de','services.bgr.de',
 				'daten.gdz.bkg.bund.de','geodatenzentrum.de','sg.geodatenzentrum.de','sgx.geodatenzentrum.de',
 				'gdi-services.bmel.de',
-				'gdi.bsh.de',
-				'dwd.de','cdc.dwd.de','opendata.dwd.de',
+				'gdi.bsh.de','elwis.de','kuestendaten.de','wasserblick.net',
+				'dwd.de','cdc.dwd.de','opendata.dwd.de','maps.dwd.de',
 				'd-nb.info',
-				'geoinformation.eisenbahn-bundesamt.de',
+				'eba.bund.de','geoportal.eisenbahn-bundesamt.de','geoinformation.eisenbahn-bundesamt.de','dzsf.bund.de',
 				'geoservices.julius-kuehn.de',
 				'lba.de','www2.lba.de',
 				'mobilithek.info',
+				'gesetze-im-internet.de',
 				'inspire.thuenen.de',
 				'map.bvwp-projekte.de',
 				'sgb2.info',
@@ -152,7 +198,11 @@
 		),
 		'EU' => (object) array(
 			'title' => 'Europa',
-			'hosts' => array('cds.climate.copernicus.eu'),
+			'hosts' => array(
+				'eur-lex.europa.eu',
+				'cds.climate.copernicus.eu',
+				'confluence.ecmwf.int',
+			),
 		),
 		'World' => (object) array(
 			'title' => 'Welt',
@@ -161,10 +211,11 @@
 		'Others' => (object) array(
 			'title' => 'Diverses',
 			'hosts' => array(
-				'assets.plan4better.de','haleconnect.com','vbb.de',
+				'assets.plan4better.de','haleconnect.com','vbb.de','blag-udig.de',
 				'daten.zvbn.de','metaver.de',
 				'doi.org','zenodo.org',
 				'single-datasets.s3.eu-de.cloud-object-storage.appdomain.cloud',
+				'api.parking-pilot.com',
 			),
 		),
 	);
