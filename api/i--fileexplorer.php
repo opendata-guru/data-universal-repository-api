@@ -3,6 +3,8 @@
 
 	$dict = array(
 		'de' => (object) array(
+			'countLink' => '(%count% Objekt)',
+			'countLinks' => '(%count% Objekte)',
 			'defects' => 'Defekte Objekte',
 			'journal' => 'Tagebuch',
 			'journalToday' => 'Tagebuch (heute)',
@@ -25,6 +27,8 @@
 			'tombstones' => 'Archiv',
 		),
 		'en' => (object) array(
+			'countLink' => '(%count% object)',
+			'countLinks' => '(%count% objects)',
 			'defects' => 'Defective objects',
 			'journal' => 'Journal',
 			'journalToday' => 'Journal (today)',
@@ -308,24 +312,34 @@
 		return $entry;
 	}
 
-	function buildFolder($path, $folder) {
+	function buildFolder($path, $folder, $lang) {
+		global $dict;
+
 		$foldertype = '';
 
 		if (isset($folder->overlay)) {
 			$foldertype = $folder->overlay;
 		}
 
+		$name = $folder->title;
+		if ($folder->countFiles) {
+			$name = $name . ' ' . str_replace('%count%', $folder->countFiles, 1 === $folder->countFiles ? $dict[$lang]->countLink : $dict[$lang]->countLinks);
+		}
+
 		$entry = array(
 			'id' => $folder->id,
-			'name' => $folder->title,
+			'name' => $name,
 			'type' => 'folder',
 			'hash' => getEntryHash($path, $folder->id),
 
 			// optional
-			'tooltip' => getTooltip($folder->title, []),
+			'tooltip' => getTooltip($name, []),
 			'overlay' => 'foldertype_' . $foldertype,
 //			'attrs' => ???,
 //			'thumb' => 'https://opendata.guru/govdata/assets/folder.svg',
+
+			// customized
+			'countFiles' => $folder->countFiles,
 		);
 
 		return $entry;
@@ -396,17 +410,20 @@
 	function getFilesAndFoldersListHosts($path, $lang, $iObjects, $result) {
 		if (count($path) < 1) {
 			$hosts = array();
+			$count = array();
 
 			foreach($iObjects as $iObject) {
 				$url = parse_url($iObject->url, PHP_URL_HOST);
 				$host = preg_replace('#^www\.(.+\.)#i', '$1', $url);
 
-				$hosts[$host] = true;
+				$hosts[$host] = $host;
+				$count[$host] = $count[$host] ? $count[$host] + 1 : 1;
 			}
-			foreach($hosts as $host => $value) {
+			foreach($hosts as $id => $title) {
 				$result->folders[] = (object) array(
-					'id' => $host,
-					'title' => $host
+					'id' => $id,
+					'title' => $title,
+					'countFiles' => $count[$id],
 				);
 			}
 
@@ -444,10 +461,9 @@
 	}
 
 	function getFilesAndFoldersListSemanticHosts($path, $lang, $iObjects, $result) {
-		$OTHERS = 'others';
-
 		if (count($path) < 1) {
 			$hosts = array();
+			$count = array();
 
 			foreach($iObjects as $iObject) {
 				$url = parse_url($iObject->url, PHP_URL_HOST);
@@ -456,15 +472,17 @@
 
 				if ($semantic) {
 					$hosts[$semantic->id] = $semantic->title;
+					$count[$semantic->id] = $count[$semantic->id] ? $count[$semantic->id] + 1 : 1;
 				} else {
-//					$hosts[$OTHERS] = $OTHERS;
 					$hosts[$host] = $host;
+					$count[$host] = $count[$host] ? $count[$host] + 1 : 1;
 				}
 			}
 			foreach($hosts as $id => $title) {
 				$result->folders[] = (object) array(
 					'id' => $id,
-					'title' => $title
+					'title' => $title,
+					'countFiles' => $count[$id],
 				);
 			}
 
@@ -702,7 +720,7 @@
 			);
 
 			foreach($dir->folders as $folder) {
-				$entry = buildFolder($path, $folder);
+				$entry = buildFolder($path, $folder, $lang);
 				if ($entry !== false) {
 					$result['entries'][] = $entry;
 				}
