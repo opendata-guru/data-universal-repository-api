@@ -561,27 +561,6 @@
 		return $result;
 	}
 
-	function getFilesAndFoldersHVDTombstones($path, $lang, $result) {
-		$iObjects = getAtticIObjectsDetails();
-
-		if (count($path) < 1) {
-			foreach($iObjects as $iObject) {
-				$dataset = (object) array(
-					'datasetIdentifier' => '',
-					'distribution' => $iObject,
-				);
-				$result->files[] = getFilesAndFoldersHVDDataset($dataset);
-			}
-		} else {
-			$level = $path[0];
-			array_shift($path);
-
-			// nothing to do
-		}
-
-		return $result;
-	}
-
 	function getFilesAndFoldersHVD($path, $lang, $result) {
 		global $dict;
 
@@ -630,7 +609,8 @@
 		} else if ('defects' === $level) {
 			return getFilesAndFoldersHVDDefects($path, $lang, $result);
 		} else if ('tombstones' === $level) {
-			return getFilesAndFoldersHVDTombstones($path, $lang, $result);
+			$iObjects = getAtticIObjectsDetails();
+			return getFilesAndFoldersListSemanticHosts($path, $lang, $iObjects, $result);
 		}
 
 		return $result;
