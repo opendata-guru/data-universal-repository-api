@@ -102,7 +102,11 @@
 		),
 		'HH' => (object) array(
 			'title' => 'Hamburg',
-			'hosts' => array('api.hamburg.de','daten-hamburg.de','geodienste.hamburg.de'),
+			'hosts' => array(
+				'api.hamburg.de','geodienste.hamburg.de','hamburg.de','iot.hamburg.de',
+				'daten-hamburg.de',
+				'radkultur.hamburg',
+			),
 		),
 		'MV' => (object) array(
 			'title' => 'Mecklenburg-Vorpommern',
@@ -577,6 +581,7 @@
 
 			if ($api && isset($api->added) && isset($api->removed)) {
 				if (('added' === $pathAction) && (0 < count($api->added))) {
+//return getFilesAndFoldersListFiles($path, $lang, $api->added, $result);
 					foreach($api->added as $dataset) {
 						$result->files[] = getFilesAndFoldersHVDDataset($dataset);
 					}
