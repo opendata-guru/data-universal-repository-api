@@ -360,6 +360,27 @@
 		}
 
 		if (!$error && ($system === 'unknown')) {
+			$url = unparse_url($link);
+			$content = get_contents($url);
+
+			// test OpenDataSoft
+			$odsHeader = stripos($content, 'ods-front-header');
+			$odsFooter = stripos($content, 'ods-front-footer');
+			if (($odsHeader !== false) && ($odsFooter !== false)) {
+				unset($link['query']);
+				unset($link['fragment']);
+				$link['path'] = '/api/explore/v2.1';
+
+				$url = unparse_url($link);
+				$json = json_decode(get_contents($url));
+
+				if ($json && $json->links) {
+					$system = 'Opendatasoft';
+				}
+			}
+		}
+
+		if (!$error && ($system === 'unknown')) {
 			$url = $link;
 		}
 
