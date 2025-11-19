@@ -237,6 +237,9 @@
 		}
 
 		$json = json_decode($data);
+		if (is_null($json)) {
+			return $iObject;
+		}
 
 		if (!property_exists($json, 'sid')) {
 			$json->sid = null;
@@ -372,7 +375,7 @@
 
 		do {
 			$iid = $prefix . substr(str_shuffle($ALLOWED_CHARS), 0, $length);
-		} while($loadedIObjects[$iid]);
+		} while(isset($loadedIObjects[$iid]));
 
 		return $iid;
 	}
@@ -395,10 +398,10 @@
 			return null;
 		}
 
-		$iid = $indexIObjectsByURL[$url];
-		if ($iid == '') {
+		if (!isset($indexIObjectsByURL[$url])) {
 			return null;
 		}
+		$iid = $indexIObjectsByURL[$url];
 
 		return isset($loadedIObjects[$iid]) ? $loadedIObjects[$iid] : null;
 	}
