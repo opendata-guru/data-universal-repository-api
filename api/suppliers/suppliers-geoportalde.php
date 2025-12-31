@@ -1,6 +1,7 @@
 <?php
 	function suppliersGeoportalDE($url, $pid) {
-		$gdideSuffix = 'https://geoportal.de';
+//		$gdideSuffix = 'https://geoportal.de';
+		$gdideSuffix = 'https://www.geoportal.de';
 		$max = 30000;
 
 		$uri = $gdideSuffix . '/es/metadata_all/_search';
@@ -23,6 +24,7 @@
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
 			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
 			$ret = curl_exec($ch);
 			curl_close ($ch);
