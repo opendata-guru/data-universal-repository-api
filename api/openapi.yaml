@@ -158,6 +158,44 @@ paths:
           $ref: "#/components/responses/400BadRequest"
       tags:
         - portal
+  /p/{pID}/count:
+    get:
+      summary: Get a time series of numbers of datasets
+      description: Get the number of datasets of specified portal for a range of dates
+      operationId: getPObjectCount
+      parameters:
+        - $ref: "#/components/parameters/pidPathRandomParam"
+      responses:
+        '200':
+          description: Example of a successful answer
+          content:
+            application/json:
+              examples:
+                sample:
+                  value:
+                    pid: p000
+                    sobject:
+                      sid: sYyj9
+                      title:
+                        de: Europäische Union
+                        en: European Union
+                      type: supranational
+                      sameAs:
+                        wikidata: http://www.wikidata.org/entity/Q458
+                      partOf:
+                        wikidata: ''
+                      image:
+                        source: http://commons.wikimedia.org/wiki/Special:FilePath/Flag%20of%20Europe.svg
+                        url: https://opendata.guru/api-data/assets/sYyj9.svg
+                      geocoding:
+                        germanRegionalKey: ''
+                    count:
+                      '2024-05-23': 1724457
+                      '2024-05-24': 1724603
+        '400':
+          $ref: "#/components/responses/400BadRequest"
+      tags:
+        - portal
   /p/count/{date}:
     get:
       summary: Get the number of datasets from all portals
@@ -468,6 +506,51 @@ paths:
       responses:
         '401':
           $ref: '#/components/responses/401Unauthorized'
+      tags:
+        - link
+  /l/{lID}/count:
+    get:
+      summary: Get a time series of numbers of datasets
+      description: Get the number of datasets of specified link for a range of dates
+      operationId: getLObjectCount
+      parameters:
+        - $ref: "#/components/parameters/lidPathRandomParam"
+      responses:
+        '200':
+          description: Example of a successful answer
+          content:
+            application/json:
+              examples:
+                sample:
+                  value:
+                    lid: lpiCj
+                    pid: p000
+                    pobject:
+                      pid: p000
+                      sid: sYyj9
+                      url: https://data.europa.eu
+                    identifier: govdata
+                    sid: smZ1A
+                    sobject:
+                      sid: smZ1A
+                      title:
+                        de: Deutschland
+                        en: Germany
+                      type: country
+                      sameAs:
+                        wikidata: http://www.wikidata.org/entity/Q183
+                      partOf:
+                        wikidata: ''
+                      image:
+                        source: http://commons.wikimedia.org/wiki/Special:FilePath/Flag%20of%20Germany.svg
+                        url: https://opendata.guru/api-data/assets/smZ1A.svg
+                      geocoding:
+                        germanRegionalKey: ''
+                    count:
+                      '2025-01-02': 131237
+                      '2025-01-03': 129275
+        '400':
+          $ref: "#/components/responses/400BadRequest"
       tags:
         - link
   /l/count/{date}:
