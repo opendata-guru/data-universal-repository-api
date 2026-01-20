@@ -41,6 +41,8 @@
             '(SAMPLE(?labelDE) as ?labelDE) ' .
             '(SAMPLE(?labelEN) as ?labelEN) ' .
             '(SAMPLE(?germanRegionalKey) as ?germanRegionalKey) ' .
+            '(SAMPLE(?germanDistrictKey) as ?germanDistrictKey) ' .
+            '(SAMPLE(?nutsCode) as ?nutsCode) ' .
             '(SAMPLE(?flag) as ?flag) ' .
             '(SAMPLE(?coat) as ?coat) ' .
             '(SAMPLE(?logo) as ?logo) ' .
@@ -62,6 +64,12 @@
             '' .
             '  OPTIONAL { ?item wdt:P1388 ?germanRegionalKey. }' .
             '  BIND(IF( BOUND( ?germanRegionalKey), ?germanRegionalKey, "") AS ?germanRegionalKey)' .
+            '' .
+            '  OPTIONAL { ?item wdt:P440 ?germanDistrictKey. }' .
+            '  BIND(IF( BOUND( ?germanDistrictKey), ?germanDistrictKey, "") AS ?germanDistrictKey)' .
+            '' .
+            '  OPTIONAL { ?item wdt:P605 ?nutsCode. }' .
+            '  BIND(IF( BOUND( ?nutsCode), ?nutsCode, "") AS ?nutsCode)' .
             '' .
             '  OPTIONAL { ?item wdt:P41 ?flag. }' .
             '  BIND(IF( BOUND( ?flag), ?flag, "") AS ?flag)' .
@@ -219,10 +227,13 @@
 				$valuesSameAs_ = !is_null($valuesSameAs) ? $valuesSameAs->item->value : '';
 				$valuesPartOf_ = !is_null($valuesPartOf) ? $valuesPartOf->item->value : '';
 				$germanRegionalKey = !is_null($valuesSameAs) ? $valuesSameAs->germanRegionalKey->value : (!is_null($valuesPartOf) ? $valuesPartOf->germanRegionalKey->value : '');
+				$germanDistrictKey = !is_null($valuesSameAs) ? $valuesSameAs->germanDistrictKey->value : (!is_null($valuesPartOf) ? $valuesPartOf->germanDistrictKey->value : '');
+				$nutsCode = !is_null($valuesSameAs) ? $valuesSameAs->nutsCode->value : (!is_null($valuesPartOf) ? $valuesPartOf->nutsCode->value : '');
 				$image = updateWikiImage($sObject->sid, $valuesSameAs, $valuesPartOf);
 
-				$sObject = updateSObject($parameterSID, $labelDE, $labelEN, $valuesSameAs_, $valuesPartOf_, $image, $germanRegionalKey);
+				$germanRegionalKey = $germanRegionalKey !== '' ? $germanRegionalKey : $germanDistrictKey;
 
+				$sObject = updateSObject($parameterSID, $labelDE, $labelEN, $valuesSameAs_, $valuesPartOf_, $image, $germanRegionalKey);
 
 				saveMappingFileSObjects();
 			}
@@ -293,8 +304,12 @@
 			$valuesSameAs_ = !is_null($valuesSameAs) ? $valuesSameAs->item->value : '';
 			$valuesPartOf_ = !is_null($valuesPartOf) ? $valuesPartOf->item->value : '';
 			$germanRegionalKey = !is_null($valuesSameAs) ? $valuesSameAs->germanRegionalKey->value : (!is_null($valuesPartOf) ? $valuesPartOf->germanRegionalKey->value : '');
+			$germanDistrictKey = !is_null($valuesSameAs) ? $valuesSameAs->germanDistrictKey->value : (!is_null($valuesPartOf) ? $valuesPartOf->germanDistrictKey->value : '');
+			$nutsCode = !is_null($valuesSameAs) ? $valuesSameAs->nutsCode->value : (!is_null($valuesPartOf) ? $valuesPartOf->nutsCode->value : '');
 			$sid = createSID();
 			$image = updateWikiImage($sid, $valuesSameAs, $valuesPartOf);
+
+			$germanRegionalKey = $germanRegionalKey !== '' ? $germanRegionalKey : $germanDistrictKey;
 
 			$sObject = pushSObject($sid, $labelDE, $labelEN, $parameterType, $valuesSameAs_, $valuesPartOf_, $image, $germanRegionalKey);
 
