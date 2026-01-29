@@ -100,29 +100,16 @@
 //			$json = json_decode(file_get_contents($uri));
 			$json = json_decode(get_contents($uri));
 
-			$jsonData = $json;
-			if ($json->result) {
-				$jsonData = $json->result;
-			}
+			if ($json) {
+				$jsonData = $json;
+				if ($json->result) {
+					$jsonData = $json->result;
+				}
 
-			foreach($jsonData as $groupID) {
-				$uri = $url . $groupShowSuffix;
-//				$json = json_decode(file_get_contents($uri . $groupID->name));
-				$json = json_decode(get_contents($uri . $groupID->name));
-
-				if ($json) {
-					$uris = json_decode($json->result->extras[0]->value);
-					$data[] = semanticContributor($uriDomain, $pid, array(
-						'id' => $json->result->id,
-						'name' => $json->result->name,
-						'title' => $json->result->title,
-						'created' => $json->result->created,
-						'packages' => $json->result->package_count,
-						'uri' => $uris[0]
-					));
-				} else {
-/*					$uri = $url . $groupPackageShowSuffix;
-					$json = json_decode(file_get_contents($uri . $groupID->name));
+				foreach($jsonData as $groupID) {
+					$uri = $url . $groupShowSuffix;
+//					$json = json_decode(file_get_contents($uri . $groupID->name));
+					$json = json_decode(get_contents($uri . $groupID->name));
 
 					if ($json) {
 						$uris = json_decode($json->result->extras[0]->value);
@@ -134,8 +121,61 @@
 							'packages' => $json->result->package_count,
 							'uri' => $uris[0]
 						));
-					} else*/ {
-						$data[] = semanticContributor($uriDomain, $pid, scrapeWebsite($groupID->name, $url, $groupWebsiteSuffix));
+					} else {
+/*						$uri = $url . $groupPackageShowSuffix;
+						$json = json_decode(file_get_contents($uri . $groupID->name));
+
+						if ($json) {
+							$uris = json_decode($json->result->extras[0]->value);
+							$data[] = semanticContributor($uriDomain, $pid, array(
+								'id' => $json->result->id,
+								'name' => $json->result->name,
+								'title' => $json->result->title,
+								'created' => $json->result->created,
+								'packages' => $json->result->package_count,
+								'uri' => $uris[0]
+							));
+						} else*/ {
+							$data[] = semanticContributor($uriDomain, $pid, scrapeWebsite($groupID->name, $url, $groupWebsiteSuffix));
+						}
+					}
+				}
+			} else {
+				// page '403 Forbidden'
+
+				if ('open.rlp.de' === $uriDomain) {
+					// use Solr endpoint
+
+					$uri = $url . '/api/action/package_search';
+					$uri .= '?facet.field=[%22publisher_name%22]';
+					$uri .= '&facet.limit=-1';
+					$uri .= '&fq=(isopen%3A%22true%22)';
+					$uri .= '&rows=0';
+					$json = json_decode(get_contents($uri));
+
+					$jsonData = $json;
+					if ($jsonData->result) {
+						$jsonData = $jsonData->result;
+					}
+					if ($jsonData->search_facets) {
+						$jsonData = $jsonData->search_facets;
+					}
+					if ($jsonData->publisher_name) {
+						$jsonData = $jsonData->publisher_name;
+					}
+					if ($jsonData->items) {
+						$jsonData = $jsonData->items;
+					}
+
+					foreach($jsonData as $orga) {
+						$data[] = semanticContributor($uriDomain, $pid, array(
+							'id' => $orga->name,
+							'name' => $orga->name,
+							'title' => $orga->display_name,
+							'created' => '',
+							'packages' => intval($orga->count),
+							'uri' => ''
+						));
 					}
 				}
 			}
