@@ -16,6 +16,24 @@
 		return $data;
 	}
 
+	function get_contents_30sec($url){
+		$headers = [
+			'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+		];
+
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+		$data = curl_exec($ch);
+
+		curl_close($ch);
+
+		return $data;
+	}
+
 	function unparse_url($parsedURL) {
 		$scheme = isset($parsedURL['scheme']) ? $parsedURL['scheme'] . '://' : '';
 		$host = isset($parsedURL['host']) ? $parsedURL['host'] : '';
@@ -361,7 +379,7 @@
 
 		if (!$error && ($system === 'unknown')) {
 			$url = unparse_url($link);
-			$content = get_contents($url);
+			$content = get_contents_30sec($url);
 
 			// test OpenDataSoft
 			$odsHeader = stripos($content, 'ods-front-header');
@@ -372,7 +390,7 @@
 				$link['path'] = '/api/explore/v2.1';
 
 				$url = unparse_url($link);
-				$json = json_decode(get_contents($url));
+				$json = json_decode(get_contents_30sec($url));
 
 				if ($json && $json->links) {
 					$system = 'Opendatasoft';
