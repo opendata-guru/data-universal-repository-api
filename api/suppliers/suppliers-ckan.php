@@ -31,6 +31,50 @@
 		);
 	}
 
+	function collectDataBySOLR($uriDomain, $url, $pid, &$data) {
+		// e.g. avoindata.suomi.fi
+		$searchSuffix = '/api/3/action/package_search';
+		$searchParameter = '?facet.field=[%22organization%22]';
+
+		if ('open.rlp.de' === $uriDomain) {
+			$searchSuffix = '/api/action/package_search';
+			$searchParameter = '?facet.field=[%22publisher_name%22]';
+			$searchParameter .= '&fq=(isopen%3A%22true%22)';
+		}
+
+		$searchParameter .= '&facet.limit=-1';
+		$searchParameter .= '&rows=0';
+		$uri = $url . $searchSuffix . $searchParameter;
+		$json = json_decode(get_contents($uri));
+
+		$jsonData = $json;
+		if ($jsonData->result) {
+			$jsonData = $jsonData->result;
+		}
+		if ($jsonData->search_facets) {
+			$jsonData = $jsonData->search_facets;
+		}
+		if ($jsonData->organization) {
+			$jsonData = $jsonData->organization;
+		} else if ($jsonData->publisher_name) {
+			$jsonData = $jsonData->publisher_name;
+		}
+		if ($jsonData->items) {
+			$jsonData = $jsonData->items;
+
+			foreach($jsonData as $orga) {
+				$data[] = semanticContributor($uriDomain, $pid, array(
+					'id' => $orga->name,
+					'name' => $orga->name,
+					'title' => $orga->display_name,
+					'created' => '',
+					'packages' => intval($orga->count),
+					'uri' => ''
+				));
+			}
+		}
+	}
+
 	function suppliersCKAN($url, $pid) {
 		$orgaListSuffix = '/api/3/action/organization_list';
 		$orgaShowSuffix = '/api/3/action/organization_show?id=';
@@ -42,9 +86,16 @@
 		$uri = $url . $orgaListSuffix;
 //		$uriDomain = end(explode('/', $url));
 		$uriDomain = explode('/', $url)[2];
-		$json = json_decode(get_contents($uri));
 
 		$data = [];
+
+		collectDataBySOLR($uriDomain, $url, $pid, $data);
+		if (count($data) > 0) {
+			echo json_encode($data);
+			return;
+		}
+
+		$json = json_decode(get_contents($uri));
 
 		if ($json) {
 			foreach($json->result as $orgaID) {
@@ -143,41 +194,7 @@
 			} else {
 				// page '403 Forbidden'
 
-				if ('open.rlp.de' === $uriDomain) {
-					// use Solr endpoint
-
-					$uri = $url . '/api/action/package_search';
-					$uri .= '?facet.field=[%22publisher_name%22]';
-					$uri .= '&facet.limit=-1';
-					$uri .= '&fq=(isopen%3A%22true%22)';
-					$uri .= '&rows=0';
-					$json = json_decode(get_contents($uri));
-
-					$jsonData = $json;
-					if ($jsonData->result) {
-						$jsonData = $jsonData->result;
-					}
-					if ($jsonData->search_facets) {
-						$jsonData = $jsonData->search_facets;
-					}
-					if ($jsonData->publisher_name) {
-						$jsonData = $jsonData->publisher_name;
-					}
-					if ($jsonData->items) {
-						$jsonData = $jsonData->items;
-					}
-
-					foreach($jsonData as $orga) {
-						$data[] = semanticContributor($uriDomain, $pid, array(
-							'id' => $orga->name,
-							'name' => $orga->name,
-							'title' => $orga->display_name,
-							'created' => '',
-							'packages' => intval($orga->count),
-							'uri' => ''
-						));
-					}
-				}
+				// todo
 			}
 		}
 
