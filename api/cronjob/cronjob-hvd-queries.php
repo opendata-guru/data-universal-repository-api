@@ -12,7 +12,7 @@
 prefix dct: <http://purl.org/dc/terms/>
 prefix dcat: <http://www.w3.org/ns/dcat#>
 
-select ?catalog ?title ?description
+select DISTINCT ?catalog ?title ?description
 where {
   ?catalog a dcat:Catalog.
   ?catalog dct:title ?title.
