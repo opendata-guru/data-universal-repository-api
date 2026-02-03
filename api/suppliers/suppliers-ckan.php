@@ -87,7 +87,7 @@
 
 		if ($json) {
 			$jsonData = $json;
-			if (property_exists($jsonData, 'result')) {
+			if (is_object($jsonData) && property_exists($jsonData, 'result')) {
 				$jsonData = $jsonData->result;
 			}
 
