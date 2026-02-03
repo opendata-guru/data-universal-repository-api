@@ -66,8 +66,13 @@
 		$data = get_contents_sparql($url);
 		$result = json_decode($data)->results->bindings;
 
-		$data = array();
+		$filtered = array();
 		foreach($result as $object) {
+			$filtered[$object->catalog->value] = $object;
+		}
+
+		$data = array();
+		foreach($filtered as $object) {
 			$data[] = array(
 				'catalog' => $object->catalog->value,
 				'title' => $object->title->value,
