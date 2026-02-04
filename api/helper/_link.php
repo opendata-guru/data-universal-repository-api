@@ -182,6 +182,29 @@
 		}
 
 		if (!$error && ($system === 'unknown')) {
+			$$DUVA_CATALOG = '/duva2dcat/dcat/catalog';
+			$DUVA_2DCAT_ = '/duva2dcat/';
+			$DUVA_2DCAT = '/duva2dcat';
+			$found = null;
+
+			if ($$DUVA_CATALOG == substr($link['path'], -strlen($$DUVA_CATALOG))) {
+				$found = substr($link['path'], 0, -strlen($$DUVA_CATALOG));
+			} else if ($DUVA_2DCAT_ == substr($link['path'], -strlen($DUVA_2DCAT_))) {
+				$found = substr($link['path'], 0, -strlen($DUVA_2DCAT_));
+			} else if ($DUVA_2DCAT == substr($link['path'], -strlen($DUVA_2DCAT))) {
+				$found = substr($link['path'], 0, -strlen($DUVA_2DCAT));
+			}
+
+			if ($found !== null) {
+				$link['path'] = $found;
+				unset($link['query']);
+				unset($link['fragment']);
+				$url = unparse_url($link);
+				$system = 'DUVA';
+			}
+		}
+
+		if (!$error && ($system === 'unknown')) {
 			$ENTRYSTORE_MANAGEMENT_STATUS = '/store/management/status';
 			$ENTRYSTORE_SEARCH = '/store/search';
 			$ENTRYSTORE_STORE_ = '/store/';
