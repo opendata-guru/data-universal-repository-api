@@ -58,6 +58,9 @@
 	} else if ('datenadler' === $link->system) {
 		include 'suppliers/suppliers-datenadler.php';
 		suppliersDatenadler($link->url, $pid);
+	} else if ('DUVA' === $link->system) {
+		include 'suppliers/suppliers-duva.php';
+		suppliersDUVA($link->url, $pid);
 	} else if ('EntryStore' === $link->system) {
 		include 'suppliers/suppliers-entrystore.php';
 		suppliersEntryStore($link->url, $pid);

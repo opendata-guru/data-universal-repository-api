@@ -57,6 +57,9 @@
 	} else if ('datenadler' === $link->system) {
 		include 'datasets-count/datasets-count-datenadler.php';
 		datasetsCountDatenadler($link->url);
+	} else if ('DUVA' === $link->system) {
+		include 'datasets-count/datasets-count-duva.php';
+		datasetsCountDUVA($link->url);
 	} else if ('EntryStore' === $link->system) {
 		include 'datasets-count/datasets-count-entrystore.php';
 		datasetsCountEntryStore($link->url);
