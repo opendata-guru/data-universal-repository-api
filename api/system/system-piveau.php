@@ -1,11 +1,18 @@
 <?php
 	function systemPiveau($url) {
-		$searchSuffix = '/api/hub/search/openapi.yaml';
-		$repoSuffix = '/api/hub/repo/openapi.yaml';
+		$PIVEAU_HOST_SEARCH_PIVEAU = 'search.piveau.';
+		$PIVEAU_HOST_REPO_PIVEAU = 'repo.piveau.';
+		$PIVEAU_HOST_UI_PIVEAU = 'ui.piveau.';
+
+		$searchYAML = '/openapi.yaml';
+		$searchSuffix = '/api/hub/search' . $searchYAML;
+		$repoYAML = '/openapi.yaml';
+		$repoSuffix = '/api/hub/repo' . $repoYAML;
 		$mqaSuffix = '/api/mqa/cache/openapi.yaml';
 		$mqaSHACLSuffix = '/api/mqa/shacl/openapi-shacl.yaml';
 		// $sparqlSuffix = '/sparql';
 		// $useCasesSuffix = '/en/export-use-cases';
+		$host = '';
 
 		function getVersion($path) {
 //			$yaml = file_get_contents($path);
@@ -32,10 +39,30 @@
 			return '';
 		}
 
-		$versionSearch = getVersion($url . $searchSuffix);
-		$versionRegistry = getVersion($url . $repoSuffix);
-		$versionMQA = getVersion($url . $mqaSuffix);
-		$versionSHACLMetadataValidation = getVersion($url . $mqaSHACLSuffix);
+		$link = parse_url($url);
+		if (str_starts_with($link['host'], $PIVEAU_HOST_SEARCH_PIVEAU)) {
+    		$host = substr($link['host'], strlen($PIVEAU_HOST_SEARCH_PIVEAU));
+		} else if (str_starts_with($link['host'], $PIVEAU_HOST_UI_PIVEAU)) {
+    		$host = substr($link['host'], strlen($PIVEAU_HOST_UI_PIVEAU));
+		}
+
+		if ($host) {
+			$link['host'] = $PIVEAU_HOST_SEARCH_PIVEAU . $host;
+			$url = unparse_url($link);
+			$versionSearch = getVersion($url . $searchYAML);
+
+			$link['host'] = $PIVEAU_HOST_REPO_PIVEAU . $host;
+			$url = unparse_url($link);
+			$versionRegistry = getVersion($url . $repoYAML);
+
+			$versionMQA = '';
+			$versionSHACLMetadataValidation = '';
+		} else {
+			$versionSearch = getVersion($url . $searchSuffix);
+			$versionRegistry = getVersion($url . $repoSuffix);
+			$versionMQA = getVersion($url . $mqaSuffix);
+			$versionSHACLMetadataValidation = getVersion($url . $mqaSHACLSuffix);
+		}
 
 		if ($version !== '') {
 			echo json_encode((object) array(

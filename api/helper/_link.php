@@ -135,6 +135,8 @@
 			$PIVEAU_REPO_DATASETS = '/api/hub/repo/datasets';
 			$PIVEAU_REPO_ = '/api/hub/repo/';
 			$PIVEAU_REPO = '/api/hub/repo';
+			$PIVEAU_HOST_SEARCH_PIVEAU = 'search.piveau.';
+			$PIVEAU_HOST_UI_PIVEAU = 'ui.piveau.';
 			$found = null;
 
 			if ($PIVEAU_SEARCH_CATALOGUES_ == substr($link['path'], -strlen($PIVEAU_SEARCH_CATALOGUES_))) {
@@ -157,6 +159,10 @@
 				$found = substr($link['path'], 0, -strlen($PIVEAU_REPO_));
 			} else if ($PIVEAU_REPO == substr($link['path'], -strlen($PIVEAU_REPO))) {
 				$found = substr($link['path'], 0, -strlen($PIVEAU_REPO));
+			} else if (str_starts_with($link['host'], $PIVEAU_HOST_SEARCH_PIVEAU)) {
+				$found = '';
+			} else if (str_starts_with($link['host'], $PIVEAU_HOST_UI_PIVEAU)) {
+				$found = '';
 			}
 
 			if ($found !== null) {

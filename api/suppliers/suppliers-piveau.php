@@ -5,9 +5,28 @@
 //	error_reporting(E_ALL);
 
 	function suppliersPiveau($url, $pid) {
-		$catalogSuffix = '/api/hub/search/catalogues';
-		$catalogsSuffix = '/api/hub/search/catalogues/';
-		$countSuffix = '/api/hub/search/search?q=&filter=dataset&facets={%22catalog%22:[%22###%22]}&limit=0';
+		$PIVEAU_HOST_SEARCH_PIVEAU = 'search.piveau.';
+		$PIVEAU_HOST_UI_PIVEAU = 'ui.piveau.';
+
+		$path_prefix = '/api/hub/search';
+		$host = '';
+
+		$link = parse_url($url);
+		if (str_starts_with($link['host'], $PIVEAU_HOST_SEARCH_PIVEAU)) {
+    		$host = substr($link['host'], strlen($PIVEAU_HOST_SEARCH_PIVEAU));
+		} else if (str_starts_with($link['host'], $PIVEAU_HOST_UI_PIVEAU)) {
+    		$host = substr($link['host'], strlen($PIVEAU_HOST_UI_PIVEAU));
+		}
+
+		if ($host) {
+			$link['host'] = $PIVEAU_HOST_SEARCH_PIVEAU . $host;
+			$url = unparse_url($link);
+			$path_prefix = '';
+		}
+
+		$catalogSuffix = $path_prefix . '/catalogues';
+		$catalogsSuffix = $path_prefix . '/catalogues/';
+		$countSuffix = $path_prefix . '/search?q=&filter=dataset&facets={%22catalog%22:[%22###%22]}&limit=0';
 
 		$uri = $url . $catalogSuffix;
 		$uriDomain = end(explode('/', $url));
@@ -18,46 +37,48 @@
 
 		$list = json_decode($source);
 
-		for ($l = 0; $l < count($list); ++$l) {
-			$catalogURI = $url . $catalogsSuffix . $list[$l];
-			$source = get_contents($catalogURI);
-			$catalog = json_decode($source);
+		if ($list) {
+			for ($l = 0; $l < count($list); ++$l) {
+				$catalogURI = $url . $catalogsSuffix . $list[$l];
+				$source = get_contents($catalogURI);
+				$catalog = json_decode($source);
 
-			// $catalog->result->country->label
+				// $catalog->result->country->label
 
-			$count = $catalog->result->count;
-			if (!$count || ($count < 1)) {
-				$countURI = $url . $countSuffix;
-				$countURI = str_replace('###', $catalog->result->id, $countURI);
-				$source = get_contents($countURI);
-				$countData = json_decode($source);
-				$count = $countData->result->count;
+				$count = $catalog->result->count;
+				if (!$count || ($count < 1)) {
+					$countURI = $url . $countSuffix;
+					$countURI = str_replace('###', $catalog->result->id, $countURI);
+					$source = get_contents($countURI);
+					$countData = json_decode($source);
+					$count = $countData->result->count;
+				}
+
+				$title = $catalog->result->title;
+				if ($title) {
+					$titleLang = array_keys((array)$title)[0];
+					$title = ((array)$title)[$titleLang];
+				} else if ($catalog->result->publisher) {
+					$title = $catalog->result->publisher->name;
+				}
+
+				$id = $catalog->result->id;
+
+				// used in Bavaria and Europe
+				$isPartOf = $catalog->result->is_part_of;
+				$hasPart = $catalog->result->has_part;
+
+				$data[] = semanticContributor($uriDomain, $pid, array(
+					'id' => $id,
+					'name' => $id,
+					'title' => $title,
+					'created' => '',
+					'packages' => $count,
+					'uri' => '',
+					'ispartof' => $isPartOf,
+					'haspart' => $hasPart,
+				));
 			}
-
-			$title = $catalog->result->title;
-			if ($title) {
-				$titleLang = array_keys((array)$title)[0];
-				$title = ((array)$title)[$titleLang];
-			} else if ($catalog->result->publisher) {
-				$title = $catalog->result->publisher->name;
-			}
-
-			$id = $catalog->result->id;
-
-			// used in Bavaria and Europe
-			$isPartOf = $catalog->result->is_part_of;
-			$hasPart = $catalog->result->has_part;
-
-			$data[] = semanticContributor($uriDomain, $pid, array(
-				'id' => $id,
-				'name' => $id,
-				'title' => $title,
-				'created' => '',
-				'packages' => $count,
-				'uri' => '',
-				'ispartof' => $isPartOf,
-				'haspart' => $hasPart,
-			));
 		}
 
 		for ($d = 0; $d < count($data); ++$d) {
