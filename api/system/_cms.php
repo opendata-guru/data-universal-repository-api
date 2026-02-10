@@ -37,7 +37,7 @@
 	function getCMS($link) {
 		global $file;
 
-		$file = file_get_contents($link);
+		$file = get_contents_30sec($link);
 		$generator = getGenerator();
 
 		if ($generator && ('ckan' === explode(' ', $generator)[0])) {
@@ -45,7 +45,7 @@
 			if (substr($link, 0, strlen($query)) === $query) {
 				$link = 'https://' . substr($link, strlen($query));
 
-				$file = file_get_contents($link);
+				$file = get_contents_30sec($link);
 				$generator = getGenerator();
 			}
 		}

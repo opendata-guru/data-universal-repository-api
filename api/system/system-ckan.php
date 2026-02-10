@@ -3,7 +3,7 @@
 		$statusShowSuffix = '/api/3/action/status_show';
 
 //		$json = json_decode(file_get_contents($url . $statusShowSuffix));
-		$json = json_decode(get_contents($url . $statusShowSuffix));
+		$json = json_decode(get_contents_30sec($url . $statusShowSuffix));
 		$cms = getCMS($url);
 
 		if ($json) {
