@@ -1605,6 +1605,94 @@
         ]
       }
     },
+    "/convert/ars": {
+      "get": {
+        "summary": "Convert ARS to GeoJSON",
+        "description": "Convert a single ARS (Amtlicher Regionalschlüssel) or a list of ARS to GeoJSON. Parameter length in GET method is limited to some KByte (depend on Browser support).",
+        "parameters": [
+          {
+            "name": "ars",
+            "in": "query",
+            "description": "A single ARS or a list of ARS (delimiter comma)",
+            "required": true,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "bremen": {
+                "value": "04",
+                "summary": "Bremen (04)"
+              },
+              "bremenhessen": {
+                "value": "04,06",
+                "summary": "Bremen, Hessen (04,06)"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Example of a successful answer",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "geoJSONSample": {
+                    "value": "tbd."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "convert"
+        ]
+      },
+      "post": {
+        "summary": "Convert ARS to GeoJSON",
+        "description": "Convert a single ARS (Amtlicher Regionalschlüssel) or a list of ARS to GeoJSON. Parameter length in GET method is limited to some KByte (depend on Browser support). So use POST method to prevent this limitation.",
+        "parameters": [
+          {
+            "name": "ars",
+            "in": "query",
+            "description": "A single ARS or a list of ARS (delimiter comma)",
+            "required": true,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "bremen": {
+                "value": "04",
+                "summary": "Bremen (04)"
+              },
+              "bremenhessen": {
+                "value": "04,06",
+                "summary": "Bremen, Hessen (04,06)"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Example of a successful answer",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "geoJSONSample": {
+                    "value": "tbd."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "convert"
+        ]
+      }
+    },
     "/data-providers": {
       "get": {
         "summary": "List all known providers",
@@ -1808,6 +1896,10 @@
           "dkan": {
             "value": "https://open-data.bielefeld.de/api/3/action/group_list",
             "summary": "DKAN portal"
+          },
+          "duva": {
+            "value": "https://fritz.freiburg.de/duva2dcat/",
+            "summary": "DUVA portal"
           },
           "entrystore": {
             "value": "https://register.opendata.sachsen.de/store/",
@@ -2150,6 +2242,10 @@
     {
       "name": "live",
       "description": "The API endpoints call the source systems directly. Be careful during heavy use, there is no caching mechanism."
+    },
+    {
+      "name": "convert",
+      "description": "Helper functions to convert data"
     },
     {
       "name": "maintained",
