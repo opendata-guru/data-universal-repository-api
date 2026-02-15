@@ -1,17 +1,31 @@
 <?php
 	function analyseLink($html, $url) {
+		$href = '';
+		$title = '';
+
 		$start = stripos($html, '<a');
-		$end = stripos($html, '</a>', $start);
-		$length = $end - $start;
-		$html = trim(substr($html, $start, $length));
+		if (false !== $start) {
+			$end = stripos($html, '</a>', $start);
+			$length = $end - $start;
+			$html = trim(substr($html, $start, $length));
 
-		$start = stripos($html, 'href="') + 6;
-		$end = stripos($html, '"', $start);
-		$length = $end - $start;
-		$href = trim(substr($html, $start, $length));
+			$start = stripos($html, 'href="') + 6;
+			$end = stripos($html, '"', $start);
+			$length = $end - $start;
+			$href = trim(substr($html, $start, $length));
 
-		$start = stripos($html, '>') + 1;
-		$title = trim(substr($html, $start));
+			$start = stripos($html, '>') + 1;
+			$title = trim(substr($html, $start));
+		} else {
+			$space = stripos($html, ' ');
+
+			if ((strlen($html) > 0) && (false === $space)) {
+				$href = $html;
+				$title = $html;
+			} else {
+				return null;
+			}
+		}
 
 		return ['href' => $url . $href, 'title' => $title];
 	}
@@ -27,6 +41,9 @@
 		$end = stripos($html, '</td>', $start);
 		$length = $end - $start;
 		$source = trim(substr($html, $start, $length));
+
+		$start = stripos($source, '>');
+		$source = trim(substr($source, $start + 1));
 
 		return analyseLink($source, '');
 	}
@@ -74,7 +91,7 @@
 			}
 
 			++$page;
-		} while($page < 10);
+		} while($page < 30);
 
 		return $ret;
 	}
