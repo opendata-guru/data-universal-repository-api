@@ -87,14 +87,13 @@
 		$uri = dirname(dirname($uri));
 
 		$encodedParams = str_replace('%2C', ',', urlencode($param));
-		$uri .= '/get/rs-to-geojson.php';
-$uri = 'https://opendata.guru/govdata/get/rs-to-geojson.php';
+		$uri .= '/convert-ars.php';
 
 		$ch = curl_init();
 
 		curl_setopt($ch, CURLOPT_URL, $uri);
 		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, 'rs=' . $encodedParams);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, 'ars=' . $encodedParams);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
