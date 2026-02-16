@@ -410,19 +410,33 @@
 			$url = unparse_url($link);
 			$content = get_contents_30sec($url);
 
-			// test OpenDataSoft
-			$odsHeader = stripos($content, 'ods-front-header');
-			$odsFooter = stripos($content, 'ods-front-footer');
-			if (($odsHeader !== false) && ($odsFooter !== false)) {
-				unset($link['query']);
-				unset($link['fragment']);
-				$link['path'] = '/api/explore/v2.1';
+			if (!$error && ($system === 'unknown')) {
+				$odsHeader = stripos($content, 'ods-front-header');
+				$odsFooter = stripos($content, 'ods-front-footer');
+				if (($odsHeader !== false) && ($odsFooter !== false)) {
+					unset($link['query']);
+					unset($link['fragment']);
+					$link['path'] = '/api/explore/v2.1';
 
-				$url = unparse_url($link);
-				$json = json_decode(get_contents_30sec($url));
+					$url = unparse_url($link);
+					$json = json_decode(get_contents_30sec($url));
 
-				if ($json && $json->links) {
-					$system = 'Opendatasoft';
+					if ($json && $json->links) {
+						$system = 'Opendatasoft';
+					}
+				}
+			}
+
+			if (!$error && ($system === 'unknown')) {
+				$posXML = stripos($content, '<?xml ');
+
+				if ((false !== $posXML) && ($posXML < 10)) {
+					$posRDF = stripos($content, '<rdf:rdf');
+					$posCatalog = stripos($content, '<dcat:Catalog ');
+
+					if ((false !== $posRDF) && (false !== $posCatalog)) {
+						$system = 'rdf';
+					}
 				}
 			}
 		}

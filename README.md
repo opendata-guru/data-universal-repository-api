@@ -39,3 +39,10 @@ The INSPIRE XML schemas are documented here: [inspire.ec.europa.eu/schemas](http
 
 The INSPIRE registry is located here: [inspire.ec.europa.eu/registry](https://inspire.ec.europa.eu/registry). The [INSPIRE feature concept dictionary](https://inspire.ec.europa.eu/featureconcept) contain e.g. the [Existing Land Use Data Set](https://inspire.ec.europa.eu/featureconcept/ExistingLandUseDataSet).
 
+## Add a new system
+
+To implement a new system (data portal or file format) follow these steps:
+
+- `helper/_link.php` and add an url pattern matching or content analyses
+- `system.php` and add a link to new system file
+- add file `system/system-{name}.php` to collect metadata of the system
