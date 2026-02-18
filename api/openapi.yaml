@@ -737,6 +737,7 @@ paths:
     get:
       summary: Counts the number of datasets
       description: Get the number of datasets in the system.
+      deprecated: true
       operationId: getDatasetsCount
       parameters:
         - $ref: "#/components/parameters/linkParamOptional"
@@ -780,6 +781,27 @@ paths:
                     - id: 3cf4e37c-3ae6-4c0c-a1e2-ff782ce47a03
                       name: inspire-sh-gebaude-2d-alkis4cca8
                       title: INSPIRE SH Gebäude – 2D ALKIS
+        '400':
+          $ref: "#/components/responses/400BadRequest"
+      tags:
+        - live
+  /live/countdatasets:
+    get:
+      summary: Counts the number of datasets
+      description: Get the number of datasets in the system.
+      operationId: getLiveCountDatasets
+      parameters:
+        - $ref: "#/components/parameters/linkParamOptional"
+        - $ref: "#/components/parameters/pidParam"
+      responses:
+        '200':
+          description: Example of a successful answer
+          content:
+            application/json:
+              examples:
+                ckanSample:
+                  value:
+                    number: 42
         '400':
           $ref: "#/components/responses/400BadRequest"
       tags:
@@ -1234,6 +1256,9 @@ components:
         piveau:
           value: https://opendata.bayern/api/hub/search/
           summary: Piveau portal
+        rdf:
+          value: https://numis.niedersachsen.de/search/opensearch/query?format=rdf
+          summary: RDF endpoint
         sparql:
           value: https://www.govdata.de/sparql
           summary: SPARQL endpoint

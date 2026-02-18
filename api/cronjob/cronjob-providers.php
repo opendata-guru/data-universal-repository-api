@@ -75,7 +75,7 @@
 
 	function curlCountDatasetData($pID) {
 		$uri = 'https://opendata.guru/api/2';
-		$uri .= '/datasets/count?pID=' . urlencode($pID);
+		$uri .= '/live/countdatasets?pID=' . urlencode($pID);
 
 		$data = curl($uri);
 		$json = json_decode($data);
