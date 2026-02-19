@@ -79,6 +79,9 @@
 	} else if ('Czech' === $link->system) {
 		include 'suppliers/suppliers-czech.php';
 		suppliersCzech($link->url, $pid);
+	} else if ('rdf' === $link->system) {
+		include 'suppliers/suppliers-rdf.php';
+		suppliersRDF($link->url, $pid);
 	} else if ('Spain' === $link->system) {
 		include 'suppliers/suppliers-spain.php';
 		suppliersSpain($link->url, $pid);

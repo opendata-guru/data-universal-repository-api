@@ -79,6 +79,8 @@ Essential:
 - in `helper/_link.php` add an url pattern matching or content analyses
 - add file `live-countdatasets/live-countdatasets-{name}.php` to count datasets of the system
 - in `live-countdatasets.php` add a link to the new system file
+- add file `suppliers/suppliers-{name}.php` to count datasets by supplier of the system
+- in `suppliers.php` add a link to the new system file
 
 Nice to have:
 
@@ -90,5 +92,4 @@ todo (for documentation)
 
 - SYSTEMS.HTML or .JS
 - LIVE HARVESTER
-- SUPPLIERS
 - SYSTEM CHANGELOG
