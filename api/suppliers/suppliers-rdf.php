@@ -55,6 +55,8 @@
 		$totalItems = null;
 		$itemsPerPage = null;
 
+		$uriDomain = explode('/', $url)[2];
+
 		$start = stripos($rdf_xml, '<hydra:PagedCollection');
 		if (false !== $start) {
 			$start = stripos($rdf_xml, '>', $start) + 1;
@@ -138,7 +140,7 @@
 
 		if ($supplier) {
 			foreach($supplier as $title => $count) {
-				$id = preg_replace('#[^a-z0-9-]#i', '', $name);
+				$id = preg_replace('#[^a-z0-9-]#i', '', $title);
 				$name = $id;
 
 				$data[] = semanticContributor($uriDomain, $pid, array(
