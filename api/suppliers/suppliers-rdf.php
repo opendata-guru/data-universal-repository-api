@@ -49,40 +49,83 @@
 		}
 	}
 
+	function getHydra($rdf_xml) {
+		$start = stripos($rdf_xml, '<hydra:PagedCollection');
+
+		if (false !== $start) {
+			$start = stripos($rdf_xml, '>', $start) + 1;
+			$end = stripos($rdf_xml, '</hydra:PagedCollection>', $start);
+			$length = $end - $start;
+			return trim(substr($rdf_xml, $start, $length));
+		}
+
+		return '';
+	}
+
+	function getHydraTotalItems($hydra) {
+		if ('' !== $hydra) {
+			$start = stripos($hydra, '<hydra:totalItems');
+
+			if (false !== $start) {
+				$start = stripos($hydra, '>', $start) + 1;
+				$end = stripos($hydra, '</hydra:totalItems>', $start);
+				$length = $end - $start;
+
+				$totalItems = trim(substr($hydra, $start, $length));
+				return intval($totalItems);
+			}
+		}
+
+		return null;
+	}
+
+	function getHydraItemsPerPage($hydra) {
+		if ('' !== $hydra) {
+			$start = stripos($hydra, '<hydra:itemsperpage');
+
+			if (false !== $start) {
+				$start = stripos($hydra, '>', $start) + 1;
+				$end = stripos($hydra, '</hydra:itemsperpage>', $start);
+				$length = $end - $start;
+
+				$itemsPerPage = trim(substr($hydra, $start, $length));
+				return intval($itemsPerPage);
+			}
+		}
+
+		return null;
+	}
+
+	function getHydraNextPage($hydra) {
+		if ('' !== $hydra) {
+			$start = stripos($hydra, '<hydra:nextPage');
+
+			if (false !== $start) {
+				$start = stripos($hydra, '>', $start) + 1;
+				$end = stripos($hydra, '</hydra:nextPage>', $start);
+				$length = $end - $start;
+
+				$next = trim(substr($hydra, $start, $length));
+				return str_replace('&amp;', '&', $next);
+			}
+		}
+
+		return '';
+	}
+
 	function suppliersRDF($url, $pid) {
-		$rdf_xml = file_get_contents($url);
 		$hydra = '';
 		$totalItems = null;
 		$itemsPerPage = null;
 
 		$uriDomain = explode('/', $url)[2];
 
-		$start = stripos($rdf_xml, '<hydra:PagedCollection');
-		if (false !== $start) {
-			$start = stripos($rdf_xml, '>', $start) + 1;
-			$end = stripos($rdf_xml, '</hydra:PagedCollection>', $start);
-			$length = $end - $start;
-			$hydra = trim(substr($rdf_xml, $start, $length));
-		}
+		$rdf_xml = file_get_contents($url);
+		$hydra = getHydra($rdf_xml);
 
 		if ('' !== $hydra) {
-			$start = stripos($rdf_xml, '<hydra:totalItems');
-			if (false !== $start) {
-				$start = stripos($rdf_xml, '>', $start) + 1;
-				$end = stripos($rdf_xml, '</hydra:totalItems>', $start);
-				$length = $end - $start;
-				$totalItems = trim(substr($rdf_xml, $start, $length));
-				$totalItems = intval($totalItems);
-			}
-
-			$start = stripos($rdf_xml, '<hydra:itemsperpage');
-			if (false !== $start) {
-				$start = stripos($rdf_xml, '>', $start) + 1;
-				$end = stripos($rdf_xml, '</hydra:itemsperpage>', $start);
-				$length = $end - $start;
-				$itemsPerPage = trim(substr($rdf_xml, $start, $length));
-				$itemsPerPage = intval($itemsPerPage);
-			}
+			$totalItems = getHydraTotalItems($hydra);
+			$itemsPerPage = getHydraItemsPerPage($hydra);
 		} else {
 			$start = stripos($rdf_xml, '<dcat:catalog');
 			if (false !== $start) {
@@ -107,36 +150,28 @@
 			}
 
 			$rdf_xml = file_get_contents($url);
-
-			$start = stripos($rdf_xml, '<hydra:PagedCollection');
-			if (false !== $start) {
-				$start = stripos($rdf_xml, '>', $start) + 1;
-				$end = stripos($rdf_xml, '</hydra:PagedCollection>', $start);
-				$length = $end - $start;
-				$hydra = trim(substr($rdf_xml, $start, $length));
-			}
+			$hydra = getHydra($rdf_xml);
 		}
 
 		$supplier = [];
+		$continue = true;
+		$lastNext = $url;
 
-//		do {
+		do {
 			parseDatasets($rdf_xml, $supplier);
 
-			$next = '';
-			if ('' !== $hydra) {
-				$start = stripos($rdf_xml, '<hydra:nextPage');
-				if (false !== $start) {
-					$start = stripos($rdf_xml, '>', $start) + 1;
-					$end = stripos($rdf_xml, '</hydra:nextPage>', $start);
-					$length = $end - $start;
-					$next = trim(substr($rdf_xml, $start, $length));
-				}
-			}
+			$next = getHydraNextPage($hydra);
 
 			if ('' !== $next) {
-				$rdf_xml = file_get_contents($url);
+				$rdf_xml = file_get_contents($next);
+				$hydra = getHydra($rdf_xml);
+
+				$continue = $lastNext !== $next;
+				$lastNext = $next;
+			} else {
+				$continue = false;
 			}
-//		} while('' !== $next);
+		} while($continue);
 
 		if ($supplier) {
 			foreach($supplier as $title => $count) {
