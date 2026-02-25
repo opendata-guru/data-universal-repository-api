@@ -9,24 +9,40 @@
 		$end = stripos($html, '</ul>', $start);
 		$length = $end - $start;
 		$html = substr($html, $start, $length);
-		$html = explode('<', $html);
-		$html = $html[count($html) - 2];
-		$title = explode('>', $html)[1];
+		$listElements = explode('</li>', $html);
+
+		if (count($listElements) <= 3) {
+			// home-icon
+			// 'home' missing
+			// 'groups' missing
+			// 'title' -> here 'page not found'
+			$title = '';
+		} else {
+			$html = explode('<', $html);
+			$html = $html[count($html) - 2];
+			$title = explode('>', $html)[1];
+		}
 
 		$html = $source;
 		$start = stripos($html, 'view-header');
-		$end = stripos($html, '</div>', $start);
-		$length = $end - $start;
-		$html = trim(substr($html, $start, $length));
-		$html = explode(' ', $html);
-		$packageCount = $html[count($html) - 2];
+
+		if (false === $start) {
+			$packageCount = null;
+		} else {
+			$end = stripos($html, '</div>', $start);
+			$length = $end - $start;
+			$html = trim(substr($html, $start, $length));
+			$html = explode(' ', $html);
+			$packageCount = $html[count($html) - 2];
+			$packageCount = intval($packageCount);
+		}
 
 		return array(
 			'id' => $groupID,
 			'name' => $groupID,
 			'title' => $title,
 			'created' => '',
-			'packages' => intval($packageCount),
+			'packages' => $packageCount,
 			'uri' => ''
 		);
 	}
@@ -80,6 +96,7 @@
 		$groupShowSuffix = '/api/3/action/group_show?id=';
 		$groupPackageShowSuffix = '/api/3/action/group_package_show?id=';
 		$groupWebsiteSuffix = '/group/';
+		$groupWebsiteSuffix2 = '/';
 
 		$uri = $url . $groupListSuffix;
 //		$json = json_decode(file_get_contents($uri));
@@ -121,7 +138,13 @@
 							'uri' => $uris[0]
 						));
 					} else*/ {
-						$data[] = semanticContributor($uriDomain, $pid, scrapeWebsite($groupID->name, $url, $groupWebsiteSuffix));
+						$scraped = scrapeWebsite($groupID->name, $url, $groupWebsiteSuffix);
+
+						if (('' === $scraped['title']) && (null === $scraped['packages'])) {
+							$scraped = scrapeWebsite($groupID->name, $url, $groupWebsiteSuffix2);
+						}
+
+						$data[] = semanticContributor($uriDomain, $pid, $scraped);
 					}
 				}
 			}
