@@ -72,8 +72,8 @@
         ]
       },
       "post": {
-        "summary": "Add a known portal",
-        "description": "Unfortunately, the list of portals cannot be changed here. Please create an issue on GitHub at https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data",
+        "summary": "Add a new portal",
+        "description": "Provide a deep link to add a new portal.",
         "operationId": "postPObjects",
         "security": [
           {
@@ -84,7 +84,7 @@
           {
             "name": "url",
             "in": "query",
-            "description": "tbd.",
+            "description": "Set the `deeplink` of the portal. This can be linked to an API endpoint, e.g. to fetch all datasets.",
             "required": true,
             "allowEmptyValue": false,
             "schema": {
@@ -161,8 +161,8 @@
         ]
       },
       "post": {
-        "summary": "Changing the data of a portal",
-        "description": "Unfortunately, the portal data cannot be changed here. Please create an issue on GitHub at https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data.",
+        "summary": "Changing the metadata of a portal",
+        "description": "Change the metadata of the portal. Set a new `sID` to change the associated supplier or set the `url` parameter to modify the `deeplink` (`url` will be adjust automatically).",
         "operationId": "postPObject",
         "security": [
           {
@@ -175,9 +175,62 @@
           },
           {
             "$ref": "#/components/parameters/sidParam"
+          },
+          {
+            "name": "url",
+            "in": "query",
+            "description": "Set the `deeplink` of the portal. This can be linked to an API endpoint, e.g. to fetch all datasets.",
+            "required": false,
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "empty": {
+                "value": null,
+                "summary": "Empty value"
+              },
+              "edp": {
+                "value": "https://data.europa.eu/api/hub/search/",
+                "summary": "URL of European data portal"
+              }
+            }
           }
         ],
         "responses": {
+          "200": {
+            "description": "Example of a successful answer",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "pSample": {
+                    "value": {
+                      "pid": "p000",
+                      "sobject": {
+                        "sid": "sYyj9",
+                        "title": {
+                          "de": "Europäische Union",
+                          "en": "European Union"
+                        },
+                        "type": "root",
+                        "sameAs": {
+                          "wikidata": "http://www.wikidata.org/entity/Q458"
+                        },
+                        "partOf": {
+                          "wikidata": ""
+                        },
+                        "geocoding": {
+                          "germanRegionalKey": ""
+                        }
+                      },
+                      "url": "https://data.europa.eu",
+                      "deeplink": "https://data.europa.eu/api/hub/search/"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "401": {
             "$ref": "#/components/responses/401Unauthorized"
           }

@@ -52,6 +52,8 @@
 	function postPID() {
 		global $loadedProviders;
 
+		include('helper/_link.php');
+
 		$parameterPID = htmlspecialchars($_GET['pid']);
 		$error = null;
 		$url = '';
@@ -76,6 +78,23 @@
 					'parameter' => $parameterPID,
 				);
 			}
+		}
+
+		$parameterURL = trim(htmlspecialchars($_GET['url']));
+		if ($parameterURL != '') {
+			$deepLink = $parameterURL;
+			$url = $deepLink;
+
+			$link = getLinkWithParam($deepLink);
+			if (is_string($link->url) && ($link->url !== '')) {
+				$url = $link->url;
+			}
+
+			providerSetDeepLink($pObject, $deepLink);
+			providerSetURL($pObject, $url);
+			$pObject = findPObjectByPID($parameterPID);
+
+			saveMappingFilePObjects();
 		}
 
 		$parameterSID = htmlspecialchars($_GET['sid']);
@@ -281,8 +300,28 @@
 	function providerGetURL($provider) {
 		return $provider[2];
 	}
+	function providerSetURL($provider, $url) {
+		global $loadedProviders;
+		$pid = providerGetPID($provider);
+
+		foreach($loadedProviders as &$pObject) {
+			if (providerGetPID($pObject) == $pid) {
+				$pObject[2] = $url;
+			}
+		}
+	}
 	function providerGetDeepLink($provider) {
 		return $provider[3];
+	}
+	function providerSetDeepLink($provider, $deepLink) {
+		global $loadedProviders;
+		$pid = providerGetPID($provider);
+
+		foreach($loadedProviders as &$pObject) {
+			if (providerGetPID($pObject) == $pid) {
+				$pObject[3] = $deepLink;
+			}
+		}
 	}
 	function providerGetModified($provider) {
 		return $provider[4];
