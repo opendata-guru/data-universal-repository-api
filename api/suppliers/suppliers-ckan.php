@@ -104,8 +104,29 @@
 
 		if ($json) {
 			$jsonData = $json;
+			$success = false;
+			if (is_object($jsonData) && property_exists($jsonData, 'success')) {
+				$success = $jsonData->success;
+			}
 			if (is_object($jsonData) && property_exists($jsonData, 'result')) {
 				$jsonData = $jsonData->result;
+			}
+
+			if ($success && (0 === count($jsonData))) {
+				// suppliers in DKAN portals ('groups') are optional
+				$countDatasets = 'https://opendata.guru/api/2/live/countdatasets?pID=' . $pid;
+				$json = json_decode(file_get_contents($countDatasets));
+
+				if ($json) {
+					$data[] = semanticContributor($uriDomain, $pid, array(
+						'id' => 'default',
+						'name' => 'default',
+						'title' => 'default',
+						'created' => '',
+						'packages' => $json->number,
+						'uri' => ''
+					));
+				}
 			}
 
 			foreach($jsonData as $groupID) {
