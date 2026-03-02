@@ -654,7 +654,7 @@
       },
       "post": {
         "summary": "Changing the data of a supplier",
-        "description": "Unfortunately, the supplier data cannot be changed here. Please create an issue on GitHub at https://github.com/opendata-guru/data-universal-repository-api/tree/main/api-data.",
+        "description": "Parameter `title` overwrite English title and set German title to empty string. Parameter `sameaswikidata` and `partofwikidata` send a query to wikidata and overwrite properties title, sameAs, partOf, image and geocoding.",
         "operationId": "postSObject",
         "security": [
           {
@@ -689,6 +689,38 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "Example of a successful answer",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "europeSample": {
+                    "value": {
+                      "sid": "sYyj9",
+                      "title": {
+                        "de": "Europäische Union",
+                        "en": "European Union"
+                      },
+                      "type": "root",
+                      "sameAs": {
+                        "wikidata": "http://www.wikidata.org/entity/Q458"
+                      },
+                      "partOf": {
+                        "wikidata": ""
+                      },
+                      "image": {
+                        "source": "http://commons.wikimedia.org/wiki/Special:FilePath/Flag%20of%20Europe.svg",
+                        "url": "https://opendata.guru/api-data/assets/sYyj9.svg"
+                      },
+                      "geocoding": {
+                        "germanRegionalKey": ""
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
           "401": {
             "$ref": "#/components/responses/401Unauthorized"
           }
