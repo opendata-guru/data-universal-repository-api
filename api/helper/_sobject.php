@@ -123,6 +123,20 @@
 		);
 	}
 
+	function repairImage($image, $extension) {
+		if ('svg' === $extension) {
+			$svgTag = '<svg ';
+			$xlinkKey = 'xmlns:xlink';
+			$xlinkBlob = ' xmlns:xlink="http://www.w3.org/1999/xlink" ';
+
+			if (str_contains($image, $svgTag) && !str_contains($image, $xlinkKey)) {
+				$image = str_replace($svgTag, $svgTag . $xlinkBlob, $image);
+			}
+		}
+
+		return $image;
+	}
+
 	function updateWikiImage($sid, $valuesSameAs, $valuesPartOf) {
 		$images = [];
 
@@ -146,11 +160,12 @@
 		}
 
 		$url = $images[0];
-		$file = $sid . '.' . end(explode('.', $url));
+		$extension = strtolower(end(explode('.', $url)));
+		$file = $sid . '.' . $extension;
 		$path = '../api-data/assets/' . $file;
 		$output = 'https://opendata.guru/api-data/assets/' . $file;
 
-		if (!file_put_contents($path, get_contents($url))) {
+		if (!file_put_contents($path, repairImage(get_contents($url), $extension))) {
 			return array(
 				'source' => '',
 				'url' => '',
