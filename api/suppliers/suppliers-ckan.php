@@ -61,7 +61,7 @@
 		$searchParameter .= '&facet.limit=-1';
 		$searchParameter .= '&rows=0';
 		$uri = $url . $searchSuffix . $searchParameter;
-		$json = json_decode(get_contents($uri));
+		$json = json_decode(get_contents_30sec($uri));
 
 		$jsonData = $json;
 		if ($jsonData->result) {
@@ -100,7 +100,7 @@
 
 		$uri = $url . $groupListSuffix;
 //		$json = json_decode(file_get_contents($uri));
-		$json = json_decode(get_contents($uri));
+		$json = json_decode(get_contents_30sec($uri));
 
 		if ($json) {
 			$jsonData = $json;
@@ -130,6 +130,7 @@
 			}
 
 			foreach($jsonData as $groupID) {
+echo(' ');
 				$uri = $url . $groupShowSuffix;
 //				$json = json_decode(file_get_contents($uri . $groupID->name));
 				$json = json_decode(get_contents($uri . $groupID->name));
@@ -188,7 +189,7 @@
 			return;
 		}
 
-		$json = json_decode(get_contents($uri));
+		$json = json_decode(get_contents_30sec($uri));
 
 		if ($json) {
 			foreach($json->result as $orgaID) {
