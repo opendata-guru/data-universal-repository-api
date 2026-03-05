@@ -112,7 +112,7 @@
 				$jsonData = $jsonData->result;
 			}
 
-			if ($success && (0 === count($jsonData))) {
+			if (!$success || (0 === count($jsonData))) {
 				// suppliers in DKAN portals ('groups') are optional
 				$countDatasets = 'https://opendata.guru/api/2/live/countdatasets?pID=' . $pid;
 				$json = json_decode(file_get_contents($countDatasets));

@@ -21,7 +21,8 @@
 //		$packageShowSuffix = '/api/action/package_search?rows=1&start=0';
 		$packageShowSuffix = '/api/action/package_search?fq=(isopen%3A%22true%22)&rows=1';
 		$packageShowAllSuffix = '/api/3/action/package_search';
-		$resourcesShowSuffix = '/api/3/action/current_package_list_with_resources?limit=1000';
+		$resourcesShowLimitSuffix = '/api/3/action/current_package_list_with_resources?limit=1000';
+		$resourcesShowSuffix = '/api/3/action/current_package_list_with_resources';
 
 		$json = json_decode(get_contents($url . $packageShowSuffix_3));
 		$count = 0;
@@ -34,19 +35,23 @@
 			if ($json) {
 				$count = $json->result->count;
 			} else {
-	//			$json = json_decode(file_get_contents($url . $packageShowAllSuffix));
 				$json = json_decode(get_contents($url . $packageShowAllSuffix));
 
 				if ($json) {
 					$count = $json->result->count;
 				} else {
-	//				$json = json_decode(file_get_contents($url . $resourcesShowSuffix));
-					$json = json_decode(get_contents($url . $resourcesShowSuffix));
+					$json = json_decode(get_contents($url . $resourcesShowLimitSuffix));
 
-					if ($json) {
+					if ($json && (count($json->result) > 0)) {
 						$count = count($json->result[0]);
 					} else {
-						$count = scrapeWebsite($url);
+						$json = json_decode(get_contents($url . $resourcesShowSuffix));
+
+						if ($json) {
+							$count = count($json->result);
+						} else {
+							$count = scrapeWebsite($url);
+						}
 					}
 				}
 			}
