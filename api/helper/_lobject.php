@@ -1,6 +1,7 @@
 <?php
 	$loadedLObjects = [];
 	$fileLObjects = __DIR__ . '/../../api-data/links.csv';
+	$pathLObjectCounts = __DIR__ . '/../../api-data/counts-lid/';
 
 	loadMappingFileLObjects($loadedLObjects);
 	$hashLObjects = md5(serialize($loadedLObjects));
@@ -309,12 +310,40 @@
 		return $lObjects;
 	}
 
+	function getLObjectCounts($lObject) {
+		global $pathLObjectCounts;
+
+		$filepath = $pathLObjectCounts . $lObject['lid'] . '.json';
+		$count = [];
+
+		if (file_exists($filepath)) {
+			$count = json_decode(file_get_contents($filepath));
+		}
+
+		return $count;
+	}
+
+	function deleteLObjectCountFile($lObject) {
+		global $pathLObjectCounts;
+
+		$filepath = $pathLObjectCounts . $lObject['lid'] . '.json';
+		$ret = false;
+
+		if (file_exists($filepath)) {
+			$ret = unlink($filepath);
+		}
+
+		return $ret;
+	}
+
 	function deleteLObject($lObject) {
 		global $loadedLObjects;
 
 		$offset = array_search($lObject['lid'], array_column($loadedLObjects, 'lid'));
 		array_splice($loadedLObjects, $offset, 1);
 		saveMappingFileLObjects();
+
+		deleteLObjectCountFile($lObject);
 
 		$lObject = findLObjectByLID($lObject['lid']);
 		return is_null($lObject);

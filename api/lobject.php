@@ -61,11 +61,26 @@
 				'lObject' => $lObject,
 			));
 		} else {
-			header('HTTP/1.0 405 Method Not Allowed');
-			echo json_encode((object) array(
-				'error' => 405,
-				'message' => 'Method Not Allowed. The object to be deleted is still in use',
-			));
+			$counts = getLObjectCounts($lObject);
+			$sum = 0;
+			foreach($counts as $number) {
+				$sum += intval($number);
+			}
+
+			if ($sum === 0) {
+				$successful = deleteLObject($lObject);
+
+				echo json_encode((object) array(
+					'deleted' => $successful,
+					'lObject' => $lObject,
+				));
+			} else {
+				header('HTTP/1.0 405 Method Not Allowed');
+				echo json_encode((object) array(
+					'error' => 405,
+					'message' => 'Method Not Allowed. The object to be deleted is still in use',
+				));
+			}
 		}
 
 		return;
