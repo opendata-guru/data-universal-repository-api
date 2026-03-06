@@ -38,8 +38,9 @@
 	function getWikiQuery($qID) {
         return 'SELECT ' .
             '?item ' .
-            '(SAMPLE(?labelDE) as ?labelDE) ' .
+            '(SAMPLE(?labelMUL) as ?labelMUL) ' .
             '(SAMPLE(?labelEN) as ?labelEN) ' .
+            '(SAMPLE(?labelDE) as ?labelDE) ' .
             '(SAMPLE(?germanRegionalKey) as ?germanRegionalKey) ' .
             '(SAMPLE(?germanDistrictKey) as ?germanDistrictKey) ' .
             '(SAMPLE(?nutsCode) as ?nutsCode) ' .
@@ -51,16 +52,22 @@
             '  BIND(wd:' . $qID . ' as ?item)' .
             '' .
             '  OPTIONAL {' .
-			'    ?item rdfs:label ?labelDE .' .
-			'    filter(lang(?labelDE) = "de" )' .
+			'    ?item rdfs:label ?labelMUL .' .
+			'    filter(lang(?labelMUL) = "mul" )' .
 			'  }' .
-            '  BIND(IF( BOUND( ?labelDE), ?labelDE, "") AS ?labelDE)' .
+            '  BIND(IF( BOUND( ?labelMUL), ?labelMUL, "") AS ?labelMUL)' .
             '' .
             '  OPTIONAL {' .
 			'    ?item rdfs:label ?labelEN .' .
 			'    filter(lang(?labelEN) = "en" )' .
 			'  }' .
             '  BIND(IF( BOUND( ?labelEN), ?labelEN, "") AS ?labelEN)' .
+            '' .
+            '  OPTIONAL {' .
+			'    ?item rdfs:label ?labelDE .' .
+			'    filter(lang(?labelDE) = "de" )' .
+			'  }' .
+            '  BIND(IF( BOUND( ?labelDE), ?labelDE, "") AS ?labelDE)' .
             '' .
             '  OPTIONAL { ?item wdt:P1388 ?germanRegionalKey. }' .
             '  BIND(IF( BOUND( ?germanRegionalKey), ?germanRegionalKey, "") AS ?germanRegionalKey)' .
@@ -237,8 +244,9 @@
 			}
 
 			if (!is_null($valuesTitle) || !is_null($valuesSameAs) || !is_null($valuesPartOf)) {
-				$labelDE = !is_null($valuesTitle) ? '' : (!is_null($valuesSameAs) ? $valuesSameAs->labelDE->value : $valuesPartOf->labelDE->value);
+				$labelMUL = !is_null($valuesTitle) ? $valuesTitle : (!is_null($valuesSameAs) ? $valuesSameAs->labelMUL->value : $valuesPartOf->labelMUL->value);
 				$labelEN = !is_null($valuesTitle) ? $valuesTitle : (!is_null($valuesSameAs) ? $valuesSameAs->labelEN->value : $valuesPartOf->labelEN->value);
+				$labelDE = !is_null($valuesTitle) ? '' : (!is_null($valuesSameAs) ? $valuesSameAs->labelDE->value : $valuesPartOf->labelDE->value);
 				$valuesSameAs_ = !is_null($valuesSameAs) ? $valuesSameAs->item->value : '';
 				$valuesPartOf_ = !is_null($valuesPartOf) ? $valuesPartOf->item->value : '';
 				$germanRegionalKey = !is_null($valuesSameAs) ? $valuesSameAs->germanRegionalKey->value : (!is_null($valuesPartOf) ? $valuesPartOf->germanRegionalKey->value : '');
@@ -248,7 +256,7 @@
 
 				$germanRegionalKey = $germanRegionalKey !== '' ? $germanRegionalKey : $germanDistrictKey;
 
-				$sObject = updateSObject($parameterSID, $labelDE, $labelEN, $valuesSameAs_, $valuesPartOf_, $image, $germanRegionalKey);
+				$sObject = updateSObject($parameterSID, $labelMUL, $labelEN, $labelDE, $valuesSameAs_, $valuesPartOf_, $image, $germanRegionalKey);
 
 				saveMappingFileSObjects();
 			}
@@ -314,8 +322,9 @@
 				$valuesPartOf = json_decode($data)->results->bindings[0];
 			}
 
-			$labelDE = !is_null($valuesTitle) ? '' : (!is_null($valuesSameAs) ? $valuesSameAs->labelDE->value : $valuesPartOf->labelDE->value);
+			$labelMUL = !is_null($valuesTitle) ? $valuesTitle : (!is_null($valuesSameAs) ? $valuesSameAs->labelMUL->value : $valuesPartOf->labelMUL->value);
 			$labelEN = !is_null($valuesTitle) ? $valuesTitle : (!is_null($valuesSameAs) ? $valuesSameAs->labelEN->value : $valuesPartOf->labelEN->value);
+			$labelDE = !is_null($valuesTitle) ? '' : (!is_null($valuesSameAs) ? $valuesSameAs->labelDE->value : $valuesPartOf->labelDE->value);
 			$valuesSameAs_ = !is_null($valuesSameAs) ? $valuesSameAs->item->value : '';
 			$valuesPartOf_ = !is_null($valuesPartOf) ? $valuesPartOf->item->value : '';
 			$germanRegionalKey = !is_null($valuesSameAs) ? $valuesSameAs->germanRegionalKey->value : (!is_null($valuesPartOf) ? $valuesPartOf->germanRegionalKey->value : '');
@@ -326,7 +335,7 @@
 
 			$germanRegionalKey = $germanRegionalKey !== '' ? $germanRegionalKey : $germanDistrictKey;
 
-			$sObject = pushSObject($sid, $labelDE, $labelEN, $parameterType, $valuesSameAs_, $valuesPartOf_, $image, $germanRegionalKey);
+			$sObject = pushSObject($sid, $labelMUL, $labelEN, $labelDE, $parameterType, $valuesSameAs_, $valuesPartOf_, $image, $germanRegionalKey);
 
 		}
 		saveMappingFileSObjects();
@@ -443,14 +452,14 @@
 		}
 	}
 
-	function pushSObject($sid, $labelDE, $labelEN, $parameterType, $valuesSameAs, $valuesPartOf, $image, $germanRegionalKey) {
+	function pushSObject($sid, $labelMUL, $labelEN, $labelDE, $parameterType, $valuesSameAs, $valuesPartOf, $image, $germanRegionalKey) {
 		global $loadedSObjects;
 
 		$loadedSObjects[] = (object) array(
 			'sid' => $sid,
 			'title' => array (
-				'de' => $labelDE,
-				'en' => $labelEN,
+				'de' => $labelDE === '' ? $labelMUL : $labelDE,
+				'en' => $labelEN === '' ? $labelMUL : $labelEN,
 			),
 			'type' => $parameterType,
 			'sameAs' => array (
@@ -468,14 +477,14 @@
 		return end($loadedSObjects);
 	}
 
-	function updateSObject($sid, $labelDE, $labelEN, $valuesSameAs, $valuesPartOf, $image, $germanRegionalKey) {
+	function updateSObject($sid, $labelMUL, $labelEN, $labelDE, $valuesSameAs, $valuesPartOf, $image, $germanRegionalKey) {
 		global $loadedSObjects;
 
 		foreach($loadedSObjects as &$sObject) {
 			if ($sid === $sObject->sid) {
 				$sObject->title = array (
-					'de' => $labelDE,
-					'en' => $labelEN,
+					'de' => $labelDE === '' ? $labelMUL : $labelDE,
+					'en' => $labelEN === '' ? $labelMUL : $labelEN,
 				);
 				$sObject->sameAs = array (
 					'wikidata' => $valuesSameAs,
