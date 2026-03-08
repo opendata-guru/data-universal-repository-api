@@ -9,6 +9,8 @@
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 		$data = curl_exec($ch);
 
 		curl_close($ch);
@@ -26,7 +28,10 @@
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+
 		$data = curl_exec($ch);
 
 		curl_close($ch);
@@ -410,6 +415,8 @@
 			$url = unparse_url($link);
 			$content = get_contents_30sec($url);
 
+			// analyse the page source code
+
 			if (!$error && ($system === 'unknown')) {
 				$odsHeader = stripos($content, 'ods-front-header');
 				$odsFooter = stripos($content, 'ods-front-footer');
@@ -436,6 +443,32 @@
 
 					if ((false !== $posRDF) && (false !== $posCatalog)) {
 						$system = 'rdf';
+					}
+				}
+			}
+
+			if (!$error && ($system === 'unknown')) {
+				$spaDiv = stripos($content, '<div id="app">');
+				$spinnerContainer = stripos($content, 'class="spinner-container"');
+				$spinnerDiv = stripos($content, 'class="spinner"');
+				$faderContainer = stripos($content, 'class="fader-container"');
+				$faderDiv = stripos($content, 'class="fader"');
+
+				if ($spaDiv !== false) {
+					$system = 'single-page-application';
+
+					if ((false !== $spinnerContainer) && (false !== $spinnerDiv) && (($spinnerContainer - $spaDiv) < 100) && (($spinnerDiv - $spinnerContainer) < 100)) {
+						$link['path'] = '';
+						unset($link['query']);
+						unset($link['fragment']);
+						$url = unparse_url($link);
+						$system = 'Piveau';
+					} else if ((false !== $faderContainer) && (false !== $faderDiv) && (($faderContainer - $spaDiv) < 100) && (($faderDiv - $faderContainer) < 100)) {
+						$link['path'] = '';
+						unset($link['query']);
+						unset($link['fragment']);
+						$url = unparse_url($link);
+						$system = 'Piveau';
 					}
 				}
 			}
