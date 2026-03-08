@@ -1568,6 +1568,80 @@
         ]
       }
     },
+    "/live/systemchangelog": {
+      "get": {
+        "summary": "Get the system software change history",
+        "description": "The system software used has a change history. The complete history is returned with the version numbers, the update dates and an assessment of the updateability (in traffic light colors).",
+        "operationId": "liveGetSystemChangelog",
+        "parameters": [
+          {
+            "name": "system",
+            "in": "query",
+            "description": "System software name",
+            "required": true,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "arcgis": {
+                "value": "ArcGIS",
+                "summary": "ArcGIS portal"
+              },
+              "ckan": {
+                "value": "CKAN",
+                "summary": "CKAN portal"
+              },
+              "entrystore": {
+                "value": "EntryStore",
+                "summary": "EntryStore portal"
+              },
+              "ods": {
+                "value": "Opendatasoft",
+                "summary": "Opendatasoft portal"
+              },
+              "piveau": {
+                "value": "Piveau",
+                "summary": "Piveau portal"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Example of a successful answer",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "ckanSample": {
+                    "value": {
+                      "ckan": [
+                        {
+                          "color": "green",
+                          "date": "2024-03-13",
+                          "version": "2.10.4"
+                        },
+                        {
+                          "color": "yellow",
+                          "date": "2023-12-13",
+                          "version": "2.10.3"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          }
+        },
+        "tags": [
+          "live"
+        ]
+      }
+    },
     "/live/url": {
       "get": {
         "summary": "Analyzes the URL",
@@ -1705,6 +1779,7 @@
       "get": {
         "summary": "Get the system software change history",
         "description": "The system software used has a change history. The complete history is returned with the version numbers, the update dates and an assessment of the updateability (in traffic light colors).",
+        "deprecated": true,
         "parameters": [
           {
             "name": "system",
