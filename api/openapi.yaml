@@ -950,6 +950,34 @@ paths:
                     tbd.
       tags:
         - live
+  /live/system:
+    get:
+      summary: Get system status information
+      description: Get information about the system used, the version number, extensions and a link.
+      operationId: liveGetSystem
+      parameters:
+        - $ref: "#/components/parameters/linkParamOptional"
+        - $ref: "#/components/parameters/pidParam"
+      responses:
+        '200':
+          description: Example of a successful answer
+          content:
+            application/json:
+              examples:
+                ckanSample:
+                  value:
+                    cms: ''
+                    extensions:
+                     - text_view
+                     - image_view
+                     - recline_view
+                    system: CKAN
+                    url: https://ckan.open.nrw.de
+                    version: 2.9.9
+        '400':
+          $ref: "#/components/responses/400BadRequest"
+      tags:
+        - live
   /live/url:
     get:
       summary: Analyzes the URL
@@ -1011,6 +1039,7 @@ paths:
     get:
       summary: Get system status information
       description: Get information about the system used, the version number, extensions and a link.
+      deprecated: true
       operationId: getSystem
       parameters:
         - $ref: "#/components/parameters/linkParamOptional"
