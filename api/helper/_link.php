@@ -313,18 +313,6 @@
 		}
 
 		if (!$error && ($system === 'unknown')) {
-			$found = 'datenadler.de' === $link['host'];
-
-			if ($found) {
-				unset($link['path']);
-				unset($link['query']);
-				unset($link['fragment']);
-				$url = unparse_url($link);
-				$system = 'datenadler';
-			}
-		}
-
-		if (!$error && ($system === 'unknown')) {
 			$host = explode('.', $link['host']);
 			$found = (count($host) >= 2) && ('mcloud.de' === ($host[count($host) - 2] . '.' . $host[count($host) - 1]));
 
@@ -364,6 +352,18 @@
 				unset($link['fragment']);
 				$url = unparse_url($link);
 				$system = 'SPARQL';
+			}
+		}
+
+		if (!$error && ($system === 'unknown')) {
+			$found = 'datenadler.de' === $link['host'];
+
+			if ($found) {
+				unset($link['path']);
+				unset($link['query']);
+				unset($link['fragment']);
+				$url = unparse_url($link);
+				$system = 'datenadler';
 			}
 		}
 
