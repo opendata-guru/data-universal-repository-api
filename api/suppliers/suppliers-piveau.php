@@ -4,39 +4,31 @@
 //	ini_set('display_startup_errors', 1);
 //	error_reporting(E_ALL);
 
-	function suppliersPiveau($url, $pid) {
-		$PIVEAU_HOST_SEARCH_PIVEAU = 'search.piveau.';
-		$PIVEAU_HOST_UI_PIVEAU = 'ui.piveau.';
+	function countCataloges($url, $path_prefix) {
+		$catalogSuffix = $path_prefix . '/catalogues';
 
-		$path_prefix = '/api/hub/search';
-		$host = '';
+		$uri = $url . $catalogSuffix;
+		$source = get_contents($uri);
 
-		$link = parse_url($url);
-		if (str_starts_with($link['host'], $PIVEAU_HOST_SEARCH_PIVEAU)) {
-    		$host = substr($link['host'], strlen($PIVEAU_HOST_SEARCH_PIVEAU));
-		} else if (str_starts_with($link['host'], $PIVEAU_HOST_UI_PIVEAU)) {
-    		$host = substr($link['host'], strlen($PIVEAU_HOST_UI_PIVEAU));
+		$list = json_decode($source);
+		if ($list) {
+			return count($list);
 		}
 
-		if ($host) {
-			$link['host'] = $PIVEAU_HOST_SEARCH_PIVEAU . $host;
-			$url = unparse_url($link);
-			$path_prefix = '';
-		}
+		return 0;
+	}
 
+	function getCataloges($url, $path_prefix, $uriDomain, $pid) {
 		$catalogSuffix = $path_prefix . '/catalogues';
 		$catalogsSuffix = $path_prefix . '/catalogues/';
 		$countSuffix = $path_prefix . '/search?q=&filter=dataset&facets={%22catalog%22:[%22###%22]}&limit=0';
 
 		$uri = $url . $catalogSuffix;
-		$uriDomain = end(explode('/', $url));
-
 		$source = get_contents($uri);
 
 		$data = [];
 
 		$list = json_decode($source);
-
 		if ($list) {
 			for ($l = 0; $l < count($list); ++$l) {
 				$catalogURI = $url . $catalogsSuffix . $list[$l];
@@ -79,6 +71,147 @@
 					'haspart' => $hasPart,
 				));
 			}
+		}
+
+		return $data;
+	}
+
+	function getCatalogesByFacet($url, $path_prefix, $uriDomain, $pid) {
+		// %22is_hvd%22:[]
+		// %22hvd_category%22:[]
+		// %22categories%22:[]
+		// %22publisher%22:[]
+		// %22format%22:[]
+		// %22license%22:[]
+		// %22catalog%22:[] -> %22catalog%22:[%22name%22]
+		// %22superCatalog%22:[]
+		$facetSuffix = $path_prefix . '/search?q=&filter=dataset&facets={%22publisher%22:[],%22catalog%22:[],%22superCatalog%22:[]}&limit=0';
+
+		$uri = $url . $facetSuffix;
+		$source = get_contents($uri);
+
+		$data = [];
+
+		$result = json_decode($source);
+		if ($result) {
+			$facets = $result->result->facets;
+			if ($facets) {
+				foreach ($facets as $facet) {
+					if ('catalog' === $facet->id) {
+						foreach ($facet->items as $item) {
+							$id = $item->id;
+							$title = $item->title;
+							$count = $item->count;
+
+							// used in Bavaria and Europe
+							$isPartOf = ''; // ???
+							$hasPart = ''; // ???
+
+							$data[] = semanticContributor($uriDomain, $pid, array(
+								'id' => $id,
+								'name' => $id,
+								'title' => $title,
+								'created' => '',
+								'packages' => $count,
+								'uri' => '',
+								'ispartof' => $isPartOf,
+								'haspart' => $hasPart,
+							));
+						}
+					}
+				}
+			}
+		}
+
+		return $data;
+	}
+
+	function getPublisherByFacet($url, $path_prefix, $uriDomain, $pid) {
+		// %22is_hvd%22:[]
+		// %22hvd_category%22:[]
+		// %22categories%22:[]
+		// %22publisher%22:[]
+		// %22format%22:[]
+		// %22license%22:[]
+		// %22catalog%22:[] -> %22catalog%22:[%22name%22]
+		// %22superCatalog%22:[]
+		$facetSuffix = $path_prefix . '/search?q=&filter=dataset&facets={%22publisher%22:[],%22catalog%22:[],%22superCatalog%22:[]}&limit=0';
+
+		$uri = $url . $facetSuffix;
+		$source = get_contents($uri);
+
+		$data = [];
+
+		$result = json_decode($source);
+		if ($result) {
+			$facets = $result->result->facets;
+			if ($facets) {
+				foreach ($facets as $facet) {
+					if ('publisher' === $facet->id) {
+						foreach ($facet->items as $item) {
+							$id = $item->id;
+							$title = $item->title;
+							$count = $item->count;
+
+							// used in Bavaria and Europe
+							$isPartOf = ''; // ???
+							$hasPart = ''; // ???
+
+$data[] = $title;
+/*							$data[] = semanticContributor($uriDomain, $pid, array(
+								'id' => $id,
+								'name' => $id,
+								'title' => $title,
+								'created' => '',
+								'packages' => $count,
+								'uri' => '',
+								'ispartof' => $isPartOf,
+								'haspart' => $hasPart,
+							));*/
+						}
+					}
+				}
+			}
+		}
+
+		return $data;
+	}
+
+	function suppliersPiveau($url, $pid) {
+		$PIVEAU_HOST_SEARCH_PIVEAU = 'search.piveau.';
+		$PIVEAU_HOST_UI_PIVEAU = 'ui.piveau.';
+
+		$path_prefix = '/api/hub/search';
+		$host = '';
+
+		$link = parse_url($url);
+		if (str_starts_with($link['host'], $PIVEAU_HOST_SEARCH_PIVEAU)) {
+    		$host = substr($link['host'], strlen($PIVEAU_HOST_SEARCH_PIVEAU));
+		} else if (str_starts_with($link['host'], $PIVEAU_HOST_UI_PIVEAU)) {
+    		$host = substr($link['host'], strlen($PIVEAU_HOST_UI_PIVEAU));
+		}
+
+		if ($host) {
+			$link['host'] = $PIVEAU_HOST_SEARCH_PIVEAU . $host;
+			$url = unparse_url($link);
+			$path_prefix = '';
+		}
+
+		$uriDomain = end(explode('/', $url));
+
+		$data = [];
+
+		//$data = getPublisherByFacet($url, $path_prefix, $uriDomain, $pid);
+
+		$count = countCataloges($url, $path_prefix);
+		if ($count < 250) {
+			// find all cataloges (also cataloges without datasets)
+			// make a single call for every catalog -> timeout for too many cataloges
+			$data = getCataloges($url, $path_prefix, $uriDomain, $pid);
+		} else {
+			// find only cataloges with data
+			// did not find 'isPartOf' and 'hasPart' properties
+			$data = getCatalogesByFacet($url, $path_prefix, $uriDomain, $pid);
 		}
 
 		for ($d = 0; $d < count($data); ++$d) {
