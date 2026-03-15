@@ -91,6 +91,52 @@
 		}
 	}
 
+	function collectDataByEKAN($uriDomain, $url, $pid, &$data) {
+		$countWebsiteSuffix = '/search?f[0]=content_type%3Adataset.dataset';
+
+		$uri = $url . $countWebsiteSuffix;
+		$source = file_get_contents($uri);
+
+		$html = $source;
+		$start = stripos($html, 'ekan-theme-publisher');
+		$end = stripos($html, '</ul>', $start);
+		$length = $end - $start;
+		$html = substr($html, $start, $length);
+
+		$listElements = explode('</li>', $html);
+		foreach($listElements as $item) {
+			$start = stripos($item, 'data-drupal-facet-item-id');
+
+			if (false !== $start) {
+				$start = stripos($item, '"', $start) + 1;
+				$end = stripos($item, '"', $start);
+				$length = $end - $start;
+				$id = substr($item, $start, $length);
+
+				$start = stripos($item, 'data-drupal-facet-item-count');
+				$start = stripos($item, '"', $start) + 1;
+				$end = stripos($item, '"', $start);
+				$length = $end - $start;
+				$count = intval(substr($item, $start, $length));
+
+				$start = stripos($item, '<span');
+				$start = stripos($item, '>', $start) + 1;
+				$end = stripos($item, '</', $start);
+				$length = $end - $start;
+				$title = trim(substr($item, $start, $length));
+
+				$data[] = semanticContributor($uriDomain, $pid, array(
+					'id' => $id,
+					'name' => $id,
+					'title' => $title,
+					'created' => '',
+					'packages' => $count,
+					'uri' => ''
+				));
+			}
+		}
+	}
+
 	function collectDataByDKAN($uriDomain, $url, $pid, &$data) {
 		$groupListSuffix = '/api/3/action/group_list';
 		$groupShowSuffix = '/api/3/action/group_show?id=';
@@ -189,7 +235,8 @@ echo(' ');
 			return;
 		}
 
-		$json = json_decode(get_contents_30sec($uri));
+		$html = get_contents_30sec($uri);
+		$json = json_decode($html);
 
 		if ($json) {
 			foreach($json->result as $orgaID) {
@@ -240,7 +287,13 @@ echo(' ');
 				));
 			}
 		} else {
-			collectDataByDKAN($uriDomain, $url, $pid, $data);
+			$ekan = stripos($html, 'ekan-theme');
+			if (false !== $ekan) {
+				collectDataByEKAN($uriDomain, $url, $pid, $data);
+			} else {
+				collectDataByDKAN($uriDomain, $url, $pid, $data);
+			}
+
 			if (count($data) > 0) {
 				echo json_encode($data);
 				return;

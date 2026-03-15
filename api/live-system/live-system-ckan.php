@@ -2,9 +2,11 @@
 	function liveSystemCKAN($url) {
 		$statusShowSuffix = '/api/3/action/status_show';
 
-//		$json = json_decode(file_get_contents($url . $statusShowSuffix));
-		$json = json_decode(get_contents_30sec($url . $statusShowSuffix));
+		$html = get_contents_30sec($url . $statusShowSuffix);
+		$json = json_decode($html);
 		$cms = getCMS($url);
+
+		$ekan = stripos($html, 'ekan-theme');
 
 		if ($json) {
 			echo json_encode((object) array(
@@ -18,7 +20,7 @@
 			echo json_encode((object) array(
 				'cms' => $cms,
 				'extensions' => null,
-				'system' => (substr($cms, 0, 6) === 'Drupal') ? 'DKAN' : 'CKAN',
+				'system' => false !== $ekan ? 'EKAN' : ((substr($cms, 0, 6) === 'Drupal') ? 'DKAN' : 'CKAN'),
 				'url' => $url,
 				'version' => null,
 			));

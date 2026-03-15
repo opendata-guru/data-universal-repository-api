@@ -1,4 +1,22 @@
 <?php
+	function countDatasetsEKAN($url) {
+		$countWebsiteSuffix = '/search?f[0]=content_type%3Adataset.dataset';
+
+		$uri = $url . $countWebsiteSuffix;
+		$source = file_get_contents($uri);
+
+		$html = $source;
+
+		$start = stripos($html, 'view-header');
+		$end = stripos($html, '</div>', $start);
+		$length = $end - $start;
+		$html = trim(substr($html, $start, $length));
+		$html = explode(' ', $html);
+		$packageCount = $html[count($html) - 2];
+
+		return intval($packageCount);
+	}
+
 	function scrapeWebsite($url) {
 		$countWebsiteSuffix = '/search';
 
@@ -6,6 +24,12 @@
 		$source = file_get_contents($uri);
 
 		$html = $source;
+
+		$ekan = stripos($html, 'ekan-theme');
+		if (false !== $ekan) {
+			return countDatasetsEKAN($url);
+		}
+
 		$start = stripos($html, 'view-header');
 		$end = stripos($html, '</div>', $start);
 		$length = $end - $start;
