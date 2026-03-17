@@ -89,7 +89,7 @@
 
 	function curlSystemsData($pID) {
 		$uri = 'https://opendata.guru/api/2';
-		$uri .= '/system?pID=' . urlencode($pID);
+		$uri .= '/live/system?pID=' . urlencode($pID);
 
 		$data = curl($uri);
 		$json = json_decode($data);
