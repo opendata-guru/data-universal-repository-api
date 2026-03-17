@@ -40,6 +40,7 @@
 
 		foreach ($list as $item) {
 			$item->date = str_replace('xx', '01', $item->date);
+			$item->date = str_replace('??', '01', $item->date);
 			$date = new DateTime($item->date);
 			$major = explode('.', $item->version)[0];
 			$minor = explode('.', $item->version)[1];
