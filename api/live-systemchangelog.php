@@ -82,7 +82,7 @@
 	} else if ('_ArcGIS' === $link->system) {
 		include 'live-systemchangelog/live-systemchangelog-arcgis.php';
 		liveSystemChangelogArcGIS();
-	} else if ('_EntryStore' === $link->system) {
+	} else if ('EntryStore' === $link->system) {
 		include 'live-systemchangelog/live-systemchangelog-entrystore.php';
 		liveSystemChangelogEntryStore();
 	} else if ('_Opendatasoft' === $link->system) {
