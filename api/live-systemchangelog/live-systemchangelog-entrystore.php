@@ -28,7 +28,7 @@
 		}
 
 		echo json_encode((object) array(
-			'EntryStore' => addColors($list),
+			'entrystore' => addColors($list),
 		));
 	}
 ?>
