@@ -18,6 +18,23 @@
 			}
 		}
 
+		if (0 === count($list)) {
+			// suppliers in Opendatasoft portals ('publisher') are optional
+			$countDatasets = 'https://opendata.guru/api/2/live/countdatasets?pID=' . $pid;
+			$json = json_decode(file_get_contents($countDatasets));
+
+			if ($json) {
+				$data[] = semanticContributor($uriDomain, $pid, array(
+					'id' => 'default',
+					'name' => 'default',
+					'title' => 'default',
+					'created' => '',
+					'packages' => $json->number,
+					'uri' => ''
+				));
+			}
+		}
+
 		for ($l = 0; $l < count($list); ++$l) {
 			$entry = $list[$l];
 
