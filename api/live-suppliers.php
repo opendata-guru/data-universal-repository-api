@@ -1,0 +1,106 @@
+<?php
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Methods: GET');
+    header('Access-Control-Allow-Headers: X-Requested-With');
+	header('Content-Type: application/json; charset=utf-8');
+
+	include('helper/_link.php');
+	include('helper/_provider.php');
+	include('live-suppliers/_semantic.php');
+
+	$link = getLink();
+	$provider = getProvider();
+	$pid = '';
+
+	if (($link->parameter !== '') && ($provider->parameter !== '')) {
+		header('HTTP/1.0 400 Bad Request');
+		echo json_encode((object) array(
+			'error' => 400,
+			'message' => 'Bad Request. Both parameters \'link\' and \'pID\' are set',
+		));
+		exit;
+	}
+	if ($provider->parameter !== '') {
+		if ($provider->error) {
+			header($provider->error->header);
+			echo json_encode((object) array(
+				'error' => $provider->error->error,
+				'message' => $provider->error->message,
+			));
+			exit;
+		}
+		$link = getLinkWithParam($provider->url);
+		$pid = $provider->parameter;
+	} else {
+		$pObject = findPObjectByLink($link);
+		if ($pObject) {
+			$pid = providerGetPID($pObject);
+		}
+	}
+	if ($link->error) {
+		header($link->error->header);
+		echo json_encode((object) array(
+			'error' => $link->error->error,
+			'message' => $link->error->message,
+		));
+		exit;
+	}
+
+	if ('CKAN' === $link->system) {
+		include 'live-suppliers/live-suppliers-ckan.php';
+		liveSuppliersCKAN($link->url, $pid);
+	} else if ('Piveau' === $link->system) {
+		include 'live-suppliers/live-suppliers-piveau.php';
+		liveSuppliersPiveau($link->url, $pid);
+	} else if ('ArcGIS' === $link->system) {
+		include 'live-suppliers/live-suppliers-arcgis.php';
+		liveSuppliersArcGIS($link->url, $pid);
+	} else if ('datenadler' === $link->system) {
+		include 'live-suppliers/live-suppliers-datenadler.php';
+		liveSuppliersDatenadler($link->url, $pid);
+	} else if ('DUVA' === $link->system) {
+		include 'live-suppliers/live-suppliers-duva.php';
+		liveSuppliersDUVA($link->url, $pid);
+	} else if ('EntryStore' === $link->system) {
+		include 'live-suppliers/live-suppliers-entrystore.php';
+		liveSuppliersEntryStore($link->url, $pid);
+	} else if ('geoportal.de' === $link->system) {
+		include 'live-suppliers/live-suppliers-geoportalde.php';
+		liveSuppliersGeoportalDE($link->url, $pid);
+	} else if ('mcloud' === $link->system) {
+		include 'live-suppliers/live-suppliers-mcloud.php';
+		liveSuppliersMCloud($link->url, $pid);
+	} else if ('mobilithek' === $link->system) {
+		include 'live-suppliers/live-suppliers-mobilithek.php';
+		liveSuppliersMobilithek($link->url, $pid);
+	} else if ('Opendatasoft' === $link->system) {
+		include 'live-suppliers/live-suppliers-opendatasoft.php';
+		liveSuppliersOpendatasoft($link->url, $pid);
+	} else if ('Czech' === $link->system) {
+		include 'live-suppliers/live-suppliers-czech.php';
+		liveSuppliersCzech($link->url, $pid);
+	} else if ('rdf' === $link->system) {
+		include 'live-suppliers/live-suppliers-rdf.php';
+		liveSuppliersRDF($link->url, $pid);
+	} else if ('Spain' === $link->system) {
+		include 'live-suppliers/live-suppliers-spain.php';
+		liveSuppliersSpain($link->url, $pid);
+	} else if ('SPARQL' === $link->system) {
+		include 'live-suppliers/live-suppliers-sparql.php';
+		liveSuppliersSPARQL($link->url, $pid);
+	} else if ('unknown' !== $link->system) {
+		header('HTTP/1.0 400 Bad Request');
+		echo json_encode((object) array(
+			'error' => 400,
+			'message' => 'Bad Request. Could not create a result for system \'' . $link->system . '\'',
+		));
+	} else {
+		header('HTTP/1.0 400 Bad Request');
+		echo json_encode((object) array(
+			'error' => 400,
+			'message' => 'Bad Request. The underlying system could not be detected',
+		));
+	}
+
+	saveMappingFileLObjects();
+?>

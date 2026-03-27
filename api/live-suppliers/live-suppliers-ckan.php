@@ -1,0 +1,309 @@
+<?php
+	function scrapeWebsite($groupID, $url, $groupWebsiteSuffix) {
+		$uri = $url . $groupWebsiteSuffix . $groupID;
+//		$source = file_get_contents($uri);
+		$source = get_contents($uri);
+
+		$html = $source;
+		$start = stripos($html, 'breadcrumb');
+		$end = stripos($html, '</ul>', $start);
+		$length = $end - $start;
+		$html = substr($html, $start, $length);
+		$listElements = explode('</li>', $html);
+
+		if (count($listElements) <= 3) {
+			// home-icon
+			// 'home' missing
+			// 'groups' missing
+			// 'title' -> here 'page not found'
+			$title = '';
+		} else {
+			$html = explode('<', $html);
+			$html = $html[count($html) - 2];
+			$title = explode('>', $html)[1];
+		}
+
+		$html = $source;
+		$start = stripos($html, 'view-header');
+
+		if (false === $start) {
+			$packageCount = null;
+		} else {
+			$end = stripos($html, '</div>', $start);
+			$length = $end - $start;
+			$html = trim(substr($html, $start, $length));
+			$html = explode(' ', $html);
+			$packageCount = $html[count($html) - 2];
+			$packageCount = intval($packageCount);
+		}
+
+		return array(
+			'id' => $groupID,
+			'name' => $groupID,
+			'title' => $title,
+			'created' => '',
+			'packages' => $packageCount,
+			'uri' => ''
+		);
+	}
+
+	function collectDataBySOLR($uriDomain, $url, $pid, &$data) {
+		// e.g. avoindata.suomi.fi
+		$searchSuffix = '/api/3/action/package_search';
+		$searchParameter = '?facet.field=[%22organization%22]';
+
+		if ('open.rlp.de' === $uriDomain) {
+			$searchSuffix = '/api/action/package_search';
+			$searchParameter = '?facet.field=[%22publisher_name%22]';
+			$searchParameter .= '&fq=(isopen%3A%22true%22)';
+		}
+
+		$searchParameter .= '&facet.limit=-1';
+		$searchParameter .= '&rows=0';
+		$uri = $url . $searchSuffix . $searchParameter;
+		$json = json_decode(get_contents_30sec($uri));
+
+		$jsonData = $json;
+		if ($jsonData->result) {
+			$jsonData = $jsonData->result;
+		}
+		if ($jsonData->search_facets) {
+			$jsonData = $jsonData->search_facets;
+		}
+		if ($jsonData->organization) {
+			$jsonData = $jsonData->organization;
+		} else if ($jsonData->publisher_name) {
+			$jsonData = $jsonData->publisher_name;
+		}
+		if ($jsonData->items) {
+			$jsonData = $jsonData->items;
+
+			foreach($jsonData as $orga) {
+				$data[] = semanticContributor($uriDomain, $pid, array(
+					'id' => $orga->name,
+					'name' => $orga->name,
+					'title' => $orga->display_name,
+					'created' => '',
+					'packages' => intval($orga->count),
+					'uri' => ''
+				));
+			}
+		}
+	}
+
+	function collectDataByEKAN($uriDomain, $url, $pid, &$data) {
+		$countWebsiteSuffix = '/search?f[0]=content_type%3Adataset.dataset';
+
+		$uri = $url . $countWebsiteSuffix;
+		$source = file_get_contents($uri);
+
+		$html = $source;
+		$start = stripos($html, 'ekan-theme-publisher');
+		$end = stripos($html, '</ul>', $start);
+		$length = $end - $start;
+		$html = substr($html, $start, $length);
+
+		$listElements = explode('</li>', $html);
+		foreach($listElements as $item) {
+			$start = stripos($item, 'data-drupal-facet-item-id');
+
+			if (false !== $start) {
+				$start = stripos($item, '"', $start) + 1;
+				$end = stripos($item, '"', $start);
+				$length = $end - $start;
+				$id = substr($item, $start, $length);
+
+				$start = stripos($item, 'data-drupal-facet-item-count');
+				$start = stripos($item, '"', $start) + 1;
+				$end = stripos($item, '"', $start);
+				$length = $end - $start;
+				$count = intval(substr($item, $start, $length));
+
+				$start = stripos($item, '<span');
+				$start = stripos($item, '>', $start) + 1;
+				$end = stripos($item, '</', $start);
+				$length = $end - $start;
+				$title = trim(substr($item, $start, $length));
+
+				$data[] = semanticContributor($uriDomain, $pid, array(
+					'id' => $id,
+					'name' => $id,
+					'title' => $title,
+					'created' => '',
+					'packages' => $count,
+					'uri' => ''
+				));
+			}
+		}
+	}
+
+	function collectDataByDKAN($uriDomain, $url, $pid, &$data) {
+		$groupListSuffix = '/api/3/action/group_list';
+		$groupShowSuffix = '/api/3/action/group_show?id=';
+		$groupPackageShowSuffix = '/api/3/action/group_package_show?id=';
+		$groupWebsiteSuffix = '/group/';
+		$groupWebsiteSuffix2 = '/';
+
+		$uri = $url . $groupListSuffix;
+//		$json = json_decode(file_get_contents($uri));
+		$json = json_decode(get_contents_30sec($uri));
+
+		if ($json) {
+			$jsonData = $json;
+			$success = false;
+			if (is_object($jsonData) && property_exists($jsonData, 'success')) {
+				$success = $jsonData->success;
+			}
+			if (is_object($jsonData) && property_exists($jsonData, 'result')) {
+				$jsonData = $jsonData->result;
+			}
+
+			if (0 === count($jsonData)) {
+				// suppliers in DKAN portals ('groups') are optional
+				$countDatasets = 'https://opendata.guru/api/2/live/countdatasets?pID=' . $pid;
+				$json = json_decode(file_get_contents($countDatasets));
+
+				if ($json) {
+					$data[] = semanticContributor($uriDomain, $pid, array(
+						'id' => 'default',
+						'name' => 'default',
+						'title' => 'default',
+						'created' => '',
+						'packages' => $json->number,
+						'uri' => ''
+					));
+				}
+			}
+
+			foreach($jsonData as $groupID) {
+echo(' ');
+				$uri = $url . $groupShowSuffix;
+//				$json = json_decode(file_get_contents($uri . $groupID->name));
+				$json = json_decode(get_contents($uri . $groupID->name));
+
+				if ($json) {
+					$uris = json_decode($json->result->extras[0]->value);
+					$data[] = semanticContributor($uriDomain, $pid, array(
+						'id' => $json->result->id,
+						'name' => $json->result->name,
+						'title' => $json->result->title,
+						'created' => $json->result->created,
+						'packages' => $json->result->package_count,
+						'uri' => $uris[0]
+					));
+				} else {
+/*					$uri = $url . $groupPackageShowSuffix;
+					$json = json_decode(get_contents($uri . $groupID->name));
+
+					if ($json) {
+						$uris = json_decode($json->result->extras[0]->value);
+						$data[] = semanticContributor($uriDomain, $pid, array(
+							'id' => $json->result->id,
+							'name' => $json->result->name,
+							'title' => $json->result->title,
+							'created' => $json->result->created,
+							'packages' => $json->result->package_count,
+							'uri' => $uris[0]
+						));
+					} else*/ {
+						$scraped = scrapeWebsite($groupID->name, $url, $groupWebsiteSuffix);
+
+						if (('' === $scraped['title']) && (null === $scraped['packages'])) {
+							$scraped = scrapeWebsite($groupID->name, $url, $groupWebsiteSuffix2);
+						}
+
+						$data[] = semanticContributor($uriDomain, $pid, $scraped);
+					}
+				}
+			}
+		}
+	}
+
+	function liveSuppliersCKAN($url, $pid) {
+		$orgaListSuffix = '/api/3/action/organization_list';
+		$orgaShowSuffix = '/api/3/action/organization_show?id=';
+
+		$uri = $url . $orgaListSuffix;
+//		$uriDomain = end(explode('/', $url));
+		$uriDomain = explode('/', $url)[2];
+
+		$data = [];
+
+		collectDataBySOLR($uriDomain, $url, $pid, $data);
+		if (count($data) > 0) {
+			echo json_encode($data);
+			return;
+		}
+
+		$html = get_contents_30sec($uri);
+		$json = json_decode($html);
+
+		if ($json) {
+			foreach($json->result as $orgaID) {
+				$uri = $url . $orgaShowSuffix;
+				$json = json_decode(get_contents($uri . $orgaID));
+
+				if (is_null($json)) {
+					// I'm to fast for CKAN APIs. The CKAN need a cool down phase ;)
+					// If I wait for 1/10 second for every call, it will work fine
+					// (but I want more speed)
+					time_nanosleep(0, 1000000000 / 2); // 1/2 second
+					$json = json_decode(get_contents($uri . $orgaID));
+				}
+
+				$uris = json_decode($json->result->extras[0]->value);
+				$title = $json->result->title;
+				$id = $json->result->id;
+				$name = $json->result->name;
+
+				if (is_object($title)) {
+					if ($title->en && ($title->en !== '')) {
+						$title = $title->en;
+					} else {
+						foreach(get_object_vars($title) as $val) {
+							$title = $val ?: $title;
+						}
+					}
+				}
+
+				if (is_null($id)) {
+					$id = $orgaID;
+				}
+				if (is_null($name)) {
+					$name = $id;
+				}
+				if (is_null($title)) {
+					$title = $orgaID;
+				}
+
+				// extras - key=gnd - value
+				$data[] = semanticContributor($uriDomain, $pid, array(
+					'id' => $id,
+					'name' => $name,
+					'title' => $title,
+					'created' => $json->result->created,
+					'packages' => $json->result->package_count,
+					'uri' => (!is_null($uris) && is_array($uris)) ? $uris[0] : ''
+				));
+			}
+		} else {
+			$ekan = stripos($html, 'ekan-theme');
+			if (false !== $ekan) {
+				collectDataByEKAN($uriDomain, $url, $pid, $data);
+			} else {
+				collectDataByDKAN($uriDomain, $url, $pid, $data);
+			}
+
+			if (count($data) > 0) {
+				echo json_encode($data);
+				return;
+			}
+
+			// page '403 Forbidden'
+
+			// todo
+		}
+
+		echo json_encode($data);
+	}
+?>
