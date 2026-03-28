@@ -14,17 +14,23 @@
 	}
 
 	function getGroups($injection) {
-		$groups = $injection->site->data->catalog->groups;
+		$data = $injection->site->data;
+		$groups = [];
+
+		if ($data->catalog) {
+			$groups = $data->catalog->groups;
+		} else {
+			$groups = $data->catalogV2->scopes->item->filters[0]->predicates[0]->group->any;
+		}
 
 		return implode(rawurlencode(', '), $groups);
 	}
 
 	function countDatasetsArcGIS($url) {
-//		$html = file_get_contents($url);
 		$html = get_contents($url);
 
 		$injection = getSiteInjection($html);
-		$domainInfo = $injection->site->domainInfo;
+//		$domainInfo = $injection->site->domainInfo;
 
 		$baseURI = 'https://hub.arcgis.com/api/search/v1/collections/dataset/items?filter=((group%20IN%20(GROUPS)))&limit=0';
 		$groups = getGroups($injection);
