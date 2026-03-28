@@ -61,7 +61,7 @@
 
 	function curlSuppliersData($pID) {
 		$uri = 'https://opendata.guru/api/2';
-		$uri .= '/suppliers?pID=' . urlencode($pID);
+		$uri .= '/live/suppliers?pID=' . urlencode($pID);
 
 		$data = curl($uri);
 		$json = json_decode($data);
