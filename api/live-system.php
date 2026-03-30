@@ -68,13 +68,20 @@
 		include 'live-system/live-system-sparql.php';
 		liveSystemSPARQL($link->url);
 	} else if ('unknown' !== $link->system) {
-		echo json_encode((object) array(
-			'cms' => getCMS($link->url),
-			'extensions' => null,
-			'system' => $link->system,
-			'url' => $link->url,
-			'version' => '',
-		));
+		$includePath = 'model/' . $link->system . '/systems.php';
+
+		if (file_exists($includePath)) {
+			include $includePath;
+			systems($link->url);
+		} else {
+			echo json_encode((object) array(
+				'cms' => getCMS($link->url),
+				'extensions' => null,
+				'system' => $link->system,
+				'url' => $link->url,
+				'version' => '',
+			));
+		}
 	} else {
 		header('HTTP/1.0 400 Bad Request');
 		echo json_encode((object) array(
