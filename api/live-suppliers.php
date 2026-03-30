@@ -89,11 +89,18 @@
 		include 'live-suppliers/live-suppliers-sparql.php';
 		liveSuppliersSPARQL($link->url, $pid);
 	} else if ('unknown' !== $link->system) {
-		header('HTTP/1.0 400 Bad Request');
-		echo json_encode((object) array(
-			'error' => 400,
-			'message' => 'Bad Request. Could not create a result for system \'' . $link->system . '\'',
-		));
+		$includePath = 'model/' . $link->system . '/suppliers.php';
+
+		if (file_exists($includePath)) {
+			include $includePath;
+			suppliers($link->url, $pid);
+		} else {
+			header('HTTP/1.0 400 Bad Request');
+			echo json_encode((object) array(
+				'error' => 400,
+				'message' => 'Bad Request. Could not create a result for system \'' . $link->system . '\'',
+			));
+		}
 	} else {
 		header('HTTP/1.0 400 Bad Request');
 		echo json_encode((object) array(

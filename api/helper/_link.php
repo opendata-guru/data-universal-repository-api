@@ -472,6 +472,19 @@
 					}
 				}
 			}
+
+			if (!$error && ($system === 'unknown')) {
+				$posTheme = stripos($content, '/themes/ingrid/');
+				$posJS = stripos($content, '/ingrid.js');
+
+				if ((false !== $posTheme) || (false !== $posJS)) {
+					$link['path'] = '';
+					unset($link['query']);
+					unset($link['fragment']);
+					$url = unparse_url($link);
+					$system = 'ingrid';
+				}
+			}
 		}
 
 		if (!$error && ($system === 'unknown')) {

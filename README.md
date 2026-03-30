@@ -76,11 +76,10 @@ To implement a new system (data portal or file format) follow these steps:
 
 Essential:
 
-- in `helper/_link.php` add an url pattern matching or content analyses
-- add file `live-countdatasets/live-countdatasets-{name}.php` to count datasets of the system
-- in `live-countdatasets.php` add a link to the new system file
-- add file `suppliers/suppliers-{name}.php` to count datasets by supplier of the system
-- in `suppliers.php` add a link to the new system file
+- in `/helper/_link.php` add an url pattern matching or content analyses
+- add new folder `/model/{name}/` and replace `{name}` with system name (or copy `/model/_sample/`)
+- add file `/model/{name}/countdatasets.php` to count datasets of the system
+- add file `/model/{name}/suppliers.php` to count datasets by suppliers of the system
 
 Nice to have:
 

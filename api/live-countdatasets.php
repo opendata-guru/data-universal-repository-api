@@ -88,11 +88,18 @@
 		include 'live-countdatasets/live-countdatasets-sparql.php';
 		countDatasetsSPARQL($link->url);
 	} else if ('unknown' !== $link->system) {
-		header('HTTP/1.0 400 Bad Request');
-		echo json_encode((object) array(
-			'error' => 400,
-			'message' => 'Bad Request. Could not create a result for system \'' . $link->system . '\'',
-		));
+		$includePath = 'model/' . $link->system . '/countdatasets.php';
+
+		if (file_exists($includePath)) {
+			include $includePath;
+			countDatasets($link->url);
+		} else {
+			header('HTTP/1.0 400 Bad Request');
+			echo json_encode((object) array(
+				'error' => 400,
+				'message' => 'Bad Request. Could not create a result for system \'' . $link->system . '\'',
+			));
+		}
 	} else {
 		header('HTTP/1.0 400 Bad Request');
 		echo json_encode((object) array(
