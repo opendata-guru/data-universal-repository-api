@@ -71,6 +71,10 @@
 			return;
 		}
 
+		$uriDomain = $injection->site->domainInfo->domain;
+//		$uriDomain = $injection->site->domainInfo->hostname;
+//		$uriDomain = explode('/', $injection->site->item->url)[2];
+
 		$searchAPI = 'https://hub.arcgis.com/api/search/v1';
 		$allItems = $searchAPI . '/collections/all/items'; // all = datasets + documents + apps + maps
 		$datasetItems = $searchAPI . '/collections/dataset/items';
