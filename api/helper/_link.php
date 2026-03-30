@@ -485,6 +485,17 @@
 					$system = 'ingrid';
 				}
 			}
+
+			if (!$error && ($system === 'unknown')) {
+				$posAppRuntime = stripos($content, '$apprt.startApp');
+
+				if (false !== $posAppRuntime) {
+					unset($link['query']);
+					unset($link['fragment']);
+					$url = unparse_url($link);
+					$system = 'conterra';
+				}
+			}
 		}
 
 		if (!$error && ($system === 'unknown')) {

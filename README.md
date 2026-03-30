@@ -84,8 +84,7 @@ Essential:
 Nice to have:
 
 - in `openapi.json` and `openapi.yaml` add an example to `components -> parameters -> linkParam`
-- add file `system/system-{name}.php` to collect metadata of the system
-- in `system.php` add a link to the new system file
+- add file `/model/{name}/systems.php` to collect metadata of the system
 - in `module.system.js` (other repository) add a visual specialization for the new system
 
 todo (for documentation)
