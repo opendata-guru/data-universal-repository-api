@@ -86,6 +86,10 @@
 			}
 		}
 
+// ---------------------------------------------------------
+// analyze url
+// ---------------------------------------------------------
+
 		if (!$error && ($system === 'unknown')) {
 			$CKAN_CURRENT_PACKAGE_LIST = '/api/3/action/current_package_list_with_resources';
 			$CKAN_ORGANIZATION_LIST = '/api/3/action/organization_list';
@@ -193,13 +197,13 @@
 		}
 
 		if (!$error && ($system === 'unknown')) {
-			$$DUVA_CATALOG = '/duva2dcat/dcat/catalog';
+			$DUVA_CATALOG = '/duva2dcat/dcat/catalog';
 			$DUVA_2DCAT_ = '/duva2dcat/';
 			$DUVA_2DCAT = '/duva2dcat';
 			$found = null;
 
-			if ($$DUVA_CATALOG == substr($link['path'], -strlen($$DUVA_CATALOG))) {
-				$found = substr($link['path'], 0, -strlen($$DUVA_CATALOG));
+			if ($DUVA_CATALOG == substr($link['path'], -strlen($DUVA_CATALOG))) {
+				$found = substr($link['path'], 0, -strlen($DUVA_CATALOG));
 			} else if ($DUVA_2DCAT_ == substr($link['path'], -strlen($DUVA_2DCAT_))) {
 				$found = substr($link['path'], 0, -strlen($DUVA_2DCAT_));
 			} else if ($DUVA_2DCAT == substr($link['path'], -strlen($DUVA_2DCAT))) {
@@ -411,6 +415,10 @@
 			}
 		}
 
+// ---------------------------------------------------------
+// parse source code
+// ---------------------------------------------------------
+
 		if (!$error && ($system === 'unknown')) {
 			$url = unparse_url($link);
 			$content = get_contents_30sec($url);
@@ -494,6 +502,48 @@
 					unset($link['fragment']);
 					$url = unparse_url($link);
 					$system = 'conterra';
+				}
+			}
+
+			if (!$error && ($system === 'unknown')) {
+				$posRefresh = stripos($content, 'http-equiv="refresh"');
+
+				if (false !== $posRefresh) {
+					$start = strripos(substr($content, 0, $posRefresh), '<');
+					$end = stripos($content, '>', $start) + 1;
+					$length = $end - $start;
+					$tag = trim(substr($content, $start, $length));
+
+					$start = stripos($tag, 'url=') + 4;
+					$end = stripos($tag, '"', $start);
+					$length = $end - $start;
+					$refreshURL = trim(substr($tag, $start, $length));
+
+					unset($link['query']);
+					unset($link['fragment']);
+					$link['path'] = $refreshURL;
+					$url = unparse_url($link);
+
+// ---------------------------------------------------------
+// follow refresh redirection
+// ---------------------------------------------------------
+
+					if (!$error && ($system === 'unknown')) {
+						$DUVA_PORTAL = '/informationsportal/';
+						$found = null;
+
+						if ($DUVA_PORTAL == substr($link['path'], 0, strlen($DUVA_PORTAL))) {
+							$found = '';
+						}
+
+						if ($found !== null) {
+							$link['path'] = $found;
+							unset($link['query']);
+							unset($link['fragment']);
+							$url = unparse_url($link);
+							$system = 'DUVA';
+						}
+					}
 				}
 			}
 		}
