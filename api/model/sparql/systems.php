@@ -1,10 +1,13 @@
 <?php
-	function liveSystemSPARQL($url) {
+	function systems($url) {
+		$suffix = '?query=';
+
+		$uri = $url . $suffix;
+
 		// Jena Fuseki
 		// https://jena.apache.org/documentation/fuseki2/fuseki-server-info.html
 		//
 		// Virtuoso
-		$endpoint = $url . '?query=';
 		$sparql = '
 SELECT
 	( bif:sys_stat("st_dbms_name")          AS ?name )
@@ -34,7 +37,7 @@ LIMIT 1
 		];
 		$context = stream_context_create($opts);
 
-		$json = json_decode(file_get_contents($endpoint . urlencode($sparql), false, $context));
+		$json = json_decode(file_get_contents($uri . urlencode($sparql), false, $context));
 
 		$git_head = $json ? $json->results->bindings[0]->git_head->value : '';
 		$version = $json ? $json->results->bindings[0]->version->value : '';
@@ -43,7 +46,7 @@ LIMIT 1
 		$name = $json ? $json->results->bindings[0]->name->value : '';
 		$date = $json ? $json->results->bindings[0]->date->value : '';
 
-		$json = json_decode(file_get_contents($endpoint . urlencode($sparqlCommercialEdition), false, $context));
+		$json = json_decode(file_get_contents($uri . urlencode($sparqlCommercialEdition), false, $context));
 
 		$owner = $json ? $json->results->bindings[0]->name->owner : '';
 		$serial = $json ? $json->results->bindings[0]->name->serial : '';
@@ -60,7 +63,7 @@ LIMIT 1
 				'serial' => $serial,
 			),
 			'name' => $name,
-			'system' => 'SPARQL',
+			'system' => 'sparql',
 			'url' => $url,
 			'version' => $version,
 		));

@@ -1,5 +1,5 @@
 <?php
-	function countDatasetsSPARQL($url) {
+	function countDatasets($url) {
 		$endpoint = $url . '?query=';
 		$sparql = '
 PREFIX dcat: <http://www.w3.org/ns/dcat#>

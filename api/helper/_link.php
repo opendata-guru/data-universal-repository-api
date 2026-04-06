@@ -355,7 +355,7 @@
 				unset($link['query']);
 				unset($link['fragment']);
 				$url = unparse_url($link);
-				$system = 'SPARQL';
+				$system = 'sparql';
 			}
 		}
 

@@ -1,17 +1,19 @@
 <?php
-	function liveSuppliersSPARQL($url, $pid) {
+	function suppliers($url, $pid) {
 		$endpoint = $url . '?query=';
 		$sparql = '
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX dcat: <http://www.w3.org/ns/dcat#>
-PREFIX dcatde: <http://dcat-ap.de/def/dcatde/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
-SELECT ?contributorid (COUNT(?contributorid) as ?datasets) WHERE {
-  ?dataset a dcat:Dataset .
-  ?dataset dcatde:contributorID ?contributorid_ .
-  BIND (STR(?contributorid_) as ?contributorid)
+SELECT ?name (COUNT(DISTINCT ?dataset) as ?datasets)
+WHERE {
+  ?dataset a dcat:Dataset ;
+           dct:publisher ?publisher .
+  ?publisher foaf:name ?name .
 }
-GROUP BY ?contributorid
+GROUP BY ?name
+ORDER BY DESC(?datasets)
 		';
 
 		$opts = [
@@ -28,16 +30,16 @@ GROUP BY ?contributorid
 		$data = [];
 
 		foreach ($suppliers as $item) {
-			$contributorId = $item->contributorid->value;
+			$supplier = $item->name->value;
 			$value = $item->datasets->value;
 
 			$data[] = semanticContributor($uriDomain, $pid, array(
-				'id' => $contributorId,
-				'name' => $contributorId,
-				'title' => $contributorId,
+				'id' => $supplier,
+				'name' => $supplier,
+				'title' => $supplier,
 				'created' => '',
 				'packages' => intval($value),
-				'uri' => $contributorId
+				'uri' => $supplier
 			));
 		}
 

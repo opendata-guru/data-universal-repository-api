@@ -85,9 +85,6 @@
 	} else if ('Spain' === $link->system) {
 		include 'live-suppliers/live-suppliers-spain.php';
 		liveSuppliersSpain($link->url, $pid);
-	} else if ('SPARQL' === $link->system) {
-		include 'live-suppliers/live-suppliers-sparql.php';
-		liveSuppliersSPARQL($link->url, $pid);
 	} else if ('unknown' !== $link->system) {
 		$includePath = 'model/' . $link->system . '/suppliers.php';
 

@@ -64,9 +64,6 @@
 	} else if ('rdf' === $link->system) {
 		include 'live-system/live-system-rdf.php';
 		liveSystemRDF($link->url);
-	} else if ('SPARQL' === $link->system) {
-		include 'live-system/live-system-sparql.php';
-		liveSystemSPARQL($link->url);
 	} else if ('unknown' !== $link->system) {
 		$includePath = 'model/' . $link->system . '/systems.php';
 

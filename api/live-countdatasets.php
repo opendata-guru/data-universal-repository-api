@@ -84,9 +84,6 @@
 	} else if ('Spain' === $link->system) {
 		include 'live-countdatasets/live-countdatasets-spain.php';
 		countDatasetsSpain($link->url);
-	} else if ('SPARQL' === $link->system) {
-		include 'live-countdatasets/live-countdatasets-sparql.php';
-		countDatasetsSPARQL($link->url);
 	} else if ('unknown' !== $link->system) {
 		$includePath = 'model/' . $link->system . '/countdatasets.php';
 
