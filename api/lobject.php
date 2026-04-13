@@ -5,6 +5,7 @@
 	header('Content-Type: application/json; charset=utf-8');
 
 	$lObject = null;
+	$force = false;
 
 	if ('POST' === $_SERVER['REQUEST_METHOD']) {
 		include('helper/_post.php');
@@ -67,7 +68,7 @@
 				$sum += intval($number);
 			}
 
-			if ($sum === 0) {
+			if ($force || ($sum === 0)) {
 				$successful = deleteLObject($lObject);
 
 				echo json_encode((object) array(
