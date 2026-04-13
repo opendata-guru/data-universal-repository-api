@@ -188,7 +188,7 @@
 		}
 
 		$lines = explode("\n", file_get_contents($fileIObjects));
-		$mappingHeader = str_getcsv($lines[0], ',');
+		$mappingHeader = str_getcsv($lines[0], ',', '"', '');
 
 		for ($m = 0; $m < count($mappingHeader); ++$m) {
 			if ($mappingHeader[$m] === 'iid') {
@@ -203,7 +203,7 @@
 		array_shift($lines);
 		foreach($lines as $line) {
 			if ($line != '') {
-				$arr = str_getcsv($line, ',');
+				$arr = str_getcsv($line, ',', '"', '');
 
 				if ($arr[$idIID]) {
 					$mapping[$arr[$idIID]] = (object) array(
@@ -296,13 +296,13 @@
 			];
 
 			$fp = fopen($fileIObjects, 'wb');
-			fputcsv($fp, $header, ',');
+			fputcsv($fp, $header, ',', '"', '');
 			foreach ($loadedIObjects as $key => $iObject) {
 				fputcsv($fp, [
 					$iObject->iid,
 					$iObject->url,
 					$iObject->modified,
-				], ',');
+				], ',', '"', '');
 			}
 			fclose($fp);
 

@@ -357,7 +357,7 @@
 		$idSID = null;
 
 		$lines = explode("\n", file_get_contents($fileSObjects));
-		$mappingHeader = str_getcsv($lines[0], ',');
+		$mappingHeader = str_getcsv($lines[0], ',', '"', '');
 
 		for ($m = 0; $m < count($mappingHeader); ++$m) {
 			if ($mappingHeader[$m] === 'sid') {
@@ -384,7 +384,7 @@
 		array_shift($lines);
 		foreach($lines as $line) {
 			if ($line != '') {
-				$arr = str_getcsv($line, ',');
+				$arr = str_getcsv($line, ',', '"', '');
 
 				$mapping[] = (object) array(
 					'sid' => $arr[$idSID] ?: '',
@@ -432,7 +432,7 @@
 			];
 
 			$fp = fopen($fileSObjects, 'wb');
-			fputcsv($fp, $header, ',');
+			fputcsv($fp, $header, ',', '"', '');
 			foreach ($loadedSObjects as $sObject) {
 				fputcsv($fp, [
 					$sObject->sid,
@@ -444,7 +444,7 @@
 					$sObject->image['source'],
 					$sObject->image['url'],
 					$sObject->geocoding['germanRegionalKey']
-				], ',');
+				], ',', '"', '');
 			}
 			fclose($fp);
 

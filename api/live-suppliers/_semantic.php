@@ -35,7 +35,7 @@
 		$idAssociatedRS = null;
 
 		$lines = explode("\n", file_get_contents($file));
-		$mappingHeader = str_getcsv($lines[0], ',');
+		$mappingHeader = str_getcsv($lines[0], ',', '"', '');
 
 		for ($m = 0; $m < count($mappingHeader); ++$m) {
 			if ($mappingHeader[$m] === 'parent_and_id_1') {
@@ -68,7 +68,7 @@
 		array_shift($lines);
 		foreach($lines as $line) {
 			if ($line != '') {
-				$arr = str_getcsv($line, ',');
+				$arr = str_getcsv($line, ',', '"', '');
 				$mapping[] = [
 					$arr[$idSID] ?: '',
 					$arr[$idTitle] ?: '',

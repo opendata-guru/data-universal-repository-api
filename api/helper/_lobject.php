@@ -114,7 +114,7 @@
 		$idSID = null;
 
 		$lines = explode("\n", file_get_contents($fileLObjects));
-		$mappingHeader = str_getcsv($lines[0], ',');
+		$mappingHeader = str_getcsv($lines[0], ',', '"', '');
 
 		for ($m = 0; $m < count($mappingHeader); ++$m) {
 			if ($mappingHeader[$m] === 'lid') {
@@ -139,7 +139,7 @@
 		array_shift($lines);
 		foreach($lines as $line) {
 			if ($line != '') {
-				$arr = str_getcsv($line, ',');
+				$arr = str_getcsv($line, ',', '"', '');
 
 				$lObject = [];
 				$lObject['lid'] = $arr[$idLID] ?: '';
@@ -176,7 +176,7 @@
 			];
 
 			$fp = fopen($fileLObjects, 'wb');
-			fputcsv($fp, $header, ',');
+			fputcsv($fp, $header, ',', '"', '');
 			foreach ($loadedLObjects as $line) {
 				fputcsv($fp, [
 					$line['lid'],
@@ -187,7 +187,7 @@
 					json_encode($line['ispartof'] ?: []),
 					$line['sid'],
 					$line['lastseen']
-				], ',');
+				], ',', '"', '');
 			}
 			fclose($fp);
 
