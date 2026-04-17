@@ -216,10 +216,19 @@ echo(' ');
 					}
 				}
 			}
+		} else {
+			$dkan2search = '/api/1/search?page-size=0';
+			$dkan2search = '/api/1/datastore/query?limit=1&offset=0&count=true&results=false&schema=false&keys=false&format=json&rowIds=false';
+
+			$uri = $url . $dkan2search;
+			$json = json_decode(get_contents_30sec($uri));
+
+			if ($json) {
+			}
 		}
 	}
 
-	function liveSuppliersCKAN($url, $pid) {
+	function suppliers($url, $pid) {
 		$orgaListSuffix = '/api/3/action/organization_list';
 		$orgaShowSuffix = '/api/3/action/organization_show?id=';
 

@@ -45,10 +45,7 @@
 		exit;
 	}
 
-	if ('CKAN' === $link->system) {
-		include 'live-countdatasets/live-countdatasets-ckan.php';
-		countDatasetsCKAN($link->url);
-	} else if ('Piveau' === $link->system) {
+	if ('Piveau' === $link->system) {
 		include 'live-countdatasets/live-countdatasets-piveau.php';
 		countDatasetsPiveau($link->url);
 	} else if ('ArcGIS' === $link->system) {

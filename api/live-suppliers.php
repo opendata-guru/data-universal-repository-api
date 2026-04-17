@@ -46,10 +46,7 @@
 		exit;
 	}
 
-	if ('CKAN' === $link->system) {
-		include 'live-suppliers/live-suppliers-ckan.php';
-		liveSuppliersCKAN($link->url, $pid);
-	} else if ('Piveau' === $link->system) {
+	if ('Piveau' === $link->system) {
 		include 'live-suppliers/live-suppliers-piveau.php';
 		liveSuppliersPiveau($link->url, $pid);
 	} else if ('ArcGIS' === $link->system) {

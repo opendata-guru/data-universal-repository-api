@@ -46,10 +46,7 @@
 		exit;
 	}
 
-	if ('CKAN' === $link->system) {
-		include 'live-system/live-system-ckan.php';
-		liveSystemCKAN($link->url);
-	} else if ('Piveau' === $link->system) {
+	if ('Piveau' === $link->system) {
 		include 'live-system/live-system-piveau.php';
 		liveSystemPiveau($link->url);
 	} else if ('ArcGIS' === $link->system) {

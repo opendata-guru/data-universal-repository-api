@@ -129,7 +129,7 @@
 				unset($link['query']);
 				unset($link['fragment']);
 				$url = unparse_url($link);
-				$system = 'CKAN';
+				$system = 'ckan';
 			}
 		}
 

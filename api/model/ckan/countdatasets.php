@@ -40,13 +40,14 @@
 		return intval($packageCount);
 	}
 
-	function countDatasetsCKAN($url) {
+	function countDatasets($url) {
 		$packageShowSuffix_3 = '/api/3/action/package_search?rows=1&start=0';
 //		$packageShowSuffix = '/api/action/package_search?rows=1&start=0';
 		$packageShowSuffix = '/api/action/package_search?fq=(isopen%3A%22true%22)&rows=1';
 		$packageShowAllSuffix = '/api/3/action/package_search';
 		$resourcesShowLimitSuffix = '/api/3/action/current_package_list_with_resources?limit=1000';
 		$resourcesShowSuffix = '/api/3/action/current_package_list_with_resources';
+		$dkan2search = '/api/1/search?page-size=0';
 
 		$json = json_decode(get_contents($url . $packageShowSuffix_3));
 		$count = 0;
@@ -74,7 +75,13 @@
 						if ($json) {
 							$count = count($json->result);
 						} else {
-							$count = scrapeWebsite($url);
+							$json = json_decode(get_contents($url . $dkan2search));
+
+							if ($json) {
+								$count = intval($json->total);
+							} else {
+								$count = scrapeWebsite($url);
+							}
 						}
 					}
 				}
