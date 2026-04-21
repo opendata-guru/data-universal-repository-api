@@ -27,6 +27,9 @@
 			$obj = get_object_vars($item);
 			if ($obj['@type'] == 'hydra:PagedCollection') {
 				$count = $obj['totalItems'];
+				if (null === $count) {
+					$count = $obj['hydra:totalItems'];
+				}
 			}
 		}
 
