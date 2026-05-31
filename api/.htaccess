@@ -39,6 +39,7 @@ RewriteRule ^2/datasets/(count|find)$                 /api/datasets-$1.php      
 RewriteRule ^2/system/changelog$                      /api/system-changelog.php [L]
 RewriteRule ^2/(data-providers)$                      /api/$1.php               [L]
 RewriteRule ^2/(repair)$                              /api/$1.php               [L]
+RewriteRule ^2/(appointment)$                         /api/$1.php               [L]
 
 <IfModule mod_headers.c>
     Header set Access-Control-Allow-Origin "*"
