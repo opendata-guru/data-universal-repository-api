@@ -1,6 +1,7 @@
 <?php
 	$loadedLObjects = [];
 	$fileLObjects = __DIR__ . '/../../api-data/links.csv';
+	$fileLObjectsBackup = __DIR__ . '/../../api-data/links_backup_' . date('Y-\wW') . '.csv';
 	$pathLObjectCounts = __DIR__ . '/../../api-data/counts-lid/';
 
 	loadMappingFileLObjects($loadedLObjects);
@@ -103,6 +104,7 @@
 
 	function loadMappingFileLObjects(&$mapping) {
 		global $fileLObjects;
+		global $fileLObjectsBackup;
 
 		$idIdentifier = null;
 		$idLastSeen = null;
@@ -112,6 +114,10 @@
 		$idLID = null;
 		$idPID = null;
 		$idSID = null;
+
+		if (file_exists($fileLObjects) && !file_exists($fileLObjectsBackup)) {
+			copy($fileLObjects, $fileLObjectsBackup);
+		}
 
 		$lines = explode("\n", file_get_contents($fileLObjects));
 		$mappingHeader = str_getcsv($lines[0], ',', '"', '');
