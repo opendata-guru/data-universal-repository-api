@@ -8,9 +8,10 @@
 	ini_set('display_startup_errors', 1);
 	error_reporting(E_ALL);
 
+	include('helper/_database.php');
 	include('helper/_lobject.php');
 
-	function repaireLObjects() {
+/*	function repaireLObjectsWithoutLID() {
 		global $loadedLObjects;
 
 		$ret = [];
@@ -23,9 +24,70 @@
 		}
 
 		return $ret;
+	}*/
+
+	function repaireLObjects() {
+		global $loadedLObjects;
+
+		$hashmap = [];
+		foreach($loadedLObjects as $object) {
+			$hash = $object['lid'];
+			if (!array_key_exists($hash, $hashmap)) {
+				$hashmap[$hash] = [];
+			}
+			$hashmap[$hash][] = $object;
+		}
+
+		$ret = [];
+		foreach($hashmap as $item) {
+			if (count($item) > 1) {
+//				$ret[] = $item;
+				$ret[] = $item[0]['lid'];
+			}
+		}
+
+		return $ret;
 	}
 
-	$test = repaireLObjects();
+	function repairFileBackupToDatabase() {
+		global $loadedLObjects;
+
+		$db = new GuruDatabase();
+
+		foreach($loadedLObjects as $object) {
+			$lid = $object['lid'];
+
+			echo('.');
+
+			// strlen === 5? Yes, there is a current bug in saving data resulting in too long lid
+			if (strlen($lid) === 5) {
+				$pid = $object['pid'];
+				$identifier = $object['identifier'];
+
+				$lObjects = $db->getLObjectsByPIDIdentifier($pid, $identifier);
+
+				if (0 === count($lObjects)) {
+					$lObject = $db->getLObject($lid);
+					if (!is_null($lObject)) {
+						var_dump($object);
+						var_dump($lObject);
+					}
+
+					$db->createLObject($lid, $pid, $identifier, $object['title'], $object['haspart'], $object['ispartof'], $object['sid'], $object['lastseen']);
+				} else if (1 !== count($lObjects)) {
+					var_dump('More than 1 lObject for ' . $identifier . ' in ' . $pid);
+				}
+			}
+		}
+
+		$db->close();
+
+		return 'repairFileBackupToDatabase';
+	}
+
+//	$test = repaireLObjects();
+	$test = testDB();
+	$test = repairFileBackupToDatabase();
 
 	echo json_encode((object) array(
 		'test' => $test,
