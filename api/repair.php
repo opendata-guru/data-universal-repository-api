@@ -52,12 +52,13 @@
 	function repairFileBackupToDatabase() {
 		global $loadedLObjects;
 
+		$startTime = microtime(true);
 		$db = new GuruDatabase();
+
+		echo "loadedLObjects: " . count($loadedLObjects) . "\n";
 
 		foreach($loadedLObjects as $object) {
 			$lid = $object['lid'];
-
-			echo('.');
 
 			// strlen === 5? Yes, there is a current bug in saving data resulting in too long lid
 			if (strlen($lid) === 5) {
@@ -67,19 +68,23 @@
 				$lObjects = $db->getLObjectsByPIDIdentifier($pid, $identifier);
 
 				if (0 === count($lObjects)) {
-					$lObject = $db->getLObject($lid);
-					if (!is_null($lObject)) {
-						var_dump($object);
-						var_dump($lObject);
-					}
-
 					$db->createLObject($lid, $pid, $identifier, $object['title'], $object['haspart'], $object['ispartof'], $object['sid'], $object['lastseen']);
 				} else if (1 !== count($lObjects)) {
 					var_dump('More than 1 lObject for ' . $identifier . ' in ' . $pid);
+				} else {
+					$dbObj = $lObjects[0];
+
+					if ($dbObj->lid !== $lid) {
+						var_dump('2 lids for ' . $identifier . ' in ' . $pid . ' (' . $dbObj->lid . ',' . $lid . ')');
+//						var_dump($dbObj);
+//						var_dump($object);
+					}
 				}
 			}
 		}
 
+		$timeDiff = microtime(true) - $startTime;
+		echo ('Duration: ' . (round($timeDiff * 1000) / 1000) . " seconds\n");
 		$db->close();
 
 		return 'repairFileBackupToDatabase';

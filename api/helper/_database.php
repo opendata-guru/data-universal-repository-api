@@ -15,7 +15,7 @@
 
 			// collation_connection: utf8mb3_bin (deprecated)
 			//                       utf8mb4_bin (use 'bin' for case sensitive comparission)
-			$this->dbCollation = 'utf8mb3_bin';
+			$this->dbCollation = 'utf8mb4_bin';
 
 			parent::__construct($dbServername, $dbUsername, $dbPassword, $dbName);
 			if ($this->connect_error) {
@@ -25,6 +25,22 @@
 			$this->query('SET collation_connection = ' . $this->dbCollation);
 
 			$this->initTables($dbName);
+		}
+
+// -------------------------------------
+// table lobject
+// -------------------------------------
+
+		// create a new lObject (fatal error if $lid already in use)
+		public function createLObject($lid, $pid, $identifier, $title, $haspart = [], $ispartof = [], $sid = null, $lastseen = null) {
+			$haspartString = json_encode($haspart);
+			$ispartofString = json_encode($ispartof);
+
+			$stmt = $this->prepare('INSERT INTO lobject VALUES (?,?,?,?,?,?,?,?)');
+			$stmt->bind_param('ssssssss', $lid, $pid, $identifier, $title, $haspartString, $ispartofString, $sid, $lastseen);
+			$stmt->execute();
+
+			$stmt->close();
 		}
 
 		// get an array of all lObjects
@@ -48,7 +64,7 @@
 
 		// get lObject by lid
 		public function getLObject($lid_in) {
-			$stmt = $this->prepare('SELECT lid, pid, identifier, title, haspart, ispartof, sid, lastseen FROM lobject WHERE lid COLLATE ' . $this->dbCollation . ' =?');
+			$stmt = $this->prepare('SELECT lid, pid, identifier, title, haspart, ispartof, sid, lastseen FROM lobject WHERE lid = ?');
 			$stmt->bind_param('s', $lid_in);
 			$stmt->execute();
 
@@ -77,7 +93,7 @@
 		public function getLObjectsByPIDIdentifier($pid_in, $identifier_in) {
 			$objects = [];
 
-			$stmt = $this->prepare('SELECT lid, pid, identifier, title, haspart, ispartof, sid, lastseen FROM lobject WHERE pid COLLATE ' . $this->dbCollation . ' =? AND identifier COLLATE ' . $this->dbCollation . ' =?');
+			$stmt = $this->prepare('SELECT lid, pid, identifier, title, haspart, ispartof, sid, lastseen FROM lobject WHERE pid = ? AND identifier LIKE ?');
 			$stmt->bind_param('ss', $pid_in, $identifier_in);
 			$stmt->execute();
 
@@ -100,27 +116,18 @@
 			return $objects;
 		}
 
-		// create a new lObject (fatal error if $lid already in use)
-		public function createLObject($lid, $pid, $identifier, $title, $haspart = [], $ispartof = [], $sid = null, $lastseen = null) {
-			// emulate PRIMARY KEY with case sensitiveness
-			if (is_null($this->getLObject($lid))) {
-				$haspartString = json_encode($haspart);
-				$ispartofString = json_encode($ispartof);
-
-				$stmt = $this->prepare('INSERT INTO lobject VALUES (?,?,?,?,?,?,?,?)');
-				$stmt->bind_param('ssssssss', $lid, $pid, $identifier, $title, $haspartString, $ispartofString, $sid, $lastseen);
-				$stmt->execute();
-
-				$stmt->close();
-			} else {
-				throw new Exception('Duplicate entry \'' . $lid . '\' for key \'lid\'');
-			}
-		}
+// -------------------------------------
+// table ???
+// -------------------------------------
 
 		// todo
 		public function getSObjectBySID($sid) {
 			return null;
 		}
+
+// -------------------------------------
+// init tables
+// -------------------------------------
 
 		private function initTables($dbName) {
 			$result = $this->query('SHOW TABLES IN `' . $dbName . '`');
@@ -137,21 +144,25 @@
 //			$result = $this->query('Drop Table lobject');
 			if (!in_array('lobject', $tables)) {
 				$result = $this->query('CREATE TABLE lobject( ' .
-				   'lid CHAR(5) NOT NULL, ' .
-				   'pid CHAR(4) NOT NULL, ' .
-				   'identifier VARCHAR(1024), ' .
+				   'lid CHAR(5) COLLATE ' . $this->dbCollation . ' NOT NULL, ' .
+				   'pid CHAR(4) COLLATE ' . $this->dbCollation . ' NOT NULL, ' .
+				   'identifier VARCHAR(1024) COLLATE ' . $this->dbCollation . ', ' .
 				   'title VARCHAR(1024), ' .
-				   'haspart VARCHAR(1024), ' .
-				   'ispartof VARCHAR(1024), ' .
-				   'sid VARCHAR(5), ' .
-				   'lastseen DATE ' .
-//				   ', PRIMARY KEY ( lid )' .
+				   'haspart VARCHAR(1024) COLLATE ' . $this->dbCollation . ', ' .
+				   'ispartof VARCHAR(1024) COLLATE ' . $this->dbCollation . ', ' .
+				   'sid VARCHAR(5) COLLATE ' . $this->dbCollation . ', ' .
+				   'lastseen DATE, ' .
+				   'PRIMARY KEY ( lid )' .
 				   ');');
 			}
 
 //			var_dump($result);
 		}
 	}
+
+// -------------------------------------
+// please remove me
+// -------------------------------------
 
 	function testDB() {
 		try {
