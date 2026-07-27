@@ -2,6 +2,7 @@
 	class GuruDatabase extends mysqli {
 		private string $dbCharset;
 		private string $dbCollation;
+		private array $cacheLObjects;
 
 		public function __construct() {
 			$dbServername = 'db1234567890.hosting-data.io';
@@ -24,6 +25,7 @@
 			$this->set_charset($this->dbCharset);
 			$this->query('SET collation_connection = ' . $this->dbCollation);
 
+			$this->cacheLObjects = array();
 			$this->initTables($dbName);
 		}
 
@@ -41,6 +43,19 @@
 			$stmt->execute();
 
 			$stmt->close();
+
+			if (!empty($this->cacheLObjects)) {
+				$this->cacheLObjects[] = (object) [
+					'lid' => $lid,
+					'pid' => $pid,
+					'identifier' => $identifier,
+					'title' => $title,
+					'haspart' => $haspart,
+					'ispartof' => $ispartof,
+					'sid' => $sid,
+					'lastseen' => $lastseen
+				];
+			}
 		}
 
 		// get an array of all lObjects
@@ -54,7 +69,7 @@
 						$row['haspart'] = json_decode($row['haspart']);
 						$row['ispartof'] = json_decode($row['ispartof']);
 
-						$objects[] = $row;
+						$objects[] = (object) $row;
 					}
 				}
 			}
@@ -114,6 +129,17 @@
 			$stmt->close();
 
 			return $objects;
+		}
+
+		// get an array of filtered lObjects from cache
+		public function getLObjectsByPIDIdentifier_cache($pid_in, $identifier_in) {
+			if (empty($this->cacheLObjects)) {
+				$this->cacheLObjects = $this->getLObjects();
+			}
+
+			return array_values(array_filter($this->cacheLObjects, function($row) use ($pid_in, $identifier_in) {
+				return ($pid_in === $row->pid) && ($identifier_in === $row->identifier);
+			}));
 		}
 
 // -------------------------------------

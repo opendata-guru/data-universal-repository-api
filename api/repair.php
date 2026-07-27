@@ -65,7 +65,9 @@
 				$pid = $object['pid'];
 				$identifier = $object['identifier'];
 
-				$lObjects = $db->getLObjectsByPIDIdentifier($pid, $identifier);
+				// save time factor 2.7
+//				$lObjects = $db->getLObjectsByPIDIdentifier($pid, $identifier);
+				$lObjects = $db->getLObjectsByPIDIdentifier_cache($pid, $identifier);
 
 				if (0 === count($lObjects)) {
 					$db->createLObject($lid, $pid, $identifier, $object['title'], $object['haspart'], $object['ispartof'], $object['sid'], $object['lastseen']);
