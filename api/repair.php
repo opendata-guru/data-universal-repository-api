@@ -63,6 +63,8 @@
 			// strlen === 5? Yes, there is a current bug in saving data resulting in too long lid
 			if (strlen($lid) === 5) {
 				$pid = $object['pid'];
+				$sid = $object['sid'];
+				$lastseen = $object['lastseen'];
 				$identifier = $object['identifier'];
 
 				// save time factor 2.7
@@ -77,7 +79,13 @@
 					$dbObj = $lObjects[0];
 
 					if ($dbObj->lid !== $lid) {
-						var_dump('2 lids for ' . $identifier . ' in ' . $pid . ' (' . $dbObj->lid . ',' . $lid . ')');
+						var_dump('2 lid\'s for ' . $identifier . ' in ' . $pid . ' (' . $dbObj->lid . ',' . $lid . ')');
+//						var_dump($dbObj);
+//						var_dump($object);
+					} else if ($dbObj->sid !== $sid) {
+						var_dump('2 sid\'s for ' . $identifier . ' in ' . $pid . ' (' . $dbObj->sid . ',' . $sid . ')');
+					} else if ($dbObj->lastseen != $lastseen) {
+						var_dump('2 dates for ' . $identifier . ' in ' . $pid . ' (' . $dbObj->lastseen . ',' . $lastseen . ')');
 //						var_dump($dbObj);
 //						var_dump($object);
 					}

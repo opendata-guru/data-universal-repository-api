@@ -68,6 +68,7 @@
 					while ($row = $result->fetch_assoc()) {
 						$row['haspart'] = json_decode($row['haspart']);
 						$row['ispartof'] = json_decode($row['ispartof']);
+						$row['lastseen'] = $row['lastseen'] === '0000-00-00' ? null : $row['lastseen'];
 
 						$objects[] = (object) $row;
 					}
@@ -95,7 +96,7 @@
 					'haspart' => json_decode($haspart),
 					'ispartof' => json_decode($ispartof),
 					'sid' => $sid,
-					'lastseen' => $lastseen
+					'lastseen' => $lastseen === '0000-00-00' ? null : $lastseen
 				];
 			}
 
@@ -122,7 +123,7 @@
 					'haspart' => json_decode($haspart),
 					'ispartof' => json_decode($ispartof),
 					'sid' => $sid,
-					'lastseen' => $lastseen
+					'lastseen' => $lastseen === '0000-00-00' ? null : $lastseen
 				];
 			}
 
