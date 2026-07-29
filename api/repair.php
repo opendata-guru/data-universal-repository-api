@@ -53,6 +53,9 @@
 		global $loadedLObjects;
 
 		$startTime = microtime(true);
+		$countDBCreate = 0;
+		$countDBUpdate = 0;
+		$countDBUpdateSID = 0;
 		$db = new GuruDatabase();
 
 		echo "loadedLObjects: " . count($loadedLObjects) . "\n";
@@ -72,30 +75,42 @@
 				$lObjects = $db->getLObjectsByPIDIdentifier_cache($pid, $identifier);
 
 				if (0 === count($lObjects)) {
-					$db->createLObject($lid, $pid, $identifier, $object['title'], $object['haspart'], $object['ispartof'], $object['sid'], $object['lastseen']);
+					$db->createLObject($lid, $pid, $identifier, $object['title'], $object['haspart'], $object['ispartof'], $sid, $lastseen);
+					++$countDBCreate;
 				} else if (1 !== count($lObjects)) {
-					var_dump('More than 1 lObject for ' . $identifier . ' in ' . $pid);
+					echo 'More than 1 lObject for ' . $identifier . ' in ' . $pid . "\n";
 				} else {
 					$dbObj = $lObjects[0];
 
 					if ($dbObj->lid !== $lid) {
-						var_dump('2 lid\'s for ' . $identifier . ' in ' . $pid . ' (' . $dbObj->lid . ',' . $lid . ')');
+						echo '2 lid\'s for ' . $identifier . ' in ' . $pid . ' (' . $dbObj->lid . ',' . $lid . ")\n";
 //						var_dump($dbObj);
 //						var_dump($object);
-					} else if ($dbObj->sid !== $sid) {
-						var_dump('2 sid\'s for ' . $identifier . ' in ' . $pid . ' (' . $dbObj->sid . ',' . $sid . ')');
-					} else if ($dbObj->lastseen != $lastseen) {
-						var_dump('2 dates for ' . $identifier . ' in ' . $pid . ' (' . $dbObj->lastseen . ',' . $lastseen . ')');
-//						var_dump($dbObj);
-//						var_dump($object);
+					} else {
+						if ($dbObj->lastseen < $lastseen) {
+							$db->updateLObject($lid, $object['title'], $object['haspart'], $object['ispartof'], $lastseen);
+							++$countDBUpdate;
+						}
+						if ($dbObj->sid !== $sid) {
+							if ('' === $dbObj->sid) {
+								$db->updateLObjectSID($lid, $sid);
+								++$countDBUpdateSID;
+							} else {
+								echo '2 sid\'s for ' . $identifier . ' in ' . $pid . ' (' . $dbObj->sid . ',' . $sid . ")\n";
+							}
+						}
 					}
 				}
 			}
 		}
 
 		$timeDiff = microtime(true) - $startTime;
-		echo ('Duration: ' . (round($timeDiff * 1000) / 1000) . " seconds\n");
+		echo 'Duration:         ' . (round($timeDiff * 1000) / 1000) . " seconds\n";
 		$db->close();
+
+		echo 'New lObjects:     ' . $countDBCreate . "\n";
+		echo 'Updated lObjects: ' . $countDBUpdate . "\n";
+		echo 'Updated sID\'s:    ' . $countDBUpdateSID . "\n";
 
 		return 'repairFileBackupToDatabase';
 	}

@@ -58,6 +58,52 @@
 			}
 		}
 
+		// update existing lObject
+		public function updateLObject($lid, $title, $haspart, $ispartof, $lastseen) {
+			$haspartString = json_encode($haspart);
+			$ispartofString = json_encode($ispartof);
+
+			$stmt = $this->prepare('UPDATE lobject SET title = ?, haspart = ?, ispartof = ?, lastseen = ? WHERE lid = ?');
+			$stmt->bind_param('sssss', $title, $haspartString, $ispartofString, $lastseen, $lid);
+			$stmt->execute();
+
+			$stmt->close();
+
+			if (!empty($this->cacheLObjects)) {
+				$len = count($this->cacheLObjects);
+				for ($r = 0; $r < $len; ++$r) {
+					$row = $this->cacheLObjects[$r];
+
+					if ($lid === $row->lid) {
+						 $row->title = $title;
+						 $row->haspart = $haspart;
+						 $row->ispartof = $ispartof;
+						 $row->lastseen = $lastseen;
+					}
+				}
+			}
+		}
+
+		// update only sid of an existing lObject
+		public function updateLObjectSID($lid, $sid) {
+			$stmt = $this->prepare('UPDATE lobject SET sid = ? WHERE lid = ?');
+			$stmt->bind_param('ss', $sid, $lid);
+			$stmt->execute();
+
+			$stmt->close();
+
+			if (!empty($this->cacheLObjects)) {
+				$len = count($this->cacheLObjects);
+				for ($r = 0; $r < $len; ++$r) {
+					$row = $this->cacheLObjects[$r];
+
+					if ($lid === $row->lid) {
+						 $row->sid = $sid;
+					}
+				}
+			}
+		}
+
 		// get an array of all lObjects
 		public function getLObjects() {
 			$result = $this->query('SELECT * FROM lobject');
