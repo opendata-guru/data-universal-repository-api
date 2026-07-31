@@ -45,7 +45,7 @@
 			$stmt->close();
 
 			if (!empty($this->cacheLObjects)) {
-				$this->cacheLObjects[] = (object) [
+				$this->cacheLObjects[$lid] = (object) [
 					'lid' => $lid,
 					'pid' => $pid,
 					'identifier' => $identifier,
@@ -70,17 +70,10 @@
 			$stmt->close();
 
 			if (!empty($this->cacheLObjects)) {
-				$len = count($this->cacheLObjects);
-				for ($r = 0; $r < $len; ++$r) {
-					$row = $this->cacheLObjects[$r];
-
-					if ($lid === $row->lid) {
-						 $row->title = $title;
-						 $row->haspart = $haspart;
-						 $row->ispartof = $ispartof;
-						 $row->lastseen = $lastseen;
-					}
-				}
+				$this->cacheLObjects[$lid]->title = $title;
+				$this->cacheLObjects[$lid]->haspart = $haspart;
+				$this->cacheLObjects[$lid]->ispartof = $ispartof;
+				$this->cacheLObjects[$lid]->lastseen = $lastseen;
 			}
 		}
 
@@ -93,14 +86,7 @@
 			$stmt->close();
 
 			if (!empty($this->cacheLObjects)) {
-				$len = count($this->cacheLObjects);
-				for ($r = 0; $r < $len; ++$r) {
-					$row = $this->cacheLObjects[$r];
-
-					if ($lid === $row->lid) {
-						 $row->sid = $sid;
-					}
-				}
+				$this->cacheLObjects[$lid]->sid = $sid;
 			}
 		}
 
@@ -116,7 +102,7 @@
 						$row['ispartof'] = json_decode($row['ispartof']);
 						$row['lastseen'] = $row['lastseen'] === '0000-00-00' ? null : $row['lastseen'];
 
-						$objects[] = (object) $row;
+						$objects[$row['lid']] = (object) $row;
 					}
 				}
 			}
