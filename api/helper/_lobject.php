@@ -2,7 +2,10 @@
 	$loadedLObjects = [];
 	$fileLObjects = __DIR__ . '/../../api-data/links.csv';
 	$fileLObjectsBackup = __DIR__ . '/../../api-data/links_backup_' . date('Y-\wW') . '.csv';
+	$fileLObjectsBackupDB = __DIR__ . '/../../api-data/links_database_' . date('Y-\wW') . '.csv';
 	$pathLObjectCounts = __DIR__ . '/../../api-data/counts-lid/';
+
+	include_once('_database.php');
 
 	loadMappingFileLObjects($loadedLObjects);
 	$hashLObjects = md5(serialize($loadedLObjects));
@@ -115,6 +118,7 @@
 		$idPID = null;
 		$idSID = null;
 
+		saveDatabaseToBackupFileLObjects();
 		if (file_exists($fileLObjects) && !file_exists($fileLObjectsBackup)) {
 			copy($fileLObjects, $fileLObjectsBackup);
 		}
@@ -199,6 +203,45 @@
 
 			$hashLObjects = $newHash;
 		}
+	}
+
+	function saveDatabaseToBackupFileLObjects() {
+		global $fileLObjectsBackupDB;
+
+		if (file_exists($fileLObjectsBackupDB)) {
+			return;
+		}
+
+		$header = [
+			'lid',
+			'pid',
+			'identifier',
+			'title',
+			'haspart',
+			'ispartof',
+			'sid',
+			'lastseen'
+		];
+
+		$fp = fopen($fileLObjectsBackupDB, 'wb');
+		fputcsv($fp, $header, ',', '"', '');
+
+		$db = new GuruDatabase();
+		$objects = $db->getLObjects();
+
+		foreach ($objects as $row) {
+			fputcsv($fp, [
+				$row->lid,
+				$row->pid,
+				$row->identifier,
+				$row->title,
+				json_encode($row->haspart ?: []),
+				json_encode($row->ispartof ?: []),
+				$row->sid,
+				$row->lastseen
+			], ',', '"', '');
+		}
+		fclose($fp);
 	}
 
 	function createLID() {
