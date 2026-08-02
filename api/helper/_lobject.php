@@ -294,6 +294,24 @@
 	}
 
 	function updateLObject(&$obj) {
+		//----------------------
+		// new database version
+		$db = new GuruDatabase();
+		$lObjects = $db->getLObjectsByPIDIdentifier($obj['pid'], $obj['identifier']);
+
+		if (0 === count($lObjects)) {
+			$db->createLObject($obj['lid'], $obj['pid'], $obj['identifier'], $obj['title'], $obj['haspart'], $obj['ispartof'], $obj['sid'], date('Y-m-d'));
+		} else if (1 === count($lObjects)) {
+			$current = $lObjects[0];
+			$db->updateLObject($current['lid'], $obj['title'], $obj['haspart'], $obj['ispartof'], date('Y-m-d'));
+		} else {
+			// TODO
+			// what should I do. This seems to be an error.
+			// The original code modify 'first' element (but the database sort differently)
+		}
+
+		//-------------
+		// old version
 		global $loadedLObjects;
 
 		foreach($loadedLObjects as &$lObject) {
@@ -312,6 +330,17 @@
 	}
 
 	function updateLObjectSID(&$obj, $sid) {
+		//----------------------
+		// new database version
+		$db = new GuruDatabase();
+		$lObject = $db->getLObject($obj['lid']);
+
+		if (!is_null($lObject)) {
+			$db->updateLObjectSID($obj['lid'], $obj['sid']);
+		}
+
+		//-------------
+		// old version
 		global $loadedLObjects;
 
 		foreach($loadedLObjects as &$lObject) {
