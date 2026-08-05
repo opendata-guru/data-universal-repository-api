@@ -303,7 +303,7 @@
 			$db->createLObject($obj['lid'], $obj['pid'], $obj['identifier'], $obj['title'], $obj['haspart'], $obj['ispartof'], $obj['sid'], date('Y-m-d'));
 		} else if (1 === count($lObjects)) {
 			$current = $lObjects[0];
-			$db->updateLObject($current['lid'], $obj['title'], $obj['haspart'], $obj['ispartof'], date('Y-m-d'));
+			$db->updateLObject($current->lid, $obj['title'], $obj['haspart'], $obj['ispartof'], date('Y-m-d'));
 		} else {
 			// TODO
 			// what should I do. This seems to be an error.
